@@ -41,6 +41,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     console.log('➕ Adding tens to workspace:', workspaceId);
     onBlocksChange(tensCount + 1, onesCount);
   };
+  
   const handleAddOnes = () => {
     // Prevent direct addition to Total workspace
     if (workspaceId === 'total') {
@@ -50,6 +51,13 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     console.log('➕ Adding ones to workspace:', workspaceId);
     onBlocksChange(tensCount, onesCount + 1);
   };
+
+  // Allow deletion in Total section by handling block changes normally
+  const handleBlocksChange = (tens: number, ones: number) => {
+    console.log(`🔄 Block change in ${workspaceId}:`, { tens, ones });
+    onBlocksChange(tens, ones);
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -151,7 +159,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         onAddTens={handleAddTens}
         onAddOnes={handleAddOnes}
         userAnswer={tensCount * 10 + onesCount}
-        onBlocksChange={onBlocksChange}
+        onBlocksChange={handleBlocksChange}
         resetTrigger={resetTrigger}
         workspaceId={workspaceId}
         externalTensCount={tensCount}

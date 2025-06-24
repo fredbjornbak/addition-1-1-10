@@ -9,7 +9,7 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
     const blockWidth = 40; // Increased from 24
     const blockHeight = 32; // Increased from 18
     const spacing = 4; // Slightly increased spacing
-    const maxCols = 3; // Limit to 3 columns
+    const maxCols = 2; // Changed from 3 to 2 columns for tens
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
@@ -21,7 +21,7 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
     const blockWidth = 28; // Increased from 16
     const blockHeight = 28; // Increased from 16
     const spacing = 3; // Slightly increased spacing
-    const maxCols = 3; // Limit to 3 columns
+    const maxCols = 3; // Keep 3 columns for ones
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
