@@ -121,15 +121,6 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           workspaceId={workspaceId}
         />
       ))}
-
-      {/* Drop zone indicator */}
-      {isDropTarget && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-sm font-bold animate-bounce-gentle">
-            Drop here!
-          </div>
-        </div>
-      )}
     </button>
   );
 };
