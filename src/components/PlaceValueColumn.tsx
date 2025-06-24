@@ -46,12 +46,27 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    console.log('Column drop event:', { type, workspaceId });
     onDrop(e, type);
   };
 
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     onDragEnter(type);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDragLeave();
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDragOver(e);
   };
 
   const shouldVibrate = hasBundle && isOnes;
@@ -60,10 +75,10 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
     <button
       onClick={onAddBlock}
       onDrop={handleDrop}
-      onDragOver={onDragOver}
+      onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
-      onDragLeave={onDragLeave}
-      className={`relative rounded-lg p-6 min-h-[240px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass}`}
+      onDragLeave={handleDragLeave}
+      className={`relative rounded-lg p-6 h-[240px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#FFD700' : borderColor

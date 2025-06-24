@@ -42,28 +42,34 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    if (!canReceiveFromOthers || !onCrossWorkspaceDrop) return;
-    
     e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('WorkspaceSection drop event:', { workspaceId, canReceiveFromOthers });
+    
+    if (!canReceiveFromOthers || !onCrossWorkspaceDrop) {
+      console.log('Cannot receive from others or no drop handler');
+      return;
+    }
     
     // Try to get cross-workspace data first
     const crossWorkspaceData = e.dataTransfer.getData('application/json');
+    console.log('Cross-workspace data received:', crossWorkspaceData);
     
     if (crossWorkspaceData) {
       try {
         const { blockType, blockValue, sourceWorkspace } = JSON.parse(crossWorkspaceData);
+        console.log('Parsed cross-workspace data:', { blockType, blockValue, sourceWorkspace });
+        
         // Only process if it's from a different workspace
         if (sourceWorkspace !== workspaceId) {
+          console.log('Processing cross-workspace drop');
           onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue);
+        } else {
+          console.log('Same workspace, ignoring');
         }
       } catch (error) {
         console.log('Error parsing cross-workspace data:', error);
-      }
-    } else {
-      // Fallback for regular drag data
-      const regularData = e.dataTransfer.getData('text/plain');
-      if (regularData) {
-        console.log('Regular drag and drop, not cross-workspace');
       }
     }
   };
@@ -71,6 +77,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   const handleDragEnter = (e: React.DragEvent) => {
     if (canReceiveFromOthers && onCrossWorkspaceDragEnter) {
       e.preventDefault();
+      e.stopPropagation();
+      console.log('Drag enter workspace:', workspaceId);
       onCrossWorkspaceDragEnter(workspaceId);
     }
   };
@@ -78,6 +86,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   const handleDragLeave = (e: React.DragEvent) => {
     if (canReceiveFromOthers && onCrossWorkspaceDragLeave) {
       e.preventDefault();
+      e.stopPropagation();
+      console.log('Drag leave workspace:', workspaceId);
       onCrossWorkspaceDragLeave();
     }
   };
@@ -85,12 +95,13 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   const handleDragOver = (e: React.DragEvent) => {
     if (canReceiveFromOthers) {
       e.preventDefault();
+      e.stopPropagation();
     }
   };
 
   return (
     <div 
-      className={`p-2 rounded-lg border-2 ${isDropTarget ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+      className={`p-2 rounded-lg border-2 min-h-[300px] ${isDropTarget ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#3B82F6' : borderColor

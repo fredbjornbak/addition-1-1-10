@@ -28,18 +28,21 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   workspaceId
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
+    console.log('Block drag start:', { id, type, value, workspaceId });
+    
     // Set regular block ID for within-workspace operations
     e.dataTransfer.setData('text/plain', id);
     
     // Set cross-workspace data if workspace ID is provided
     if (workspaceId) {
-      const crossWorkspaceData = JSON.stringify({
+      const crossWorkspaceData = {
         blockType: type,
         blockValue: value,
         sourceWorkspace: workspaceId,
         blockId: id
-      });
-      e.dataTransfer.setData('application/json', crossWorkspaceData);
+      };
+      e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
+      console.log('Cross-workspace data set:', crossWorkspaceData);
     }
     
     onDragStart(id);
@@ -69,7 +72,8 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         fontSize: isTens ? '12px' : '10px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        zIndex: 10
       }}
       title={`${value} - Double click to remove`}
     >

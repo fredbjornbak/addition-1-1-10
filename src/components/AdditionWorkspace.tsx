@@ -32,13 +32,11 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
   onTotalChange,
   resetTrigger
 }) => {
-  const {
-    dragState,
-    handleCrossWorkspaceDragEnter,
-    handleCrossWorkspaceDragLeave
-  } = useCrossWorkspaceDrag();
+  const [dragTargetWorkspace, setDragTargetWorkspace] = useState<string | null>(null);
 
   const handleCrossWorkspaceDrop = (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number) => {
+    console.log('Cross-workspace drop:', { sourceWorkspace, blockType, blockValue });
+    
     // Add the block to the total workspace
     if (blockType === 'tens') {
       onTotalChange(totalTens + 1, totalOnes);
@@ -60,6 +58,19 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
         onSecondNumberChange(secondNumberTens, Math.max(0, secondNumberOnes - 1));
       }
     }
+    
+    // Clear drag target
+    setDragTargetWorkspace(null);
+  };
+
+  const handleCrossWorkspaceDragEnter = (workspaceId: string) => {
+    console.log('Drag enter workspace:', workspaceId);
+    setDragTargetWorkspace(workspaceId);
+  };
+
+  const handleCrossWorkspaceDragLeave = () => {
+    console.log('Drag leave workspace');
+    setDragTargetWorkspace(null);
   };
 
   return (
@@ -108,7 +119,7 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
           backgroundColor="rgba(108, 117, 125, 0.1)"
           borderColor="#6C757D"
           canReceiveFromOthers={true}
-          isDropTarget={dragState.targetWorkspace === 'total'}
+          isDropTarget={dragTargetWorkspace === 'total'}
           onCrossWorkspaceDrop={handleCrossWorkspaceDrop}
           onCrossWorkspaceDragEnter={handleCrossWorkspaceDragEnter}
           onCrossWorkspaceDragLeave={handleCrossWorkspaceDragLeave}
