@@ -1,55 +1,42 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import SimpleQuestion from './SimpleQuestion';
 import AdditionWorkspace from './AdditionWorkspace';
 import SimpleFeedback from './SimpleFeedback';
-import { generateSimpleProblems, SimpleProblem } from '../utils/simpleProblems';
+import GameComplete from './GameComplete';
+import { useGameState } from '../hooks/useGameState';
+import { useBlockCounts } from '../hooks/useBlockCounts';
 
 const SimplePlaceValueTool = () => {
-  const [problems, setProblems] = useState<SimpleProblem[]>([]);
-  const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
-  
-  // First addend blocks
-  const [firstNumberTens, setFirstNumberTens] = useState(0);
-  const [firstNumberOnes, setFirstNumberOnes] = useState(0);
-  
-  // Second addend blocks
-  const [secondNumberTens, setSecondNumberTens] = useState(0);
-  const [secondNumberOnes, setSecondNumberOnes] = useState(0);
-  
-  // Total blocks
-  const [totalTens, setTotalTens] = useState(0);
-  const [totalOnes, setTotalOnes] = useState(0);
-  
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [gameComplete, setGameComplete] = useState(false);
-  const [resetTrigger, setResetTrigger] = useState(0);
+  const {
+    problems,
+    currentProblem,
+    showFeedback,
+    setShowFeedback,
+    isCorrect,
+    setIsCorrect,
+    gameComplete,
+    resetTrigger,
+    nextQuestion,
+    resetBoard,
+    startNewGame
+  } = useGameState();
 
-  useEffect(() => {
-    // Generate 10 problems when component mounts
-    const newProblems = generateSimpleProblems();
-    setProblems(newProblems);
-  }, []);
+  const {
+    firstNumberTens,
+    firstNumberOnes,
+    secondNumberTens,
+    secondNumberOnes,
+    totalTens,
+    totalOnes,
+    handleFirstNumberChange,
+    handleSecondNumberChange,
+    handleTotalChange,
+    resetAllCounts
+  } = useBlockCounts(resetTrigger);
 
-  const currentProblem = problems[currentProblemIndex];
   const userAnswer = totalTens * 10 + totalOnes;
-
-  const handleFirstNumberChange = (tens: number, ones: number) => {
-    setFirstNumberTens(tens);
-    setFirstNumberOnes(ones);
-  };
-
-  const handleSecondNumberChange = (tens: number, ones: number) => {
-    setSecondNumberTens(tens);
-    setSecondNumberOnes(ones);
-  };
-
-  const handleTotalChange = (tens: number, ones: number) => {
-    setTotalTens(tens);
-    setTotalOnes(ones);
-  };
 
   const checkAnswer = () => {
     if (!currentProblem) return;
@@ -88,35 +75,9 @@ const SimplePlaceValueTool = () => {
     }
   };
 
-  const nextQuestion = () => {
-    if (currentProblemIndex < problems.length - 1) {
-      setCurrentProblemIndex(prev => prev + 1);
-      resetBoard();
-      setShowFeedback(false);
-      setIsCorrect(null);
-    } else {
-      setGameComplete(true);
-    }
-  };
-
-  const resetBoard = () => {
-    setFirstNumberTens(0);
-    setFirstNumberOnes(0);
-    setSecondNumberTens(0);
-    setSecondNumberOnes(0);
-    setTotalTens(0);
-    setTotalOnes(0);
-    setResetTrigger(prev => prev + 1);
-  };
-
-  const startNewGame = () => {
-    const newProblems = generateSimpleProblems();
-    setProblems(newProblems);
-    setCurrentProblemIndex(0);
+  const handleResetBoard = () => {
+    resetAllCounts();
     resetBoard();
-    setShowFeedback(false);
-    setIsCorrect(null);
-    setGameComplete(false);
   };
 
   if (problems.length === 0) {
@@ -124,22 +85,7 @@ const SimplePlaceValueTool = () => {
   }
 
   if (gameComplete) {
-    return (
-      <div className="max-w-2xl mx-auto text-center space-y-6">
-        <div className="font-space-grotesk text-grade-heading text-grade-purple font-bold">
-          🎉 Great Job!
-        </div>
-        <div className="font-dm-sans text-grade-body-lg text-grade-black">
-          You completed all 10 problems!
-        </div>
-        <Button 
-          onClick={startNewGame}
-          className="font-dm-sans text-grade-button font-bold bg-grade-purple hover:bg-grade-purple/90 text-white px-8 py-4 rounded-grade-pill min-h-[44px]"
-        >
-          Play Again
-        </Button>
-      </div>
-    );
+    return <GameComplete onStartNewGame={startNewGame} />;
   }
 
   return (
@@ -183,7 +129,7 @@ const SimplePlaceValueTool = () => {
         </Button>
         
         <Button 
-          onClick={resetBoard}
+          onClick={handleResetBoard}
           variant="outline"
           className="font-dm-sans text-grade-button font-bold border-grade-black text-grade-black hover:bg-grade-gray px-8 py-4 rounded-grade-pill min-h-[44px]"
         >
