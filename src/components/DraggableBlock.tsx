@@ -6,7 +6,10 @@ interface DraggableBlockProps {
   value: number;
   type: 'tens' | 'ones';
   onRemove: (id: string) => void;
+  onDragStart: (id: string) => void;
   position: { x: number; y: number };
+  shouldVibrate?: boolean;
+  isGrouping?: boolean;
 }
 
 const DraggableBlock: React.FC<DraggableBlockProps> = ({ 
@@ -14,7 +17,10 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   value, 
   type, 
   onRemove, 
-  position 
+  onDragStart,
+  position,
+  shouldVibrate = false,
+  isGrouping = false
 }) => {
   const bgColor = type === 'tens' ? '#0026FF' : '#FF6F00';
   const width = type === 'tens' ? '80px' : '40px';
@@ -25,24 +31,41 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
     onRemove(id);
   };
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', id);
+    e.dataTransfer.effectAllowed = 'move';
+    onDragStart(id);
+  };
+
+  const vibrationClass = shouldVibrate && !isGrouping ? 'animate-vibrate' : '';
+  const groupingClass = isGrouping ? 'animate-group-flash' : '';
+  const glowClass = shouldVibrate ? 'ring-4 ring-yellow-400 ring-opacity-50' : '';
+
   return (
     <div
-      className="absolute cursor-pointer select-none font-dm-sans text-white font-bold
+      draggable
+      className={`absolute cursor-pointer select-none font-dm-sans text-white font-bold
                  rounded-md border-2 border-gray-800 shadow-lg
                  transition-all duration-200 hover:scale-110 active:scale-95 
-                 flex items-center justify-center animate-scale-in"
+                 flex items-center justify-center animate-scale-in
+                 ${vibrationClass} ${groupingClass} ${glowClass}`}
       onClick={handleClick}
+      onDragStart={handleDragStart}
       style={{
         backgroundColor: bgColor,
         width,
         height,
         left: position.x,
         top: position.y,
-        fontSize: type === 'tens' ? '14px' : '12px'
+        fontSize: type === 'tens' ? '14px' : '12px',
+        zIndex: shouldVibrate ? 10 : 5
       }}
-      title={`Click to remove this ${type === 'tens' ? 'ten' : 'one'} block`}
+      title={`Click to remove or drag to move this ${type === 'tens' ? 'ten' : 'one'} block`}
     >
       {value}
+      {shouldVibrate && (
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-sparkle" />
+      )}
     </div>
   );
 };

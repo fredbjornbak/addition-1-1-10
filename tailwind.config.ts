@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -81,7 +82,6 @@ export default {
 				'dm-sans': ['DM Sans', 'sans-serif'],
 			},
 			
-			// Font sizes with minimum 18px requirement
 			fontSize: {
 				'grade-body': ['18px', { lineHeight: '1.5' }],
 				'grade-body-lg': ['20px', { lineHeight: '1.5' }],
@@ -99,13 +99,11 @@ export default {
 				'grade-card': '50px',
 			},
 			
-			// GradeAid Shadows
 			boxShadow: {
 				'grade-button': '-10px 10px 40px rgba(0, 0, 0, 0.25)',
 				'grade-card': '0 10px 30px rgba(0, 0, 0, 0.1)',
 			},
 			
-			// GradeAid Animations & Keyframes
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -150,6 +148,40 @@ export default {
 						transform: 'scale(1)',
 						opacity: '1'
 					}
+				},
+				'vibrate': {
+					'0%, 100%': { transform: 'translateX(0)' },
+					'10%': { transform: 'translateX(-2px) rotate(-1deg)' },
+					'20%': { transform: 'translateX(2px) rotate(1deg)' },
+					'30%': { transform: 'translateX(-2px) rotate(-1deg)' },
+					'40%': { transform: 'translateX(2px) rotate(1deg)' },
+					'50%': { transform: 'translateX(-1px) rotate(-0.5deg)' },
+					'60%': { transform: 'translateX(1px) rotate(0.5deg)' },
+					'70%': { transform: 'translateX(-1px) rotate(-0.5deg)' },
+					'80%': { transform: 'translateX(1px) rotate(0.5deg)' },
+					'90%': { transform: 'translateX(0) rotate(0deg)' }
+				},
+				'group-flash': {
+					'0%': { 
+						background: 'rgba(255, 215, 0, 0.8)',
+						transform: 'scale(1)',
+						boxShadow: '0 0 0 0 rgba(255, 215, 0, 0.7)'
+					},
+					'50%': { 
+						background: 'rgba(255, 215, 0, 1)',
+						transform: 'scale(1.1)',
+						boxShadow: '0 0 0 10px rgba(255, 215, 0, 0)'
+					},
+					'100%': { 
+						background: 'rgba(255, 215, 0, 0.8)',
+						transform: 'scale(1)',
+						boxShadow: '0 0 0 0 rgba(255, 215, 0, 0)'
+					}
+				},
+				'sparkle': {
+					'0%': { opacity: '0', transform: 'scale(0) rotate(0deg)' },
+					'50%': { opacity: '1', transform: 'scale(1) rotate(180deg)' },
+					'100%': { opacity: '0', transform: 'scale(0) rotate(360deg)' }
 				}
 			},
 			animation: {
@@ -158,6 +190,9 @@ export default {
 				'bounce-gentle': 'bounce-gentle 1s infinite',
 				'pulse-glow': 'pulse-glow 2s infinite',
 				'scale-in': 'scale-in 0.2s ease-out',
+				'vibrate': 'vibrate 0.5s ease-in-out infinite',
+				'group-flash': 'group-flash 0.6s ease-out',
+				'sparkle': 'sparkle 1s ease-out'
 			}
 		}
 	},

@@ -5,6 +5,7 @@ import PlaceValueColumn from './PlaceValueColumn';
 import AnswerDisplay from './AnswerDisplay';
 import { Block, SimpleBoardProps } from '../types/placeValue';
 import { generatePosition, generateBundledPositions } from '../utils/blockPositions';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
 const SimpleBoard: React.FC<SimpleBoardProps> = ({ 
   onAddTens,
@@ -14,6 +15,15 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   resetTrigger
 }) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [isGrouping, setIsGrouping] = useState(false);
+  const {
+    dragState,
+    handleDragStart,
+    handleDragEnd,
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver
+  } = useDragAndDrop();
 
   // Clear all blocks when resetTrigger changes
   useEffect(() => {
@@ -59,32 +69,104 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   };
 
   const handleBundleClick = () => {
-    // Remove all 10 ones and add 1 ten
-    const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
+    setIsGrouping(true);
     
-    const newTenBlock: Block = {
-      id: `ten-${Date.now()}-${Math.random()}`,
-      value: 10,
-      type: 'tens',
-      position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length)
-    };
+    // Animate the regrouping process
+    setTimeout(() => {
+      // Remove all 10 ones and add 1 ten
+      const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
+      
+      const newTenBlock: Block = {
+        id: `ten-${Date.now()}-${Math.random()}`,
+        value: 10,
+        type: 'tens',
+        position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length)
+      };
+      
+      setBlocks([...nonOnesBlocks, newTenBlock]);
+      
+      // Update parent component
+      const tens = nonOnesBlocks.filter(b => b.type === 'tens').length + 1;
+      onBlocksChange(tens, 0);
+      
+      setIsGrouping(false);
+    }, 600);
+  };
+
+  const handleBlockDragStart = (blockId: string) => {
+    const block = blocks.find(b => b.id === blockId);
+    if (block) {
+      const onesCount = blocks.filter(b => b.type === 'ones').length;
+      handleDragStart(block, onesCount);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
+    e.preventDefault();
+    const draggedBlockId = e.dataTransfer.getData('text/plain');
+    const draggedBlock = blocks.find(b => b.id === draggedBlockId);
     
-    setBlocks([...nonOnesBlocks, newTenBlock]);
+    if (!draggedBlock) return;
+
+    // Special case: dragging ones to tens column for regrouping
+    if (draggedBlock.type === 'ones' && targetType === 'tens') {
+      const onesCount = blocks.filter(b => b.type === 'ones').length;
+      
+      if (onesCount >= 10) {
+        // Automatically regroup 10 ones into 1 ten
+        setIsGrouping(true);
+        
+        setTimeout(() => {
+          const nonOnesBlocks = blocks.filter(b => b.type !== 'ones').slice(0, -Math.floor(onesCount / 10) * 10);
+          const remainingOnes = onesCount % 10;
+          const newTensCount = Math.floor(onesCount / 10);
+          
+          // Create new ten blocks
+          const newTenBlocks: Block[] = [];
+          for (let i = 0; i < newTensCount; i++) {
+            newTenBlocks.push({
+              id: `ten-${Date.now()}-${Math.random()}-${i}`,
+              value: 10,
+              type: 'tens',
+              position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length + i)
+            });
+          }
+          
+          // Create remaining ones blocks
+          const remainingOnesBlocks: Block[] = [];
+          for (let i = 0; i < remainingOnes; i++) {
+            remainingOnesBlocks.push({
+              id: `one-${Date.now()}-${Math.random()}-${i}`,
+              value: 1,
+              type: 'ones',
+              position: generatePosition('ones', i)
+            });
+          }
+          
+          const newBlocks = [...nonOnesBlocks, ...newTenBlocks, ...remainingOnesBlocks];
+          setBlocks(newBlocks);
+          
+          const tens = newBlocks.filter(b => b.type === 'tens').length;
+          const ones = newBlocks.filter(b => b.type === 'ones').length;
+          onBlocksChange(tens, ones);
+          
+          setIsGrouping(false);
+        }, 600);
+      }
+    }
     
-    // Update parent component
-    const tens = nonOnesBlocks.filter(b => b.type === 'tens').length + 1;
-    onBlocksChange(tens, 0);
+    handleDragEnd();
   };
 
   const tensCount = blocks.filter(b => b.type === 'tens').length;
   const onesCount = blocks.filter(b => b.type === 'ones').length;
   const tensBlocks = blocks.filter(b => b.type === 'tens');
   const onesBlocks = blocks.filter(b => b.type === 'ones');
-  const hasBundle = onesCount === 10;
+  const hasBundle = onesCount >= 10;
 
   // Update ones block positions when bundling
   useEffect(() => {
-    if (hasBundle) {
+    if (hasBundle && !isGrouping) {
       const bundledPositions = generateBundledPositions();
       setBlocks(prev => prev.map((block, index) => {
         if (block.type === 'ones') {
@@ -97,7 +179,7 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
         return block;
       }));
     }
-  }, [hasBundle]);
+  }, [hasBundle, isGrouping]);
 
   return (
     <Card 
@@ -113,6 +195,13 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
           blocks={tensBlocks}
           onAddBlock={addTenBlock}
           onRemoveBlock={removeBlock}
+          onDragStart={handleBlockDragStart}
+          onDrop={handleDrop}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          isDropTarget={dragState.isOver === 'tens'}
+          isGrouping={isGrouping}
         />
         
         <PlaceValueColumn
@@ -122,6 +211,13 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
           onAddBlock={addOneBlock}
           onRemoveBlock={removeBlock}
           onBundleClick={handleBundleClick}
+          onDragStart={handleBlockDragStart}
+          onDrop={handleDrop}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          isDropTarget={dragState.isOver === 'ones'}
+          isGrouping={isGrouping}
         />
       </div>
 
@@ -131,6 +227,16 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
         onesCount={onesCount}
         hasBundle={hasBundle}
       />
+
+      {/* Visual feedback for drag operations */}
+      {dragState.isDragging && (
+        <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg z-50">
+          Dragging {dragState.draggedBlock?.type} block
+          {dragState.draggedBlock?.type === 'ones' && onesCount >= 10 && (
+            <div className="text-xs">Drop on tens to regroup!</div>
+          )}
+        </div>
+      )}
     </Card>
   );
 };
