@@ -71,9 +71,9 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '30px' : '20px', // Match the increased sizes from blockPositions
-        height: isTens ? '24px' : '20px', // Match the increased sizes from blockPositions
-        fontSize: isTens ? '12px' : '10px', // Slightly larger font for better readability
+        width: isTens ? '28px' : '18px', // Match the reduced sizes from blockPositions
+        height: isTens ? '22px' : '18px', // Match the reduced sizes from blockPositions
+        fontSize: isTens ? '11px' : '9px', // Smaller font to fit reduced blocks
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -90,4 +90,3 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
 };
 
 export default DraggableBlock;
-
