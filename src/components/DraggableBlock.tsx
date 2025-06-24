@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface DraggableBlockProps {
@@ -66,18 +67,19 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded shadow-lg transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass}`}
+      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded-md shadow-lg transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '45px' : '22px', // Increased from 40px/20px
-        height: isTens ? '32px' : '22px', // Increased from 28px/20px  
-        fontSize: isTens ? '14px' : '12px', // Increased font sizes
+        width: isTens ? '50px' : '26px', // Increased from 45px/22px
+        height: isTens ? '36px' : '26px', // Increased from 32px/22px  
+        fontSize: isTens ? '16px' : '14px', // Increased font sizes
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 10,
-        lineHeight: '1' // Ensure proper line height for centering
+        lineHeight: '1', // Ensure proper line height for centering
+        padding: '2px' // Add small padding for better text fit
       }}
       title={`${value} - Click to remove`}
     >
