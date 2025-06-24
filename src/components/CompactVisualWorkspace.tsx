@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import CompactNumberArea from './CompactNumberArea';
+import PlaceValueNumberArea from './PlaceValueNumberArea';
 import CompactTotalArea from './CompactTotalArea';
 import { generateVisualAdditionProblems, VisualAdditionProblem } from '../utils/visualAdditionProblems';
 
@@ -14,6 +14,7 @@ const CompactVisualWorkspace = () => {
   useEffect(() => {
     const newProblems = generateVisualAdditionProblems();
     setProblems(newProblems);
+    console.log('Generated problems:', newProblems);
   }, []);
 
   const currentProblem = problems[currentProblemIndex];
@@ -34,14 +35,19 @@ const CompactVisualWorkspace = () => {
       setResetTrigger(prev => prev + 1);
       setShowSuccess(false);
     } else {
-      // Game complete - restart
+      // Game complete - restart with new randomized problems
       const newProblems = generateVisualAdditionProblems();
       setProblems(newProblems);
       setCurrentProblemIndex(0);
       setTotalBlocks(0);
       setResetTrigger(prev => prev + 1);
       setShowSuccess(false);
+      console.log('Game restarted with new problems:', newProblems);
     }
+  };
+
+  const handleDragStart = (blocks: number) => {
+    console.log('Dragging blocks:', blocks);
   };
 
   if (!currentProblem) {
@@ -49,31 +55,44 @@ const CompactVisualWorkspace = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-6 p-4">
+    <div className="max-w-lg mx-auto space-y-4 p-4">
+      {/* Current Problem Display */}
+      <div className="text-center mb-4">
+        <div className="font-space-grotesk text-2xl font-bold text-grade-black">
+          {currentProblem.num1} + {currentProblem.num2} = ?
+        </div>
+        <div className="text-sm text-gray-600 font-dm-sans mt-1">
+          Question {currentProblem.questionNumber} of {problems.length} • {currentProblem.difficulty}
+          {currentProblem.requiresRegrouping && ' • Regrouping Required'}
+        </div>
+      </div>
+
       {/* First Number */}
-      <CompactNumberArea
+      <PlaceValueNumberArea
         number={currentProblem.num1}
         backgroundColor="rgba(111, 0, 255, 0.1)"
         borderColor="#6F00FF"
         resetTrigger={resetTrigger}
+        onDragStart={handleDragStart}
       />
 
       {/* Plus Symbol */}
       <div className="text-center">
-        <div className="font-space-grotesk text-4xl font-bold text-grade-purple">+</div>
+        <div className="font-space-grotesk text-3xl font-bold text-grade-purple">+</div>
       </div>
 
       {/* Second Number */}
-      <CompactNumberArea
+      <PlaceValueNumberArea
         number={currentProblem.num2}
         backgroundColor="rgba(0, 38, 255, 0.1)"
         borderColor="#0026FF"
         resetTrigger={resetTrigger}
+        onDragStart={handleDragStart}
       />
 
       {/* Equals Symbol */}
       <div className="text-center">
-        <div className="font-space-grotesk text-4xl font-bold text-grade-black">=</div>
+        <div className="font-space-grotesk text-3xl font-bold text-grade-black">=</div>
       </div>
 
       {/* Total Area */}
@@ -83,12 +102,14 @@ const CompactVisualWorkspace = () => {
         resetTrigger={resetTrigger}
       />
 
-      {/* Progress */}
-      <div className="text-center">
-        <div className="font-dm-sans text-grade-body text-grade-black">
-          {currentProblemIndex + 1} of {problems.length}
+      {/* Success Message */}
+      {showSuccess && (
+        <div className="text-center">
+          <div className="font-dm-sans text-lg font-bold text-green-600 animate-bounce">
+            ✓ Correct! Well done!
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

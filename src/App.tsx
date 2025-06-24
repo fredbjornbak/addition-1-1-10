@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import VisualAddition from "./pages/VisualAddition";
 import NotFound from "./pages/NotFound";
+import "./components/animations.css";
 
 const queryClient = new QueryClient();
 
