@@ -22,9 +22,8 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   shouldVibrate = false,
   isGrouping = false
 }) => {
-  const bgColor = type === 'tens' ? '#0026FF' : '#FF6F00';
-  const width = type === 'tens' ? '80px' : '40px';
-  const height = type === 'tens' ? '30px' : '40px';
+  const bgColor = type === 'tens' ? '#22C55E' : '#3B82F6';
+  const size = type === 'tens' ? '60px' : '50px';
   
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,7 +44,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
     <div
       draggable
       className={`absolute cursor-pointer select-none font-dm-sans text-white font-bold
-                 rounded-md border-2 border-gray-800 shadow-lg
+                 rounded-full shadow-lg border-2 border-white
                  transition-all duration-200 hover:scale-110 active:scale-95 
                  flex items-center justify-center animate-scale-in
                  ${vibrationClass} ${groupingClass} ${glowClass}`}
@@ -53,11 +52,11 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       onDragStart={handleDragStart}
       style={{
         backgroundColor: bgColor,
-        width,
-        height,
+        width: size,
+        height: size,
         left: position.x,
         top: position.y,
-        fontSize: type === 'tens' ? '14px' : '12px',
+        fontSize: type === 'tens' ? '16px' : '14px',
         zIndex: shouldVibrate ? 10 : 5
       }}
       title={`Click to remove or drag to move this ${type === 'tens' ? 'ten' : 'one'} block`}
