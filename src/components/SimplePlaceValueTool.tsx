@@ -2,16 +2,26 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import SimpleQuestion from './SimpleQuestion';
-import SimpleBoard from './SimpleBoard';
+import AdditionWorkspace from './AdditionWorkspace';
 import SimpleFeedback from './SimpleFeedback';
 import { generateSimpleProblems, SimpleProblem } from '../utils/simpleProblems';
 
 const SimplePlaceValueTool = () => {
   const [problems, setProblems] = useState<SimpleProblem[]>([]);
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
-  const [tensBlocks, setTensBlocks] = useState(0);
-  const [onesBlocks, setOnesBlocks] = useState(0);
-  const [userAnswer, setUserAnswer] = useState(0);
+  
+  // First addend blocks
+  const [firstNumberTens, setFirstNumberTens] = useState(0);
+  const [firstNumberOnes, setFirstNumberOnes] = useState(0);
+  
+  // Second addend blocks
+  const [secondNumberTens, setSecondNumberTens] = useState(0);
+  const [secondNumberOnes, setSecondNumberOnes] = useState(0);
+  
+  // Total blocks
+  const [totalTens, setTotalTens] = useState(0);
+  const [totalOnes, setTotalOnes] = useState(0);
+  
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [gameComplete, setGameComplete] = useState(false);
@@ -23,29 +33,36 @@ const SimplePlaceValueTool = () => {
     setProblems(newProblems);
   }, []);
 
-  useEffect(() => {
-    setUserAnswer(tensBlocks * 10 + onesBlocks);
-  }, [tensBlocks, onesBlocks]);
-
   const currentProblem = problems[currentProblemIndex];
+  const userAnswer = totalTens * 10 + totalOnes;
 
-  const handleAddTens = () => {
-    setTensBlocks(prev => prev + 1);
+  const handleFirstNumberChange = (tens: number, ones: number) => {
+    setFirstNumberTens(tens);
+    setFirstNumberOnes(ones);
   };
 
-  const handleAddOnes = () => {
-    setOnesBlocks(prev => prev + 1);
+  const handleSecondNumberChange = (tens: number, ones: number) => {
+    setSecondNumberTens(tens);
+    setSecondNumberOnes(ones);
   };
 
-  const handleBlocksChange = (tens: number, ones: number) => {
-    setTensBlocks(tens);
-    setOnesBlocks(ones);
+  const handleTotalChange = (tens: number, ones: number) => {
+    setTotalTens(tens);
+    setTotalOnes(ones);
   };
 
   const checkAnswer = () => {
     if (!currentProblem) return;
     
-    const correct = userAnswer === currentProblem.answer;
+    const firstNumber = firstNumberTens * 10 + firstNumberOnes;
+    const secondNumber = secondNumberTens * 10 + secondNumberOnes;
+    const totalNumber = totalTens * 10 + totalOnes;
+    
+    // Check if all three numbers are correct
+    const correct = firstNumber === currentProblem.num1 && 
+                   secondNumber === currentProblem.num2 && 
+                   totalNumber === currentProblem.answer;
+    
     setIsCorrect(correct);
     setShowFeedback(true);
     
@@ -69,10 +86,13 @@ const SimplePlaceValueTool = () => {
   };
 
   const resetBoard = () => {
-    setTensBlocks(0);
-    setOnesBlocks(0);
-    setUserAnswer(0);
-    setResetTrigger(prev => prev + 1); // Trigger reset in SimpleBoard
+    setFirstNumberTens(0);
+    setFirstNumberOnes(0);
+    setSecondNumberTens(0);
+    setSecondNumberOnes(0);
+    setTotalTens(0);
+    setTotalOnes(0);
+    setResetTrigger(prev => prev + 1);
   };
 
   const startNewGame = () => {
@@ -109,19 +129,25 @@ const SimplePlaceValueTool = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {/* Question Display */}
       <SimpleQuestion 
         problem={currentProblem} 
         totalQuestions={problems.length} 
       />
 
-      {/* Place Value Board */}
-      <SimpleBoard 
-        onAddTens={handleAddTens}
-        onAddOnes={handleAddOnes}
-        userAnswer={userAnswer}
-        onBlocksChange={handleBlocksChange}
+      {/* Addition Workspace with three sections */}
+      <AdditionWorkspace
+        problem={currentProblem}
+        firstNumberTens={firstNumberTens}
+        firstNumberOnes={firstNumberOnes}
+        secondNumberTens={secondNumberTens}
+        secondNumberOnes={secondNumberOnes}
+        totalTens={totalTens}
+        totalOnes={totalOnes}
+        onFirstNumberChange={handleFirstNumberChange}
+        onSecondNumberChange={handleSecondNumberChange}
+        onTotalChange={handleTotalChange}
         resetTrigger={resetTrigger}
       />
 

@@ -2,10 +2,10 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import WorkspaceSection from './WorkspaceSection';
-import { VisualAdditionProblem } from '../utils/visualAdditionProblems';
+import { SimpleProblem } from '../utils/simpleProblems';
 
 interface AdditionWorkspaceProps {
-  problem: VisualAdditionProblem;
+  problem: SimpleProblem;
   firstNumberTens: number;
   firstNumberOnes: number;
   secondNumberTens: number;
