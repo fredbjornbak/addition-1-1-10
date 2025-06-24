@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import DraggableBlock from './DraggableBlock';
 
 interface BlockControlsProps {
   tensBlocks: number;
@@ -35,16 +34,27 @@ const BlockControls: React.FC<BlockControlsProps> = ({
         </div>
         <div className="flex flex-wrap gap-2 justify-center">
           {Array.from({ length: 2 }, (_, i) => (
-            <DraggableBlock
+            <button
               key={`tens-${i}`}
-              value={10}
-              type="tens"
               onClick={() => {
                 if (tensBlocks < 2) {
                   onAddTens();
                 }
               }}
-            />
+              className="cursor-pointer select-none font-dm-sans text-white font-bold
+                         rounded-md border-2 border-gray-800 shadow-lg
+                         transition-all duration-200 hover:scale-110 active:scale-95 
+                         flex items-center justify-center"
+              style={{
+                backgroundColor: '#0026FF',
+                width: '80px',
+                height: '30px',
+                fontSize: '14px'
+              }}
+              title="Click to add a ten block"
+            >
+              10
+            </button>
           ))}
         </div>
       </div>
@@ -56,12 +66,23 @@ const BlockControls: React.FC<BlockControlsProps> = ({
         </div>
         <div className="grid grid-cols-5 gap-2 justify-center max-w-xs mx-auto">
           {Array.from({ length: 10 }, (_, i) => (
-            <DraggableBlock
+            <button
               key={`ones-${i}`}
-              value={1}
-              type="ones"
               onClick={onAddOnes}
-            />
+              className="cursor-pointer select-none font-dm-sans text-white font-bold
+                         rounded-md border-2 border-gray-800 shadow-lg
+                         transition-all duration-200 hover:scale-110 active:scale-95 
+                         flex items-center justify-center"
+              style={{
+                backgroundColor: '#FF6F00',
+                width: '40px',
+                height: '40px',
+                fontSize: '12px'
+              }}
+              title="Click to add a one block"
+            >
+              1
+            </button>
           ))}
         </div>
       </div>
