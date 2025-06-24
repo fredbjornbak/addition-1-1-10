@@ -1,14 +1,14 @@
 
 // Container dimensions for proper block positioning
 const CONTAINER_PADDING = 8; // Small padding from edges
-const CONTAINER_WIDTH = 180; // Actual usable container width
+const CONTAINER_WIDTH = 240; // Increased width to prevent cutoffs
 const CONTAINER_HEIGHT = 280; // Increased height for better visual space
 
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   if (type === 'tens') {
     const blockWidth = 32; // Much smaller to fit in container
     const blockHeight = 25; // Much smaller to fit in container
-    const spacing = 4; // Compact spacing
+    const spacing = 3; // Reduced spacing to fit more blocks
     const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
@@ -20,7 +20,7 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   } else {
     const blockWidth = 20; // Much smaller square blocks
     const blockHeight = 20; // Much smaller square blocks
-    const spacing = 3; // Tight spacing
+    const spacing = 2; // Even tighter spacing for ones
     const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
@@ -35,7 +35,7 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
 export const generateBundledPositions = () => {
   const positions = [];
   const blockSize = 20; // Much smaller for bundled ones blocks
-  const spacing = 3; // Tight spacing
+  const spacing = 2; // Tight spacing
   const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockSize + spacing));
   
   for (let i = 0; i < 10; i++) {

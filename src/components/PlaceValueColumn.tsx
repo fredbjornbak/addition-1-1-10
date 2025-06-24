@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
@@ -123,13 +122,6 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           />
         );
       })}
-      
-      {/* Visual indicator for tens that can be broken down - keeping this one */}
-      {!isOnes && blocks.length > 0 && !isGrouping && (
-        <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
-          {blocks.length}
-        </div>
-      )}
     </button>
   );
 };
