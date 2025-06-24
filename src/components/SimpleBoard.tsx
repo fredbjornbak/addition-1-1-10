@@ -8,11 +8,13 @@ import { generateBundledPositions } from '../utils/blockPositions';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useBlockManagement } from '../hooks/useBlockManagement';
 import { useRegrouping } from '../hooks/useRegrouping';
+
 interface ExtendedSimpleBoardProps extends SimpleBoardProps {
   workspaceId?: string;
   externalTensCount?: number;
   externalOnesCount?: number;
 }
+
 const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   onAddTens,
   onAddOnes,
@@ -52,6 +54,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     handleDragLeave,
     handleDragOver
   } = useDragAndDrop();
+
   const handleBlockDragStart = (blockId: string) => {
     const block = blocks.find(b => b.id === blockId);
     if (block) {
@@ -59,26 +62,32 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       handleDragStart(block, onesCount);
     }
   };
+
   const handleBulkDragStart = (blockType: 'tens' | 'ones') => {
     startDrag(blockType);
   };
+
   const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
     e.preventDefault();
     const draggedBlockId = e.dataTransfer.getData('text/plain');
     const draggedBlock = blocks.find(b => b.id === draggedBlockId);
+    
     if (!draggedBlock) {
       cancelDrag();
       return;
     }
+
     console.log('🎯 Internal drop - attempting regroup:', {
       draggedBlockType: draggedBlock.type,
       targetType,
       canRegroup: canRegroup()
     });
+
     handleRegroup(draggedBlock, targetType);
     handleDragEnd();
     completeDrag();
   };
+
   const handleDragCancel = () => {
     handleDragEnd();
     cancelDrag();
@@ -94,11 +103,13 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isDragging]);
+
   const tensCount = blocks.filter(b => b.type === 'tens').length;
   const onesCount = blocks.filter(b => b.type === 'ones').length;
   const tensBlocks = blocks.filter(b => b.type === 'tens');
   const onesBlocks = blocks.filter(b => b.type === 'ones');
   const hasBundle = onesCount >= 10;
+
   useEffect(() => {
     if (hasBundle && !isGrouping) {
       const bundledPositions = generateBundledPositions();
@@ -114,10 +125,9 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       }));
     }
   }, [hasBundle, isGrouping, setBlocks]);
-  return <div className="space-y-2">
-      {/* Show regrouping hint if applicable */}
-      {canRegroup() && !isGrouping}
-      
+
+  return (
+    <div className="space-y-2">
       <div className="grid grid-cols-2 gap-2">
         <PlaceValueColumn 
           type="tens" 
@@ -158,6 +168,8 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       </div>
 
       <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} draggedBlocks={draggedBlocks} />
-    </div>;
+    </div>
+  );
 };
+
 export default SimpleBoard;

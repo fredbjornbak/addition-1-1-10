@@ -11,11 +11,11 @@ export const useRegrouping = (
   const [isGrouping, setIsGrouping] = useState(false);
 
   const handleRegroup = (draggedBlock: Block, targetType: 'tens' | 'ones') => {
-    // Ones to Tens conversion
+    // Ones to Tens conversion (every 10 ones becomes 1 ten)
     if (draggedBlock.type === 'ones' && targetType === 'tens') {
       const onesCount = blocks.filter(b => b.type === 'ones').length;
       
-      if (onesCount > 0) {
+      if (onesCount >= 10) {
         console.log('🔄 Starting ones-to-tens regrouping with', onesCount, 'ones blocks');
         setIsGrouping(true);
         
@@ -67,51 +67,54 @@ export const useRegrouping = (
       }
     }
     
-    // Tens to Ones conversion
+    // Tens to Ones conversion (1 ten becomes 10 ones)
     else if (draggedBlock.type === 'tens' && targetType === 'ones') {
-      const tensCount = blocks.filter(b => b.type === 'tens').length;
+      console.log('🔄 Starting tens-to-ones regrouping for block:', draggedBlock.id);
+      setIsGrouping(true);
       
-      if (tensCount > 0) {
-        console.log('🔄 Starting tens-to-ones regrouping with', tensCount, 'tens blocks');
-        setIsGrouping(true);
+      setTimeout(() => {
+        // Remove only the specific dragged tens block
+        const remainingBlocks = blocks.filter(b => b.id !== draggedBlock.id);
+        const currentOnesCount = remainingBlocks.filter(b => b.type === 'ones').length;
+        const remainingTensCount = remainingBlocks.filter(b => b.type === 'tens').length;
         
-        setTimeout(() => {
-          const nonTensBlocks = blocks.filter(b => b.type !== 'tens');
-          const currentOnesCount = nonTensBlocks.filter(b => b.type === 'ones').length;
-          
-          // Convert all tens blocks into ones (each ten becomes 10 ones)
-          const newOnesFromTens = tensCount * 10;
-          const totalNewOnes = currentOnesCount + newOnesFromTens;
-          
-          console.log('🔢 Tens-to-ones calculation:', {
-            originalTens: tensCount,
-            newOnesFromTens,
-            currentOnes: currentOnesCount,
-            totalNewOnes
+        // Add 10 new ones blocks for the converted ten
+        const newOnesFromTen = 10;
+        const totalNewOnes = currentOnesCount + newOnesFromTen;
+        
+        console.log('🔢 Tens-to-ones calculation:', {
+          draggedTenId: draggedBlock.id,
+          currentOnes: currentOnesCount,
+          newOnesFromTen,
+          totalNewOnes,
+          remainingTens: remainingTensCount
+        });
+        
+        // Create new ones blocks
+        const newOnesBlocks: Block[] = [];
+        for (let i = 0; i < totalNewOnes; i++) {
+          newOnesBlocks.push({
+            id: `one-${Date.now()}-${Math.random()}-${i}`,
+            value: 1,
+            type: 'ones',
+            position: generatePosition('ones', i)
           });
-          
-          // Create new ones blocks
-          const newOnesBlocks: Block[] = [];
-          for (let i = 0; i < totalNewOnes; i++) {
-            newOnesBlocks.push({
-              id: `one-${Date.now()}-${Math.random()}-${i}`,
-              value: 1,
-              type: 'ones',
-              position: generatePosition('ones', i)
-            });
-          }
-          
-          const newBlocks = [...nonTensBlocks.filter(b => b.type !== 'ones'), ...newOnesBlocks];
-          console.log('✅ Tens-to-ones complete:', {
-            totalOnes: totalNewOnes,
-            tensRemaining: 0
-          });
-          
-          setBlocks(newBlocks);
-          onBlocksChange(0, totalNewOnes);
-          setIsGrouping(false);
-        }, 600);
-      }
+        }
+        
+        const newBlocks = [
+          ...remainingBlocks.filter(b => b.type !== 'ones'), 
+          ...newOnesBlocks
+        ];
+        
+        console.log('✅ Tens-to-ones complete:', {
+          totalOnes: totalNewOnes,
+          remainingTens: remainingTensCount
+        });
+        
+        setBlocks(newBlocks);
+        onBlocksChange(remainingTensCount, totalNewOnes);
+        setIsGrouping(false);
+      }, 600);
     }
   };
 
