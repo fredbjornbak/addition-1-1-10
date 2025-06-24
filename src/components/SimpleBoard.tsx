@@ -58,13 +58,9 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   const handleBlockDragStart = (blockId: string) => {
     const block = blocks.find(b => b.id === blockId);
     if (block) {
-      const onesCount = blocks.filter(b => b.type === 'ones').length;
-      handleDragStart(block, onesCount);
+      console.log('🚀 Simple drag start for block:', blockId, block.type);
+      handleDragStart(block, 0); // Remove bulk drag logic
     }
-  };
-
-  const handleBulkDragStart = (blockType: 'tens' | 'ones') => {
-    startDrag(blockType);
   };
 
   const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
@@ -73,19 +69,26 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     const draggedBlock = blocks.find(b => b.id === draggedBlockId);
     
     if (!draggedBlock) {
-      cancelDrag();
+      console.log('❌ No dragged block found');
+      handleDragEnd();
       return;
     }
 
-    console.log('🎯 Internal drop - attempting regroup:', {
+    console.log('🎯 Drop detected:', {
       draggedBlockType: draggedBlock.type,
       targetType,
-      canRegroup: canRegroup()
+      blockId: draggedBlockId
     });
 
-    handleRegroup(draggedBlock, targetType);
+    // Only trigger regrouping for cross-type drops
+    if (draggedBlock.type !== targetType) {
+      console.log('🔄 Cross-type drop - triggering regrouping');
+      handleRegroup(draggedBlock, targetType);
+    } else {
+      console.log('ℹ️ Same-type drop - no regrouping needed');
+    }
+    
     handleDragEnd();
-    completeDrag();
   };
 
   const handleDragCancel = () => {
@@ -142,7 +145,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           isDropTarget={dragState.isOver === 'tens'} 
           isGrouping={isGrouping} 
           workspaceId={workspaceId} 
-          onStartBulkDrag={handleBulkDragStart}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
         />
@@ -161,7 +163,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           isDropTarget={dragState.isOver === 'ones'} 
           isGrouping={isGrouping} 
           workspaceId={workspaceId} 
-          onStartBulkDrag={handleBulkDragStart}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
         />

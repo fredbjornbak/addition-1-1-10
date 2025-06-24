@@ -11,31 +11,38 @@ export const useRegrouping = (
   const [isGrouping, setIsGrouping] = useState(false);
 
   const handleRegroup = (draggedBlock: Block, targetType: 'tens' | 'ones') => {
-    // Ones to Tens conversion (every 10 ones becomes 1 ten)
+    console.log('🔄 Regrouping triggered:', { 
+      draggedBlockType: draggedBlock.type, 
+      targetType,
+      totalOnes: blocks.filter(b => b.type === 'ones').length,
+      totalTens: blocks.filter(b => b.type === 'tens').length
+    });
+
+    // Simple ones to tens conversion: any ones block dragged to tens converts 10 ones to 1 ten
     if (draggedBlock.type === 'ones' && targetType === 'tens') {
       const onesCount = blocks.filter(b => b.type === 'ones').length;
       
       if (onesCount >= 10) {
-        console.log('🔄 Starting ones-to-tens regrouping with', onesCount, 'ones blocks');
+        console.log('✅ Converting 10 ones to 1 ten');
         setIsGrouping(true);
         
         setTimeout(() => {
           const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
           const currentTensCount = nonOnesBlocks.filter(b => b.type === 'tens').length;
           
-          const newTensFromOnes = Math.floor(onesCount / 10);
-          const remainingOnes = onesCount % 10;
-          const totalNewTens = currentTensCount + newTensFromOnes;
+          // Convert exactly 10 ones to 1 ten
+          const remainingOnes = onesCount - 10;
+          const totalTens = currentTensCount + 1;
           
-          console.log('🔢 Ones-to-tens calculation:', {
+          console.log('🔢 Conversion result:', {
             originalOnes: onesCount,
-            newTensFromOnes,
             remainingOnes,
-            totalNewTens
+            totalTens
           });
           
+          // Create new tens blocks
           const newTenBlocks: Block[] = [];
-          for (let i = 0; i < totalNewTens; i++) {
+          for (let i = 0; i < totalTens; i++) {
             newTenBlocks.push({
               id: `ten-${Date.now()}-${Math.random()}-${i}`,
               value: 10,
@@ -44,6 +51,7 @@ export const useRegrouping = (
             });
           }
           
+          // Create remaining ones blocks
           const remainingOnesBlocks: Block[] = [];
           for (let i = 0; i < remainingOnes; i++) {
             remainingOnesBlocks.push({
@@ -55,44 +63,38 @@ export const useRegrouping = (
           }
           
           const newBlocks = [...nonOnesBlocks.filter(b => b.type !== 'tens'), ...newTenBlocks, ...remainingOnesBlocks];
-          console.log('✅ Ones-to-tens complete:', {
-            totalTens: totalNewTens,
-            remainingOnes: remainingOnes
-          });
           
           setBlocks(newBlocks);
-          onBlocksChange(totalNewTens, remainingOnes);
+          onBlocksChange(totalTens, remainingOnes);
           setIsGrouping(false);
-        }, 600);
+        }, 300);
+      } else {
+        console.log('❌ Need at least 10 ones to convert to tens');
       }
     }
     
-    // Tens to Ones conversion (1 ten becomes 10 ones)
+    // Simple tens to ones conversion: dragged ten becomes 10 ones
     else if (draggedBlock.type === 'tens' && targetType === 'ones') {
-      console.log('🔄 Starting tens-to-ones regrouping for block:', draggedBlock.id);
+      console.log('✅ Converting 1 ten to 10 ones');
       setIsGrouping(true);
       
       setTimeout(() => {
-        // Remove only the specific dragged tens block
+        // Remove the specific dragged tens block
         const remainingBlocks = blocks.filter(b => b.id !== draggedBlock.id);
         const currentOnesCount = remainingBlocks.filter(b => b.type === 'ones').length;
         const remainingTensCount = remainingBlocks.filter(b => b.type === 'tens').length;
         
-        // Add 10 new ones blocks for the converted ten
-        const newOnesFromTen = 10;
-        const totalNewOnes = currentOnesCount + newOnesFromTen;
+        // Add 10 ones for the converted ten
+        const totalOnes = currentOnesCount + 10;
         
-        console.log('🔢 Tens-to-ones calculation:', {
-          draggedTenId: draggedBlock.id,
-          currentOnes: currentOnesCount,
-          newOnesFromTen,
-          totalNewOnes,
+        console.log('🔢 Conversion result:', {
+          totalOnes,
           remainingTens: remainingTensCount
         });
         
         // Create new ones blocks
         const newOnesBlocks: Block[] = [];
-        for (let i = 0; i < totalNewOnes; i++) {
+        for (let i = 0; i < totalOnes; i++) {
           newOnesBlocks.push({
             id: `one-${Date.now()}-${Math.random()}-${i}`,
             value: 1,
@@ -106,15 +108,10 @@ export const useRegrouping = (
           ...newOnesBlocks
         ];
         
-        console.log('✅ Tens-to-ones complete:', {
-          totalOnes: totalNewOnes,
-          remainingTens: remainingTensCount
-        });
-        
         setBlocks(newBlocks);
-        onBlocksChange(remainingTensCount, totalNewOnes);
+        onBlocksChange(remainingTensCount, totalOnes);
         setIsGrouping(false);
-      }, 600);
+      }, 300);
     }
   };
 

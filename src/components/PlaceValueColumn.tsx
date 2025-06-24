@@ -48,19 +48,13 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    console.log('🎯 PlaceValueColumn drop event:', {
+    console.log('🎯 PlaceValueColumn simple drop event:', {
       type,
       workspaceId
     });
 
-    const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
-    if (crossWorkspaceDataStr) {
-      console.log('📦 Cross-workspace data detected, letting parent handle it');
-      return;
-    }
-
+    // Handle simple internal drops
     e.stopPropagation();
-    console.log('🔄 Handling internal drop in column:', type);
     onDrop(e, type);
   };
 
@@ -104,7 +98,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
         Click!
       </div>
       
-      {/* Render blocks with enhanced props */}
+      {/* Render blocks with simplified props */}
       {blocks.map(block => (
         <DraggableBlock
           key={block.id}
@@ -119,7 +113,6 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           workspaceId={workspaceId}
           totalBlocksOfType={totalBlocksOfType}
           isBeingDragged={block.isBeingDragged}
-          onStartBulkDrag={onStartBulkDrag}
         />
       ))}
       
