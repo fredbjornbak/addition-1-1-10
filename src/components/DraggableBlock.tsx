@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface DraggableBlockProps {
@@ -14,6 +13,7 @@ interface DraggableBlockProps {
   shouldVibrate?: boolean;
   isGrouping?: boolean;
   workspaceId?: string;
+  totalBlocksOfType?: number; // New prop for bulk transfer
 }
 
 const DraggableBlock: React.FC<DraggableBlockProps> = ({
@@ -25,30 +25,33 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   position,
   shouldVibrate = false,
   isGrouping = false,
-  workspaceId
+  workspaceId,
+  totalBlocksOfType = 1
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
-    console.log('🚀 DraggableBlock drag start:', { 
+    console.log('🚀 DraggableBlock bulk drag start:', { 
       id, 
       type, 
       value, 
       workspaceId,
+      totalBlocksOfType,
       position: position 
     });
     
     // Set regular block ID for within-workspace operations
     e.dataTransfer.setData('text/plain', id);
     
-    // Set cross-workspace data for between-workspace operations
+    // Set cross-workspace data for bulk transfer
     const crossWorkspaceData = {
       blockType: type,
       blockValue: value,
       sourceWorkspace: workspaceId,
       blockId: id,
-      isFromWorkspace: true
+      isFromWorkspace: true,
+      bulkCount: totalBlocksOfType // Include total count for bulk transfer
     };
     e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
-    console.log('📦 Cross-workspace data set:', crossWorkspaceData);
+    console.log('📦 Cross-workspace bulk data set:', crossWorkspaceData);
     
     onDragStart(id);
   };
@@ -81,7 +84,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         justifyContent: 'center',
         zIndex: 10
       }}
-      title={`${value} - Double click to remove`}
+      title={`${value} - Double click to remove${totalBlocksOfType > 1 ? ` (Will drag all ${totalBlocksOfType} ${type})` : ''}`}
     >
       {value}
     </div>

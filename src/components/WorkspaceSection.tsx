@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SimpleBoard from './SimpleBoard';
 
@@ -13,7 +12,7 @@ interface WorkspaceSectionProps {
   borderColor: string;
   canReceiveFromOthers: boolean;
   isDropTarget?: boolean;
-  onCrossWorkspaceDrop?: (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number) => void;
+  onCrossWorkspaceDrop?: (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number, bulkCount?: number) => void;
   onCrossWorkspaceDragEnter?: (workspaceId: string) => void;
   onCrossWorkspaceDragLeave?: () => void;
 }
@@ -65,20 +64,21 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     if (crossWorkspaceDataStr) {
       try {
         const crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
-        console.log('📦 Parsed cross-workspace data:', crossWorkspaceData);
+        console.log('📦 Parsed cross-workspace bulk data:', crossWorkspaceData);
         
-        const { blockType, blockValue, sourceWorkspace, isFromWorkspace } = crossWorkspaceData;
+        const { blockType, blockValue, sourceWorkspace, isFromWorkspace, bulkCount = 1 } = crossWorkspaceData;
         
         // Process cross-workspace drops (from different workspaces)
         if (isFromWorkspace && sourceWorkspace && sourceWorkspace !== workspaceId) {
-          console.log('✅ Processing cross-workspace drop:', {
+          console.log('✅ Processing bulk cross-workspace drop:', {
             from: sourceWorkspace,
             to: workspaceId,
             blockType,
-            blockValue
+            blockValue,
+            bulkCount
           });
           
-          onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue);
+          onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue, bulkCount);
         } else {
           console.log('🚫 Ignoring - same workspace or not cross-workspace drop');
         }
@@ -133,7 +133,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       
       {isDropTarget && canReceiveFromOthers && (
         <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse bg-blue-100 rounded px-2 py-1">
-          🎯 Drop blocks here to add them!
+          🎯 Drop all blocks here!
         </div>
       )}
       

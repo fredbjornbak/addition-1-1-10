@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -66,7 +65,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   const onesBlocks = blocks.filter(b => b.type === 'ones');
   const hasBundle = onesCount >= 10;
 
-  // Update ones block positions when bundling
   useEffect(() => {
     if (hasBundle && !isGrouping) {
       const bundledPositions = generateBundledPositions();
@@ -118,7 +116,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
         />
       </div>
 
-      <DragFeedback dragState={dragState} onesCount={onesCount} />
+      <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} />
     </div>
   );
 };

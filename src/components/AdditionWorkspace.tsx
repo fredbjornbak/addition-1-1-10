@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import WorkspaceSection from './WorkspaceSection';
@@ -33,11 +32,12 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
 }) => {
   const [dragTargetWorkspace, setDragTargetWorkspace] = useState<string | null>(null);
 
-  const handleCrossWorkspaceDrop = (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number) => {
-    console.log('🎯 CROSS-WORKSPACE DROP HANDLER:', { 
+  const handleCrossWorkspaceDrop = (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number, bulkCount: number = 1) => {
+    console.log('🎯 BULK CROSS-WORKSPACE DROP:', { 
       sourceWorkspace, 
       blockType, 
       blockValue,
+      bulkCount,
       currentCounts: { 
         first: { tens: firstNumberTens, ones: firstNumberOnes },
         second: { tens: secondNumberTens, ones: secondNumberOnes },
@@ -45,43 +45,39 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
       }
     });
     
-    // Add the block to the total workspace
+    // Add ALL blocks of the type to the total workspace
     if (blockType === 'tens') {
-      console.log('➕ Adding tens block to total:', totalTens + 1);
-      onTotalChange(totalTens + 1, totalOnes);
+      console.log(`➕ Adding ${bulkCount} tens blocks to total:`, totalTens + bulkCount);
+      onTotalChange(totalTens + bulkCount, totalOnes);
     } else {
-      console.log('➕ Adding ones block to total:', totalOnes + 1);
-      onTotalChange(totalTens, totalOnes + 1);
+      console.log(`➕ Adding ${bulkCount} ones blocks to total:`, totalOnes + bulkCount);
+      onTotalChange(totalTens, totalOnes + bulkCount);
     }
 
-    // Remove the block from the source workspace
+    // Remove ALL blocks of the type from the source workspace
     if (sourceWorkspace === 'first') {
-      console.log('➖ Removing from first workspace');
+      console.log(`➖ Removing all ${bulkCount} ${blockType} from first workspace`);
       if (blockType === 'tens') {
-        const newTens = Math.max(0, firstNumberTens - 1);
-        console.log('  - First tens:', firstNumberTens, '→', newTens);
-        onFirstNumberChange(newTens, firstNumberOnes);
+        console.log('  - First tens:', firstNumberTens, '→', 0);
+        onFirstNumberChange(0, firstNumberOnes);
       } else {
-        const newOnes = Math.max(0, firstNumberOnes - 1);
-        console.log('  - First ones:', firstNumberOnes, '→', newOnes);
-        onFirstNumberChange(firstNumberTens, newOnes);
+        console.log('  - First ones:', firstNumberOnes, '→', 0);
+        onFirstNumberChange(firstNumberTens, 0);
       }
     } else if (sourceWorkspace === 'second') {
-      console.log('➖ Removing from second workspace');
+      console.log(`➖ Removing all ${bulkCount} ${blockType} from second workspace`);
       if (blockType === 'tens') {
-        const newTens = Math.max(0, secondNumberTens - 1);
-        console.log('  - Second tens:', secondNumberTens, '→', newTens);
-        onSecondNumberChange(newTens, secondNumberOnes);
+        console.log('  - Second tens:', secondNumberTens, '→', 0);
+        onSecondNumberChange(0, secondNumberOnes);
       } else {
-        const newOnes = Math.max(0, secondNumberOnes - 1);
-        console.log('  - Second ones:', secondNumberOnes, '→', newOnes);
-        onSecondNumberChange(secondNumberTens, newOnes);
+        console.log('  - Second ones:', secondNumberOnes, '→', 0);
+        onSecondNumberChange(secondNumberTens, 0);
       }
     }
     
     // Clear drag target
     setDragTargetWorkspace(null);
-    console.log('✅ Cross-workspace transfer complete');
+    console.log('✅ Bulk cross-workspace transfer complete');
   };
 
   const handleCrossWorkspaceDragEnter = (workspaceId: string) => {
