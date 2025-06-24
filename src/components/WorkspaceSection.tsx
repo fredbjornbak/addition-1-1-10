@@ -1,5 +1,6 @@
 import React from 'react';
 import SimpleBoard from './SimpleBoard';
+
 interface WorkspaceSectionProps {
   title: string;
   workspaceId: string;
@@ -15,6 +16,7 @@ interface WorkspaceSectionProps {
   onCrossWorkspaceDragEnter?: (workspaceId: string) => void;
   onCrossWorkspaceDragLeave?: () => void;
 }
+
 const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   title,
   workspaceId,
@@ -41,11 +43,13 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
     console.log('🎯 WorkspaceSection DROP received:', {
       workspaceId,
       canReceiveFromOthers,
       hasDropHandler: !!onCrossWorkspaceDrop
     });
+
     if (!canReceiveFromOthers || !onCrossWorkspaceDrop) {
       console.log('❌ Cannot receive blocks or no drop handler');
       return;
@@ -54,10 +58,12 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     // Get cross-workspace data
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
     console.log('📋 Cross-workspace data string:', crossWorkspaceDataStr);
+    
     if (crossWorkspaceDataStr) {
       try {
         const crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
         console.log('📦 Parsed cross-workspace bulk data:', crossWorkspaceData);
+        
         const {
           blockType,
           blockValue,
@@ -109,10 +115,18 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     }
   };
   const totalValue = tensCount * 10 + onesCount;
-  return <div className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`} style={{
-    backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
-    borderColor: isDropTarget ? '#3B82F6' : borderColor
-  }} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver}>
+  return (
+    <div 
+      className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
+      style={{
+        backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
+        borderColor: isDropTarget ? '#3B82F6' : borderColor
+      }}
+      onDrop={handleDrop}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+    >
       <h3 className="font-space-grotesk text-lg font-bold text-center mb-2 text-grade-black">
         {title}
       </h3>
@@ -127,7 +141,18 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       {isDropTarget && canReceiveFromOthers && <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse bg-blue-100 rounded px-2 py-1">
           🎯 Drop all blocks here!
         </div>}
-      <SimpleBoard onAddTens={handleAddTens} onAddOnes={handleAddOnes} userAnswer={tensCount * 10 + onesCount} onBlocksChange={onBlocksChange} resetTrigger={resetTrigger} workspaceId={workspaceId} externalTensCount={tensCount} externalOnesCount={onesCount} />
-    </div>;
+      <SimpleBoard 
+        onAddTens={handleAddTens}
+        onAddOnes={handleAddOnes}
+        userAnswer={tensCount * 10 + onesCount}
+        onBlocksChange={onBlocksChange}
+        resetTrigger={resetTrigger}
+        workspaceId={workspaceId}
+        externalTensCount={tensCount}
+        externalOnesCount={onesCount}
+      />
+    </div>
+  );
 };
+
 export default WorkspaceSection;

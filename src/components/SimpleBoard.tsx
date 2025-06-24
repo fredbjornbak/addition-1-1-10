@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -71,24 +70,21 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     // Check for cross-workspace data first
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
     if (crossWorkspaceDataStr) {
-      console.log('📋 Cross-workspace data detected in SimpleBoard:', crossWorkspaceDataStr);
-      try {
-        const crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
-        console.log('📦 Cross-workspace drop in SimpleBoard:', crossWorkspaceData);
-        
-        // For cross-workspace drops, let the event bubble up to WorkspaceSection
-        // Don't stop propagation so it reaches the parent WorkspaceSection
-        console.log('⬆️ Letting cross-workspace drop bubble up to WorkspaceSection');
-        return;
-      } catch (error) {
-        console.error('❌ Error parsing cross-workspace data in SimpleBoard:', error);
-      }
+      console.log('📋 Cross-workspace data detected in SimpleBoard - letting bubble up');
+      // For cross-workspace drops, let the event bubble up to WorkspaceSection
+      // DON'T stop propagation so it reaches the parent WorkspaceSection
+      return;
     }
 
     // Handle internal drops (regrouping within same workspace)
     const draggedBlockId = e.dataTransfer.getData('text/plain');
+    if (!draggedBlockId) {
+      console.log('❌ No internal drag data found');
+      handleDragEnd();
+      return;
+    }
+
     const draggedBlock = blocks.find(b => b.id === draggedBlockId);
-    
     if (!draggedBlock) {
       console.log('❌ No dragged block found for internal drop');
       handleDragEnd();

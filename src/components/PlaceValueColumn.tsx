@@ -54,21 +54,27 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
     e.preventDefault();
     console.log('🎯 PlaceValueColumn drop event:', {
       type,
-      workspaceId
+      workspaceId,
+      hasJSONData: !!e.dataTransfer.getData('application/json'),
+      hasTextData: !!e.dataTransfer.getData('text/plain')
     });
 
     // Check for cross-workspace data first
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
     if (crossWorkspaceDataStr) {
-      console.log('📋 Cross-workspace data detected in column, passing up:', crossWorkspaceDataStr);
-      // Let the parent handle cross-workspace drops by not stopping propagation
+      console.log('📋 Cross-workspace data detected in column, passing to parent:', crossWorkspaceDataStr);
+      // For cross-workspace drops, DON'T stop propagation - let it bubble up
       onDrop(e, type);
       return;
     }
 
-    // Handle simple internal drops
-    console.log('🔄 Handling internal drop in column');
-    e.stopPropagation();
+    // Handle internal drops only if we have text data
+    const draggedBlockId = e.dataTransfer.getData('text/plain');
+    if (draggedBlockId) {
+      console.log('🔄 Internal drop detected in column:', draggedBlockId);
+      e.stopPropagation(); // Stop propagation for internal drops only
+    }
+    
     onDrop(e, type);
   };
 

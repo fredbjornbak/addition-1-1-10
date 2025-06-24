@@ -42,10 +42,10 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       totalBlocksOfType
     });
     
-    // Set simple drag data for internal drops
+    // Always set simple drag data for internal drops
     e.dataTransfer.setData('text/plain', id);
     
-    // Set cross-workspace drag data for bulk transfers
+    // Set cross-workspace drag data for bulk transfers ONLY from first/second workspaces
     if (workspaceId && (workspaceId === 'first' || workspaceId === 'second')) {
       const crossWorkspaceData = {
         blockType: type,
@@ -57,6 +57,8 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       
       console.log('📦 Setting cross-workspace drag data:', crossWorkspaceData);
       e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
+    } else {
+      console.log('ℹ️ Internal workspace drag - no cross-workspace data needed');
     }
     
     onDragStart(id);
