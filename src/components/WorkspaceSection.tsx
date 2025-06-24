@@ -33,10 +33,20 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   onCrossWorkspaceDragLeave
 }) => {
   const handleAddTens = () => {
+    // Prevent direct addition to Total workspace
+    if (workspaceId === 'total') {
+      console.log('❌ Cannot add tens directly to Total workspace - must drag');
+      return;
+    }
     console.log('➕ Adding tens to workspace:', workspaceId);
     onBlocksChange(tensCount + 1, onesCount);
   };
   const handleAddOnes = () => {
+    // Prevent direct addition to Total workspace
+    if (workspaceId === 'total') {
+      console.log('❌ Cannot add ones directly to Total workspace - must drag');
+      return;
+    }
     console.log('➕ Adding ones to workspace:', workspaceId);
     onBlocksChange(tensCount, onesCount + 1);
   };
@@ -146,6 +156,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         workspaceId={workspaceId}
         externalTensCount={tensCount}
         externalOnesCount={onesCount}
+        canAddDirectly={workspaceId !== 'total'}
       />
       
       {workspaceId === 'total' && <div className="text-center mt-2">

@@ -19,6 +19,7 @@ interface PlaceValueColumnProps {
   onStartBulkDrag?: (blockType: 'tens' | 'ones') => void;
   canRegroupOnestoTens?: boolean;
   canRegroupTensToOnes?: boolean;
+  canAddDirectly?: boolean;
 }
 
 const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
@@ -37,7 +38,8 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   workspaceId,
   onStartBulkDrag,
   canRegroupOnestoTens = false,
-  canRegroupTensToOnes = false
+  canRegroupTensToOnes = false,
+  canAddDirectly = true
 }) => {
   const isOnes = type === 'ones';
   const backgroundColor = isOnes ? 'rgba(255, 111, 0, 0.1)' : 'rgba(0, 38, 255, 0.1)';
@@ -48,6 +50,12 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
 
   // Determine which blocks should vibrate - only first 10 ones blocks when there are 10+ ones
   const shouldVibrateBlocks = hasBundle && isOnes && blocks.length >= 10;
+
+  const handleButtonClick = () => {
+    if (canAddDirectly) {
+      onAddBlock();
+    }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -134,24 +142,28 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
 
   return (
     <button
-      onClick={onAddBlock}
+      onClick={handleButtonClick}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
-      className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
+      className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 ${
+        canAddDirectly ? 'hover:scale-105 active:scale-95 cursor-pointer' : 'cursor-default'
+      } focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
-        borderColor: isDropTarget ? '#FFD700' : borderColor
+        borderColor: isDropTarget ? '#FFD700' : borderColor,
+        opacity: canAddDirectly ? 1 : 0.7
       }}
-      aria-label={`Click to add ${type} blocks or drop blocks here`}
+      aria-label={canAddDirectly ? `Click to add ${type} blocks or drop blocks here` : `Drop ${type} blocks here`}
+      disabled={!canAddDirectly}
     >
       <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
         {type.toUpperCase()}
       </div>
       
       <div className={`text-sm ${textColor} mb-2 opacity-75`}>
-        Click!
+        {canAddDirectly ? 'Click!' : 'Drop only!'}
       </div>
       
       {/* Render blocks with individual vibration logic */}
