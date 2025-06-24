@@ -12,60 +12,49 @@ export const useBlockManagement = (
   externalOnesCount?: number
 ) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
-  const [isExternalSync, setIsExternalSync] = useState(false);
 
   // Clear all blocks when resetTrigger changes
   useEffect(() => {
     if (resetTrigger > 0) {
+      console.log('🔄 Clearing all blocks due to reset trigger');
       setBlocks([]);
     }
   }, [resetTrigger]);
 
   // Synchronize blocks with external counts (for cross-workspace transfers)
   useEffect(() => {
-    if (externalTensCount !== undefined && externalOnesCount !== undefined && !isExternalSync) {
-      const currentTens = blocks.filter(b => b.type === 'tens').length;
-      const currentOnes = blocks.filter(b => b.type === 'ones').length;
+    if (externalTensCount !== undefined && externalOnesCount !== undefined) {
+      console.log('🔄 Syncing blocks with external counts:', {
+        externalTens: externalTensCount,
+        externalOnes: externalOnesCount
+      });
       
-      // Only sync if counts have changed
-      if (currentTens !== externalTensCount || currentOnes !== externalOnesCount) {
-        console.log('🔄 Syncing blocks with external counts:', {
-          current: { tens: currentTens, ones: currentOnes },
-          target: { tens: externalTensCount, ones: externalOnesCount }
+      const newBlocks: Block[] = [];
+      
+      // Create tens blocks
+      for (let i = 0; i < externalTensCount; i++) {
+        newBlocks.push({
+          id: `ten-${Date.now()}-${Math.random()}-${i}`,
+          value: 10,
+          type: 'tens',
+          position: generatePosition('tens', i)
         });
-        
-        setIsExternalSync(true);
-        
-        const newBlocks: Block[] = [];
-        
-        // Create tens blocks
-        for (let i = 0; i < externalTensCount; i++) {
-          newBlocks.push({
-            id: `ten-${Date.now()}-${Math.random()}-${i}`,
-            value: 10,
-            type: 'tens',
-            position: generatePosition('tens', i)
-          });
-        }
-        
-        // Create ones blocks
-        for (let i = 0; i < externalOnesCount; i++) {
-          newBlocks.push({
-            id: `one-${Date.now()}-${Math.random()}-${i}`,
-            value: 1,
-            type: 'ones',
-            position: generatePosition('ones', i)
-          });
-        }
-        
-        setBlocks(newBlocks);
-        console.log('✅ Blocks synchronized:', newBlocks.length, 'total blocks');
-        
-        // Reset the sync flag after a brief delay
-        setTimeout(() => setIsExternalSync(false), 100);
       }
+      
+      // Create ones blocks
+      for (let i = 0; i < externalOnesCount; i++) {
+        newBlocks.push({
+          id: `one-${Date.now()}-${Math.random()}-${i}`,
+          value: 1,
+          type: 'ones',
+          position: generatePosition('ones', i)
+        });
+      }
+      
+      console.log('✅ Setting blocks to match external counts:', newBlocks.length, 'total blocks');
+      setBlocks(newBlocks);
     }
-  }, [externalTensCount, externalOnesCount, blocks, isExternalSync]);
+  }, [externalTensCount, externalOnesCount]);
 
   const addTenBlock = () => {
     const newBlock: Block = {
