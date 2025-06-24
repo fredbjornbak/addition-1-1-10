@@ -1,3 +1,4 @@
+
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
@@ -51,8 +52,13 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   // Determine which blocks should vibrate - only first 10 ones blocks when there are 10+ ones
   const shouldVibrateBlocks = hasBundle && isOnes && blocks.length >= 10;
 
-  const handleButtonClick = () => {
-    if (canAddDirectly) {
+  const handleButtonClick = (e: React.MouseEvent) => {
+    // Only handle clicks that aren't on blocks
+    const target = e.target as HTMLElement;
+    const isDraggableBlock = target.closest('[data-draggable-block]');
+    
+    if (!isDraggableBlock && canAddDirectly) {
+      console.log('🔘 Column button clicked - adding block');
       onAddBlock();
     }
   };
@@ -141,28 +147,32 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   const totalBlocksOfType = blocks.length;
 
   return (
-    <button
-      onClick={handleButtonClick}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 ${
-        canAddDirectly ? 'hover:scale-105 active:scale-95 cursor-pointer' : 'cursor-default'
-      } focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
+    <div
+      className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#FFD700' : borderColor,
         opacity: canAddDirectly ? 1 : 0.7
       }}
-      aria-label={canAddDirectly ? `Click to add ${type} blocks or drop blocks here` : `Drop ${type} blocks here`}
-      disabled={!canAddDirectly}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
     >
-      <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
+      {/* Clickable area for adding blocks - only when canAddDirectly is true */}
+      {canAddDirectly && (
+        <button
+          onClick={handleButtonClick}
+          className="absolute inset-0 w-full h-full bg-transparent hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer z-0"
+          aria-label={`Click to add ${type} blocks`}
+        />
+      )}
+      
+      <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor} relative z-10 pointer-events-none`}>
         {type.toUpperCase()}
       </div>
       
-      <div className={`text-sm ${textColor} mb-2 opacity-75`}>
+      <div className={`text-sm ${textColor} mb-2 opacity-75 text-center relative z-10 pointer-events-none`}>
         {canAddDirectly ? 'Click!' : 'Drop only!'}
       </div>
       
@@ -189,7 +199,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           />
         );
       })}
-    </button>
+    </div>
   );
 };
 

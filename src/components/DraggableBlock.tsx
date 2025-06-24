@@ -77,11 +77,11 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    // Prevent event bubbling to parent button
+    // Prevent all event bubbling
     e.stopPropagation();
     e.preventDefault();
     
-    console.log('🗑️ Single click remove block:', { id, type, value });
+    console.log('🗑️ Block clicked for removal:', { id, type, value, workspaceId });
     onRemove(id);
   };
 
@@ -103,6 +103,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   
   return (
     <div
+      data-draggable-block="true"
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
@@ -116,7 +117,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: isBeingDragged ? 20 : 10,
+        zIndex: isBeingDragged ? 20 : 50, // Higher z-index to be above background button
         lineHeight: '1',
         padding: '2px',
         fontWeight: '900',
