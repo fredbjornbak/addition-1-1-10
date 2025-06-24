@@ -34,19 +34,23 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
   const [dragTargetWorkspace, setDragTargetWorkspace] = useState<string | null>(null);
 
   const handleCrossWorkspaceDrop = (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number) => {
-    console.log('🎯 CROSS-WORKSPACE DROP:', { 
+    console.log('🎯 CROSS-WORKSPACE DROP HANDLER:', { 
       sourceWorkspace, 
       blockType, 
       blockValue,
-      currentTotal: { totalTens, totalOnes }
+      currentCounts: { 
+        first: { tens: firstNumberTens, ones: firstNumberOnes },
+        second: { tens: secondNumberTens, ones: secondNumberOnes },
+        total: { tens: totalTens, ones: totalOnes }
+      }
     });
     
     // Add the block to the total workspace
     if (blockType === 'tens') {
-      console.log('➕ Adding tens block to total');
+      console.log('➕ Adding tens block to total:', totalTens + 1);
       onTotalChange(totalTens + 1, totalOnes);
     } else {
-      console.log('➕ Adding ones block to total');
+      console.log('➕ Adding ones block to total:', totalOnes + 1);
       onTotalChange(totalTens, totalOnes + 1);
     }
 
@@ -54,16 +58,24 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
     if (sourceWorkspace === 'first') {
       console.log('➖ Removing from first workspace');
       if (blockType === 'tens') {
-        onFirstNumberChange(Math.max(0, firstNumberTens - 1), firstNumberOnes);
+        const newTens = Math.max(0, firstNumberTens - 1);
+        console.log('  - First tens:', firstNumberTens, '→', newTens);
+        onFirstNumberChange(newTens, firstNumberOnes);
       } else {
-        onFirstNumberChange(firstNumberTens, Math.max(0, firstNumberOnes - 1));
+        const newOnes = Math.max(0, firstNumberOnes - 1);
+        console.log('  - First ones:', firstNumberOnes, '→', newOnes);
+        onFirstNumberChange(firstNumberTens, newOnes);
       }
     } else if (sourceWorkspace === 'second') {
       console.log('➖ Removing from second workspace');
       if (blockType === 'tens') {
-        onSecondNumberChange(Math.max(0, secondNumberTens - 1), secondNumberOnes);
+        const newTens = Math.max(0, secondNumberTens - 1);
+        console.log('  - Second tens:', secondNumberTens, '→', newTens);
+        onSecondNumberChange(newTens, secondNumberOnes);
       } else {
-        onSecondNumberChange(secondNumberTens, Math.max(0, secondNumberOnes - 1));
+        const newOnes = Math.max(0, secondNumberOnes - 1);
+        console.log('  - Second ones:', secondNumberOnes, '→', newOnes);
+        onSecondNumberChange(secondNumberTens, newOnes);
       }
     }
     

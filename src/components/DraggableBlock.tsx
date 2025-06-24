@@ -73,7 +73,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '35px' : '18px', // Updated sizes
+        width: isTens ? '35px' : '18px',
         height: isTens ? '25px' : '18px',
         fontSize: isTens ? '11px' : '9px',
         display: 'flex',

@@ -47,20 +47,20 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('🎯 WorkspaceSection DROP:', { 
+    console.log('🎯 WorkspaceSection DROP received:', { 
       workspaceId, 
       canReceiveFromOthers,
       hasDropHandler: !!onCrossWorkspaceDrop 
     });
     
     if (!canReceiveFromOthers || !onCrossWorkspaceDrop) {
-      console.log('❌ Cannot receive or no drop handler');
+      console.log('❌ Cannot receive blocks or no drop handler');
       return;
     }
     
     // Get cross-workspace data
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
-    console.log('📋 Raw cross-workspace data:', crossWorkspaceDataStr);
+    console.log('📋 Cross-workspace data string:', crossWorkspaceDataStr);
     
     if (crossWorkspaceDataStr) {
       try {
@@ -69,7 +69,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         
         const { blockType, blockValue, sourceWorkspace, isFromWorkspace } = crossWorkspaceData;
         
-        // Only process if it's from a different workspace and is a cross-workspace drag
+        // Process cross-workspace drops (from different workspaces)
         if (isFromWorkspace && sourceWorkspace && sourceWorkspace !== workspaceId) {
           console.log('✅ Processing cross-workspace drop:', {
             from: sourceWorkspace,
@@ -80,11 +80,13 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
           
           onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue);
         } else {
-          console.log('🚫 Ignoring - same workspace or not cross-workspace');
+          console.log('🚫 Ignoring - same workspace or not cross-workspace drop');
         }
       } catch (error) {
         console.error('❌ Error parsing cross-workspace data:', error);
       }
+    } else {
+      console.log('ℹ️ No cross-workspace data found');
     }
   };
 
