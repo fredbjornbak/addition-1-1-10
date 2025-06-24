@@ -103,30 +103,32 @@ export const useBlockManagement = (
   const removeBlock = (id: string) => {
     console.log('🗑️ Manual block removal initiated for:', id);
     
-    setBlocks(prev => {
-      const blockToRemove = prev.find(block => block.id === id);
-      if (!blockToRemove) {
-        console.log('❌ Block not found for removal:', id);
-        return prev;
-      }
-      
-      // Set manual operation flag before state update
-      isManualOperation.current = true;
-      
-      const newBlocks = prev.filter(block => block.id !== id);
-      const tens = newBlocks.filter(b => b.type === 'tens').length;
-      const ones = newBlocks.filter(b => b.type === 'ones').length;
-      
-      console.log('✅ Block removed manually. New counts:', { tens, ones });
-      onBlocksChange(tens, ones);
-      
-      return newBlocks;
-    });
-
-    // Clear manual operation flag after the render cycle
-    requestAnimationFrame(() => {
+    const blockToRemove = blocks.find(block => block.id === id);
+    if (!blockToRemove) {
+      console.log('❌ Block not found for removal:', id);
+      return;
+    }
+    
+    // Set manual operation flag before state update
+    isManualOperation.current = true;
+    
+    const newBlocks = blocks.filter(block => block.id !== id);
+    const tens = newBlocks.filter(b => b.type === 'tens').length;
+    const ones = newBlocks.filter(b => b.type === 'ones').length;
+    
+    console.log('✅ Block removed manually. New counts:', { tens, ones });
+    
+    // Update blocks immediately
+    setBlocks(newBlocks);
+    
+    // Always call onBlocksChange to notify parent
+    onBlocksChange(tens, ones);
+    
+    // Clear manual operation flag after a short delay to allow state updates
+    setTimeout(() => {
       isManualOperation.current = false;
-    });
+      console.log('🔓 Manual operation flag cleared');
+    }, 100);
   };
 
   const startDrag = (blockType: 'tens' | 'ones') => {
