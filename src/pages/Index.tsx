@@ -12,7 +12,7 @@ const Index = () => {
           <div className="flex justify-center items-center gap-4 mb-4">
             <Link to="/visual-addition">
               <Button className="font-dm-sans text-grade-button font-bold bg-grade-purple hover:bg-grade-purple/90 text-white px-6 py-3 rounded-grade-pill">
-                Try Visual Addition Workspace →
+                Try Compact Visual Addition →
               </Button>
             </Link>
           </div>
