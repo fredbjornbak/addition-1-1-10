@@ -55,9 +55,9 @@ const CompactVisualWorkspace = () => {
   }
 
   return (
-    <div className="max-w-lg mx-auto space-y-4 p-4">
+    <div className="max-w-6xl mx-auto p-4">
       {/* Current Problem Display */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-6">
         <div className="font-space-grotesk text-2xl font-bold text-grade-black">
           {currentProblem.num1} + {currentProblem.num2} = ?
         </div>
@@ -67,44 +67,52 @@ const CompactVisualWorkspace = () => {
         </div>
       </div>
 
-      {/* First Number */}
-      <PlaceValueNumberArea
-        number={currentProblem.num1}
-        backgroundColor="rgba(111, 0, 255, 0.1)"
-        borderColor="#6F00FF"
-        resetTrigger={resetTrigger}
-        onDragStart={handleDragStart}
-      />
+      {/* Main Workspace - Horizontal Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Left Side - Addend Areas */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* First Number */}
+          <PlaceValueNumberArea
+            number={currentProblem.num1}
+            backgroundColor="rgba(111, 0, 255, 0.1)"
+            borderColor="#6F00FF"
+            resetTrigger={resetTrigger}
+            onDragStart={handleDragStart}
+          />
 
-      {/* Plus Symbol */}
-      <div className="text-center">
-        <div className="font-space-grotesk text-3xl font-bold text-grade-purple">+</div>
+          {/* Plus Symbol */}
+          <div className="text-center">
+            <div className="font-space-grotesk text-3xl font-bold text-grade-purple">+</div>
+          </div>
+
+          {/* Second Number */}
+          <PlaceValueNumberArea
+            number={currentProblem.num2}
+            backgroundColor="rgba(0, 38, 255, 0.1)"
+            borderColor="#0026FF"
+            resetTrigger={resetTrigger}
+            onDragStart={handleDragStart}
+          />
+
+          {/* Equals Symbol */}
+          <div className="text-center">
+            <div className="font-space-grotesk text-3xl font-bold text-grade-black">=</div>
+          </div>
+        </div>
+
+        {/* Right Side - Total Area */}
+        <div className="lg:col-span-1">
+          <PlaceValueTotalArea
+            expectedTotal={currentProblem.answer}
+            onTotalChange={setTotalBlocks}
+            resetTrigger={resetTrigger}
+          />
+        </div>
       </div>
-
-      {/* Second Number */}
-      <PlaceValueNumberArea
-        number={currentProblem.num2}
-        backgroundColor="rgba(0, 38, 255, 0.1)"
-        borderColor="#0026FF"
-        resetTrigger={resetTrigger}
-        onDragStart={handleDragStart}
-      />
-
-      {/* Equals Symbol */}
-      <div className="text-center">
-        <div className="font-space-grotesk text-3xl font-bold text-grade-black">=</div>
-      </div>
-
-      {/* Total Area - Using new PlaceValueTotalArea */}
-      <PlaceValueTotalArea
-        expectedTotal={currentProblem.answer}
-        onTotalChange={setTotalBlocks}
-        resetTrigger={resetTrigger}
-      />
 
       {/* Success Message */}
       {showSuccess && (
-        <div className="text-center">
+        <div className="text-center mt-4">
           <div className="font-dm-sans text-lg font-bold text-green-600 animate-bounce">
             ✓ Correct! Well done!
           </div>
