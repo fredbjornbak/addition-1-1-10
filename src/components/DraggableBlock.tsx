@@ -71,15 +71,15 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '110px' : '60px', // Much bigger - increased from 90px/48px
-        height: isTens ? '80px' : '60px', // Much bigger - increased from 65px/48px  
-        fontSize: isTens ? '40px' : '36px', // Much bigger font - increased from 32px/28px
+        width: isTens ? '32px' : '20px', // Much smaller to fit in container
+        height: isTens ? '25px' : '20px', // Much smaller to fit in container
+        fontSize: isTens ? '12px' : '10px', // Smaller but readable font
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 10,
         lineHeight: '1', // Ensure proper line height for centering
-        padding: '8px', // More padding for better text fit
+        padding: '2px', // Minimal padding for small blocks
         fontWeight: '900' // Extra bold for better visibility
       }}
       title={`${value} - Click to remove`}
