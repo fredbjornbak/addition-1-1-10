@@ -31,35 +31,58 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDragEnter = (targetType: 'ones' | 'tens') => {
+  const handleDragEnter = (e: React.DragEvent, targetType: 'ones' | 'tens') => {
+    e.preventDefault();
     setDragOver(targetType);
   };
 
-  const handleDragLeave = () => {
-    setDragOver(null);
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Only remove hover state if leaving the container entirely
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragOver(null);
+    }
   };
 
   const handleDrop = (e: React.DragEvent, targetType: 'ones' | 'tens') => {
     e.preventDefault();
     setDragOver(null);
     
-    const blockData = e.dataTransfer.getData('text/plain');
+    const blockData = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('application/json');
+    console.log('Drop received data:', blockData);
+    
+    if (!blockData) return;
     
     try {
-      const { value, type, sourceId } = JSON.parse(blockData);
+      const parsedData = JSON.parse(blockData);
+      const { value, type, blockValue, blockType } = parsedData;
+      
+      // Use blockValue/blockType if available, fallback to value/type
+      const actualValue = blockValue || value;
+      const actualType = blockType || type;
+      
+      console.log('Parsed drop data:', { actualValue, actualType, targetType });
       
       // Strict validation: ones blocks (value=1) only in ones area, tens blocks (value=10) only in tens area
-      if ((targetType === 'ones' && value === 1) || (targetType === 'tens' && value === 10)) {
+      const isValidDrop = (targetType === 'ones' && actualValue === 1) || 
+                         (targetType === 'tens' && actualValue === 10);
+      
+      if (isValidDrop) {
         const existingBlocks = blocks.filter(b => b.type === targetType);
         const newBlock: Block = {
           id: `total-${targetType}-${Date.now()}-${Math.random()}`,
-          value,
+          value: actualValue,
           type: targetType,
           position: generatePosition(targetType, existingBlocks.length)
         };
         
+        console.log('Adding new block:', newBlock);
         setBlocks(prev => [...prev, newBlock]);
         
         // Check for auto-conversion after adding ones
@@ -68,8 +91,12 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
             checkForAutoConversion();
           }, 100);
         }
+      } else {
+        console.log('Invalid drop - wrong type for target area');
       }
-    } catch {
+    } catch (error) {
+      console.error('Error parsing drag data:', error);
+      
       // Handle legacy drag data format
       const draggedValue = parseInt(blockData) || 1;
       
@@ -99,6 +126,7 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
       const tensBlocks = current.filter(b => b.type === 'tens');
       
       if (onesBlocks.length >= 10 && !isRegrouping) {
+        console.log('Auto-conversion triggered for', onesBlocks.length, 'ones blocks');
         setIsRegrouping(true);
         
         // Convert 10 ones to 1 ten
@@ -126,9 +154,10 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
             });
           }
           
+          console.log('Conversion complete:', { newTensBlocks: newTensBlocks.length, remainingOnes });
           setBlocks([...tensBlocks, ...newTensBlocks, ...remainingOnesBlocks]);
           setIsRegrouping(false);
-        }, 600);
+        }, 800);
         
         return current; // Return current state while animation plays
       }
@@ -152,30 +181,30 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
 
   return (
     <div 
-      className={`p-4 rounded-[50px] border-4 min-h-[300px] transition-all duration-300 ${
+      className={`p-6 rounded-[50px] border-4 min-h-[400px] transition-all duration-300 ${
         isCorrect ? 'border-green-500 bg-green-50' : 'border-grade-black bg-grade-gray'
       }`}
     >
-      <div className="text-center mb-4">
-        <div className="font-dm-sans text-lg font-bold text-grade-black">Total</div>
+      <div className="text-center mb-6">
+        <div className="font-dm-sans text-2xl font-bold text-grade-black">Total</div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Tens Section */}
         <div className="relative">
-          <div className="text-sm font-dm-sans text-grade-black mb-2 text-center">Tens</div>
+          <div className="text-lg font-dm-sans text-grade-black mb-3 text-center font-bold">Tens</div>
           <div 
-            className={`relative h-32 border-4 border-dashed rounded-lg transition-all duration-300 ${
+            className={`relative h-48 border-4 border-dashed rounded-lg transition-all duration-300 ${
               dragOver === 'tens' 
-                ? 'border-blue-500 bg-blue-100 shadow-lg' 
-                : 'border-blue-300 bg-blue-50 hover:border-blue-400'
+                ? 'border-blue-500 bg-blue-100 shadow-xl scale-105' 
+                : 'border-blue-300 bg-blue-50 hover:border-blue-400 hover:bg-blue-75'
             }`}
             onDragOver={handleDragOver}
-            onDragEnter={() => handleDragEnter('tens')}
+            onDragEnter={(e) => handleDragEnter(e, 'tens')}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, 'tens')}
           >
-            <div className="absolute inset-2 flex items-center justify-center text-blue-400 text-sm font-medium">
+            <div className="absolute inset-4 flex items-center justify-center text-blue-400 text-lg font-medium pointer-events-none">
               {tensBlocks.length === 0 ? 'Drop tens blocks here' : ''}
             </div>
             {tensBlocks.map((block) => (
@@ -191,26 +220,28 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
               />
             ))}
           </div>
-          <div className="text-xs text-center mt-1 font-dm-sans text-grade-black">
+          <div className="text-lg text-center mt-2 font-dm-sans text-grade-black font-bold">
             {tensBlocks.length}
           </div>
         </div>
 
         {/* Ones Section */}
         <div className="relative">
-          <div className="text-sm font-dm-sans text-grade-black mb-2 text-center">Ones</div>
+          <div className="text-lg font-dm-sans text-grade-black mb-3 text-center font-bold">Ones</div>
           <div 
-            className={`relative h-32 border-4 border-dashed rounded-lg transition-all duration-300 ${
+            className={`relative h-48 border-4 border-dashed rounded-lg transition-all duration-300 ${
               dragOver === 'ones' 
-                ? 'border-orange-500 bg-orange-100 shadow-lg' 
-                : 'border-orange-300 bg-orange-50 hover:border-orange-400'
-            } ${onesBlocks.length >= 10 ? 'animate-pulse border-yellow-400 bg-yellow-50' : ''}`}
+                ? 'border-orange-500 bg-orange-100 shadow-xl scale-105' 
+                : onesBlocks.length >= 10 
+                  ? 'border-yellow-400 bg-yellow-50 animate-pulse' 
+                  : 'border-orange-300 bg-orange-50 hover:border-orange-400 hover:bg-orange-75'
+            }`}
             onDragOver={handleDragOver}
-            onDragEnter={() => handleDragEnter('ones')}
+            onDragEnter={(e) => handleDragEnter(e, 'ones')}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, 'ones')}
           >
-            <div className="absolute inset-2 flex items-center justify-center text-orange-400 text-sm font-medium">
+            <div className="absolute inset-4 flex items-center justify-center text-orange-400 text-lg font-medium pointer-events-none">
               {onesBlocks.length === 0 ? 'Drop ones blocks here' : ''}
             </div>
             {onesBlocks.map((block) => (
@@ -227,27 +258,27 @@ const PlaceValueTotalArea: React.FC<PlaceValueTotalAreaProps> = ({
               />
             ))}
           </div>
-          <div className="text-xs text-center mt-1 font-dm-sans text-grade-black">
+          <div className="text-lg text-center mt-2 font-dm-sans text-grade-black font-bold">
             {onesBlocks.length}
           </div>
         </div>
       </div>
 
       {/* Total Display */}
-      <div className="text-center mt-4 font-dm-sans text-grade-body text-grade-black">
-        <div className="text-xl font-bold">Total: {total}</div>
-        {isCorrect && <div className="text-green-600 font-bold text-lg">✓ Correct!</div>}
+      <div className="text-center mt-6 font-dm-sans text-grade-body text-grade-black">
+        <div className="text-2xl font-bold">Total: {total}</div>
+        {isCorrect && <div className="text-green-600 font-bold text-xl mt-2">✓ Correct!</div>}
       </div>
 
-      {/* Auto-Conversion Message */}
+      {/* Auto-Conversion Messages */}
       {onesBlocks.length >= 10 && !isRegrouping && (
-        <div className="text-center mt-2 text-sm text-yellow-600 font-bold animate-bounce">
+        <div className="text-center mt-3 text-lg text-yellow-600 font-bold animate-bounce">
           Converting 10 ones to 1 ten!
         </div>
       )}
       
       {isRegrouping && (
-        <div className="text-center mt-2 text-sm text-blue-600 font-bold">
+        <div className="text-center mt-3 text-lg text-blue-600 font-bold">
           ✨ Regrouping in progress...
         </div>
       )}

@@ -23,8 +23,8 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   isGrouping = false
 }) => {
   const bgColor = type === 'tens' ? '#0026FF' : '#FF6F00';
-  const width = type === 'tens' ? '80px' : '40px';
-  const height = type === 'tens' ? '30px' : '40px';
+  const width = type === 'tens' ? '100px' : '50px';
+  const height = type === 'tens' ? '40px' : '50px';
   
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -32,15 +32,21 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   };
 
   const handleDragStart = (e: React.DragEvent) => {
-    // Set both legacy format and new format for compatibility
-    e.dataTransfer.setData('text/plain', JSON.stringify({
+    // Enhanced drag data format for better compatibility
+    const dragData = {
       id,
       value,
       type,
-      sourceId: id
-    }));
+      sourceId: id,
+      blockType: type,
+      blockValue: value
+    };
+    
+    e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
     e.dataTransfer.effectAllowed = 'move';
     onDragStart(id);
+    console.log('Drag started with data:', dragData);
   };
 
   const vibrationClass = shouldVibrate && !isGrouping ? 'animate-vibrate' : '';
@@ -51,8 +57,8 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
     <div
       draggable
       className={`absolute cursor-pointer select-none font-dm-sans text-white font-bold
-                 rounded-md border-2 border-gray-800 shadow-lg
-                 transition-all duration-200 hover:scale-110 active:scale-95 
+                 rounded-lg border-3 border-gray-800 shadow-lg
+                 transition-all duration-200 hover:scale-105 active:scale-95 
                  flex items-center justify-center animate-scale-in
                  ${vibrationClass} ${groupingClass} ${glowClass}`}
       onClick={handleClick}
@@ -63,14 +69,14 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         height,
         left: position.x,
         top: position.y,
-        fontSize: type === 'tens' ? '14px' : '12px',
+        fontSize: type === 'tens' ? '16px' : '14px',
         zIndex: shouldVibrate ? 10 : 5
       }}
       title={`Click to remove or drag to move this ${type === 'tens' ? 'ten' : 'one'} block`}
     >
       {value}
       {shouldVibrate && (
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-sparkle" />
+        <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-sparkle" />
       )}
     </div>
   );

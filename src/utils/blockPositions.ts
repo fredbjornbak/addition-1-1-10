@@ -1,16 +1,16 @@
 
 // Generate grid-based position within column bounds for better alignment
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
-  const containerWidth = 200;
-  const containerHeight = 90;
-  const padding = 10;
+  const containerWidth = 240;
+  const containerHeight = 180;
+  const padding = 15;
   
   if (type === 'tens') {
-    // Tens blocks are larger (80px wide)
-    const blockWidth = 80;
-    const blockHeight = 30;
+    // Tens blocks are larger (100px wide x 40px high)
+    const blockWidth = 100;
+    const blockHeight = 40;
     const cols = 2;
-    const spacing = 10;
+    const spacing = 15;
     
     const col = index % cols;
     const row = Math.floor(index / cols);
@@ -20,11 +20,11 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
       y: padding + (row * (blockHeight + spacing))
     };
   } else {
-    // Ones blocks are smaller (40px wide)
-    const blockWidth = 40;
-    const blockHeight = 40;
+    // Ones blocks are larger (50px wide x 50px high)
+    const blockWidth = 50;
+    const blockHeight = 50;
     const cols = 4;
-    const spacing = 8;
+    const spacing = 10;
     
     const col = index % cols;
     const row = Math.floor(index / cols);
@@ -43,8 +43,8 @@ export const generateBundledPositions = () => {
     const col = i % 5;
     const row = Math.floor(i / 5);
     positions.push({
-      x: 10 + (col * 42),
-      y: 10 + (row * 42)
+      x: 15 + (col * 52),
+      y: 15 + (row * 52)
     });
   }
   return positions;

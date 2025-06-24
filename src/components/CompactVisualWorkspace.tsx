@@ -55,10 +55,10 @@ const CompactVisualWorkspace = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-7xl mx-auto p-4">
       {/* Current Problem Display */}
-      <div className="text-center mb-6">
-        <div className="font-space-grotesk text-2xl font-bold text-grade-black">
+      <div className="text-center mb-8">
+        <div className="font-space-grotesk text-3xl font-bold text-grade-black">
           {currentProblem.num1} + {currentProblem.num2} = ?
         </div>
         <div className="text-sm text-gray-600 font-dm-sans mt-1">
@@ -67,10 +67,10 @@ const CompactVisualWorkspace = () => {
         </div>
       </div>
 
-      {/* Main Workspace - Horizontal Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      {/* Main Workspace - Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Left Side - Addend Areas */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="space-y-6">
           {/* First Number */}
           <PlaceValueNumberArea
             number={currentProblem.num1}
@@ -82,7 +82,7 @@ const CompactVisualWorkspace = () => {
 
           {/* Plus Symbol */}
           <div className="text-center">
-            <div className="font-space-grotesk text-3xl font-bold text-grade-purple">+</div>
+            <div className="font-space-grotesk text-4xl font-bold text-grade-purple">+</div>
           </div>
 
           {/* Second Number */}
@@ -96,24 +96,26 @@ const CompactVisualWorkspace = () => {
 
           {/* Equals Symbol */}
           <div className="text-center">
-            <div className="font-space-grotesk text-3xl font-bold text-grade-black">=</div>
+            <div className="font-space-grotesk text-4xl font-bold text-grade-black">=</div>
           </div>
         </div>
 
-        {/* Right Side - Total Area */}
-        <div className="lg:col-span-1">
-          <PlaceValueTotalArea
-            expectedTotal={currentProblem.answer}
-            onTotalChange={setTotalBlocks}
-            resetTrigger={resetTrigger}
-          />
+        {/* Right Side - Total Area with More Space */}
+        <div className="flex justify-center">
+          <div className="w-full max-w-md">
+            <PlaceValueTotalArea
+              expectedTotal={currentProblem.answer}
+              onTotalChange={setTotalBlocks}
+              resetTrigger={resetTrigger}
+            />
+          </div>
         </div>
       </div>
 
       {/* Success Message */}
       {showSuccess && (
-        <div className="text-center mt-4">
-          <div className="font-dm-sans text-lg font-bold text-green-600 animate-bounce">
+        <div className="text-center mt-6">
+          <div className="font-dm-sans text-xl font-bold text-green-600 animate-bounce">
             ✓ Correct! Well done!
           </div>
         </div>
