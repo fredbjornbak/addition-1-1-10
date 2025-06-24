@@ -1,5 +1,4 @@
 
-
 // Container dimensions for proper block positioning
 const CONTAINER_PADDING = 20; // Padding to move blocks away from edges
 const CONTAINER_WIDTH = 260; // Increased width to accommodate blocks properly
@@ -14,15 +13,15 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
-    // Calculate total width of blocks in current row to center them
-    const blocksInThisRow = Math.min(maxCols, Math.ceil((index + 1) / maxCols) === row + 1 ? 
-      ((index % maxCols) + 1) : maxCols);
-    const totalRowWidth = blocksInThisRow * blockWidth + (blocksInThisRow - 1) * spacing;
+    // Calculate how many blocks are in the current row
+    const totalBlocks = index + 1; // Total blocks up to this index
+    const blocksInCurrentRow = Math.min(maxCols, totalBlocks - (row * maxCols));
+    const totalRowWidth = blocksInCurrentRow * blockWidth + (blocksInCurrentRow - 1) * spacing;
     const centerOffset = (CONTAINER_WIDTH - totalRowWidth) / 2;
     
     return {
       x: centerOffset + col * (blockWidth + spacing),
-      y: 10 + row * (blockHeight + spacing) // Start from top of container
+      y: CONTAINER_PADDING + row * (blockHeight + spacing)
     };
   } else {
     const blockWidth = 20; // Slightly larger square blocks
@@ -32,15 +31,15 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
-    // Calculate total width of blocks in current row to center them
-    const blocksInThisRow = Math.min(maxCols, Math.ceil((index + 1) / maxCols) === row + 1 ? 
-      ((index % maxCols) + 1) : maxCols);
-    const totalRowWidth = blocksInThisRow * blockWidth + (blocksInThisRow - 1) * spacing;
+    // Calculate how many blocks are in the current row
+    const totalBlocks = index + 1; // Total blocks up to this index
+    const blocksInCurrentRow = Math.min(maxCols, totalBlocks - (row * maxCols));
+    const totalRowWidth = blocksInCurrentRow * blockWidth + (blocksInCurrentRow - 1) * spacing;
     const centerOffset = (CONTAINER_WIDTH - totalRowWidth) / 2;
     
     return {
       x: centerOffset + col * (blockWidth + spacing),
-      y: 10 + row * (blockHeight + spacing) // Start from top of container
+      y: CONTAINER_PADDING + row * (blockHeight + spacing)
     };
   }
 };
@@ -51,8 +50,9 @@ export const generateBundledPositions = () => {
   const spacing = 4; // More generous spacing
   const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockSize + spacing));
   
-  // Calculate total width for centering
-  const totalRowWidth = Math.min(10, maxCols) * blockSize + (Math.min(10, maxCols) - 1) * spacing;
+  // Calculate total width for centering 10 blocks
+  const blocksInRow = Math.min(10, maxCols);
+  const totalRowWidth = blocksInRow * blockSize + (blocksInRow - 1) * spacing;
   const centerOffset = (CONTAINER_WIDTH - totalRowWidth) / 2;
   
   for (let i = 0; i < 10; i++) {
@@ -60,9 +60,8 @@ export const generateBundledPositions = () => {
     const col = i % maxCols;
     positions.push({
       x: centerOffset + col * (blockSize + spacing),
-      y: 10 + row * (blockSize + spacing)
+      y: CONTAINER_PADDING + row * (blockSize + spacing)
     });
   }
   return positions;
 };
-
