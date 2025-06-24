@@ -118,8 +118,6 @@ const SimplePlaceValueTool = () => {
 
       {/* Place Value Board */}
       <SimpleBoard 
-        tensBlocks={tensBlocks}
-        onesBlocks={onesBlocks}
         onAddTens={handleAddTens}
         onAddOnes={handleAddOnes}
         userAnswer={userAnswer}
