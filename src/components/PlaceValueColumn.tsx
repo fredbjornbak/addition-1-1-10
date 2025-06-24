@@ -1,7 +1,6 @@
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
-
 interface PlaceValueColumnProps {
   type: 'tens' | 'ones';
   blocks: Block[];
@@ -17,7 +16,6 @@ interface PlaceValueColumnProps {
   isGrouping?: boolean;
   workspaceId?: string;
 }
-
 const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   type,
   blocks,
@@ -38,15 +36,14 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   const borderColor = isOnes ? '#FF6F00' : '#0026FF';
   const textColor = isOnes ? 'text-grade-orange' : 'text-grade-blue';
   const focusRing = isOnes ? 'focus:ring-orange-300' : 'focus:ring-blue-300';
-
-  const dropTargetClass = isDropTarget 
-    ? 'ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-50' 
-    : '';
-
+  const dropTargetClass = isDropTarget ? 'ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-50' : '';
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    console.log('🎯 PlaceValueColumn drop event:', { type, workspaceId });
-    
+    console.log('🎯 PlaceValueColumn drop event:', {
+      type,
+      workspaceId
+    });
+
     // Check for cross-workspace data first
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
     if (crossWorkspaceDataStr) {
@@ -54,44 +51,29 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       // Don't stop propagation - let it bubble up to WorkspaceSection
       return;
     }
-    
+
     // Handle internal workspace drops
     e.stopPropagation();
     console.log('🔄 Handling internal drop in column:', type);
     onDrop(e, type);
   };
-
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     onDragEnter(type);
   };
-
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     onDragLeave();
   };
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     onDragOver(e);
   };
-
   const shouldVibrate = hasBundle && isOnes;
-
-  return (
-    <button
-      onClick={onAddBlock}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      className={`relative rounded-lg p-2 h-[200px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
-      style={{
-        backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
-        borderColor: isDropTarget ? '#FFD700' : borderColor
-      }}
-      aria-label={`Click to add ${type} blocks or drop blocks here`}
-    >
+  return <button onClick={onAddBlock} onDrop={handleDrop} onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} className={`relative rounded-lg p-2 h-[200px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`} style={{
+    backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
+    borderColor: isDropTarget ? '#FFD700' : borderColor
+  }} aria-label={`Click to add ${type} blocks or drop blocks here`}>
       <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
         {type.toUpperCase()}
       </div>
@@ -100,29 +82,10 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       </div>
       
       {/* Special message for tens column when ones can be regrouped */}
-      {type === 'tens' && isDropTarget && (
-        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-2 py-1 rounded text-sm font-bold animate-bounce-gentle z-20">
-          Drop ones here!
-        </div>
-      )}
+      {type === 'tens' && isDropTarget}
       
       {/* Render blocks with workspace context */}
-      {blocks.map(block => (
-        <DraggableBlock
-          key={block.id}
-          id={block.id}
-          value={block.value}
-          type={block.type}
-          onRemove={onRemoveBlock}
-          onDragStart={onDragStart}
-          position={block.position}
-          shouldVibrate={shouldVibrate}
-          isGrouping={isGrouping}
-          workspaceId={workspaceId}
-        />
-      ))}
-    </button>
-  );
+      {blocks.map(block => <DraggableBlock key={block.id} id={block.id} value={block.value} type={block.type} onRemove={onRemoveBlock} onDragStart={onDragStart} position={block.position} shouldVibrate={shouldVibrate} isGrouping={isGrouping} workspaceId={workspaceId} />)}
+    </button>;
 };
-
 export default PlaceValueColumn;
