@@ -27,22 +27,6 @@ const CompactVisualWorkspace = () => {
     }
   }, [totalBlocks, currentProblem]);
 
-  const handleNumber1DragStart = (blocks: number) => {
-    // Set data for drag and drop
-    const event = new CustomEvent('dragstart');
-    if (event.dataTransfer) {
-      event.dataTransfer.setData('application/blocks', blocks.toString());
-    }
-  };
-
-  const handleNumber2DragStart = (blocks: number) => {
-    // Set data for drag and drop
-    const event = new CustomEvent('dragstart');
-    if (event.dataTransfer) {
-      event.dataTransfer.setData('application/blocks', blocks.toString());
-    }
-  };
-
   const nextProblem = () => {
     if (currentProblemIndex < problems.length - 1) {
       setCurrentProblemIndex(prev => prev + 1);
@@ -71,7 +55,6 @@ const CompactVisualWorkspace = () => {
         number={currentProblem.num1}
         backgroundColor="rgba(111, 0, 255, 0.1)"
         borderColor="#6F00FF"
-        onDragStart={handleNumber1DragStart}
         resetTrigger={resetTrigger}
       />
 
@@ -85,7 +68,6 @@ const CompactVisualWorkspace = () => {
         number={currentProblem.num2}
         backgroundColor="rgba(0, 38, 255, 0.1)"
         borderColor="#0026FF"
-        onDragStart={handleNumber2DragStart}
         resetTrigger={resetTrigger}
       />
 

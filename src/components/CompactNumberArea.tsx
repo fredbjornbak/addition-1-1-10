@@ -6,7 +6,6 @@ interface CompactNumberAreaProps {
   number: number;
   backgroundColor: string;
   borderColor: string;
-  onDragStart: (blocks: number) => void;
   resetTrigger: number;
 }
 
@@ -14,7 +13,6 @@ const CompactNumberArea: React.FC<CompactNumberAreaProps> = ({
   number,
   backgroundColor,
   borderColor,
-  onDragStart,
   resetTrigger
 }) => {
   const [blocks, setBlocks] = useState(0);
@@ -29,9 +27,10 @@ const CompactNumberArea: React.FC<CompactNumberAreaProps> = ({
     }
   };
 
-  const handleDragStart = () => {
+  const handleDragStart = (e: React.DragEvent) => {
     if (blocks > 0) {
-      onDragStart(blocks);
+      e.dataTransfer.setData('application/blocks', blocks.toString());
+      e.dataTransfer.effectAllowed = 'move';
     }
   };
 
