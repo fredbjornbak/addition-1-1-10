@@ -1,6 +1,5 @@
 import React from 'react';
 import SimpleBoard from './SimpleBoard';
-
 interface WorkspaceSectionProps {
   title: string;
   workspaceId: string;
@@ -16,7 +15,6 @@ interface WorkspaceSectionProps {
   onCrossWorkspaceDragEnter?: (workspaceId: string) => void;
   onCrossWorkspaceDragLeave?: () => void;
 }
-
 const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   title,
   workspaceId,
@@ -36,38 +34,38 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     console.log('➕ Adding tens to workspace:', workspaceId);
     onBlocksChange(tensCount + 1, onesCount);
   };
-
   const handleAddOnes = () => {
     console.log('➕ Adding ones to workspace:', workspaceId);
     onBlocksChange(tensCount, onesCount + 1);
   };
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    console.log('🎯 WorkspaceSection DROP received:', { 
-      workspaceId, 
+    console.log('🎯 WorkspaceSection DROP received:', {
+      workspaceId,
       canReceiveFromOthers,
-      hasDropHandler: !!onCrossWorkspaceDrop 
+      hasDropHandler: !!onCrossWorkspaceDrop
     });
-    
     if (!canReceiveFromOthers || !onCrossWorkspaceDrop) {
       console.log('❌ Cannot receive blocks or no drop handler');
       return;
     }
-    
+
     // Get cross-workspace data
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
     console.log('📋 Cross-workspace data string:', crossWorkspaceDataStr);
-    
     if (crossWorkspaceDataStr) {
       try {
         const crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
         console.log('📦 Parsed cross-workspace bulk data:', crossWorkspaceData);
-        
-        const { blockType, blockValue, sourceWorkspace, isFromWorkspace, bulkCount = 1 } = crossWorkspaceData;
-        
+        const {
+          blockType,
+          blockValue,
+          sourceWorkspace,
+          isFromWorkspace,
+          bulkCount = 1
+        } = crossWorkspaceData;
+
         // Process cross-workspace drops (from different workspaces)
         if (isFromWorkspace && sourceWorkspace && sourceWorkspace !== workspaceId) {
           console.log('✅ Processing bulk cross-workspace drop:', {
@@ -77,7 +75,6 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
             blockValue,
             bulkCount
           });
-          
           onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue, bulkCount);
         } else {
           console.log('🚫 Ignoring - same workspace or not cross-workspace drop');
@@ -89,7 +86,6 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       console.log('ℹ️ No cross-workspace data found');
     }
   };
-
   const handleDragEnter = (e: React.DragEvent) => {
     if (canReceiveFromOthers && onCrossWorkspaceDragEnter) {
       e.preventDefault();
@@ -98,7 +94,6 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       onCrossWorkspaceDragEnter(workspaceId);
     }
   };
-
   const handleDragLeave = (e: React.DragEvent) => {
     if (canReceiveFromOthers && onCrossWorkspaceDragLeave) {
       e.preventDefault();
@@ -107,52 +102,27 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       onCrossWorkspaceDragLeave();
     }
   };
-
   const handleDragOver = (e: React.DragEvent) => {
     if (canReceiveFromOthers) {
       e.preventDefault();
       e.stopPropagation();
     }
   };
-
-  return (
-    <div 
-      className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
-      style={{
-        backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
-        borderColor: isDropTarget ? '#3B82F6' : borderColor
-      }}
-      onDrop={handleDrop}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-    >
+  return <div className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`} style={{
+    backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
+    borderColor: isDropTarget ? '#3B82F6' : borderColor
+  }} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver}>
       <h3 className="font-space-grotesk text-lg font-bold text-center mb-2 text-grade-black">
         {title}
       </h3>
       
-      {isDropTarget && canReceiveFromOthers && (
-        <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse bg-blue-100 rounded px-2 py-1">
+      {isDropTarget && canReceiveFromOthers && <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse bg-blue-100 rounded px-2 py-1">
           🎯 Drop all blocks here!
-        </div>
-      )}
+        </div>}
       
-      <SimpleBoard
-        onAddTens={handleAddTens}
-        onAddOnes={handleAddOnes}
-        userAnswer={tensCount * 10 + onesCount}
-        onBlocksChange={onBlocksChange}
-        resetTrigger={resetTrigger}
-        workspaceId={workspaceId}
-        externalTensCount={tensCount}
-        externalOnesCount={onesCount}
-      />
+      <SimpleBoard onAddTens={handleAddTens} onAddOnes={handleAddOnes} userAnswer={tensCount * 10 + onesCount} onBlocksChange={onBlocksChange} resetTrigger={resetTrigger} workspaceId={workspaceId} externalTensCount={tensCount} externalOnesCount={onesCount} />
       
-      <div className="text-center mt-2 font-dm-sans text-sm text-grade-black bg-gray-100 rounded px-2 py-1">
-        Value: {tensCount * 10 + onesCount} ({tensCount} tens + {onesCount} ones)
-      </div>
-    </div>
-  );
+      
+    </div>;
 };
-
 export default WorkspaceSection;
