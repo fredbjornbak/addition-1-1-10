@@ -79,14 +79,8 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   }, [hasBundle, isGrouping, setBlocks]);
 
   return (
-    <Card 
-      className="p-6 shadow-grade-card bg-white rounded-grade-card border-0"
-      style={{
-        borderLeft: '10px solid #2F2E41',
-        borderBottom: '10px solid #2F2E41'
-      }}
-    >
-      <div className="grid grid-cols-2 gap-6 mb-6">
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
         <PlaceValueColumn
           type="tens"
           blocks={tensBlocks}
@@ -117,15 +111,8 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
         />
       </div>
 
-      <AnswerDisplay
-        userAnswer={userAnswer}
-        tensCount={tensCount}
-        onesCount={onesCount}
-        hasBundle={hasBundle}
-      />
-
       <DragFeedback dragState={dragState} onesCount={onesCount} />
-    </Card>
+    </div>
   );
 };
 

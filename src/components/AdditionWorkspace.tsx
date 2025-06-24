@@ -33,16 +33,16 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
 }) => {
   return (
     <Card 
-      className="p-6 shadow-grade-card bg-white rounded-grade-card border-0"
+      className="p-3 shadow-grade-card bg-white rounded-grade-card border-0"
       style={{
         borderLeft: '10px solid #2F2E41',
         borderBottom: '10px solid #2F2E41'
       }}
     >
-      <div className="grid grid-cols-1 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* First Number */}
         <WorkspaceSection
-          title={`First Number: ${problem.num1}`}
+          title={`First: ${problem.num1}`}
           workspaceId="first"
           tensCount={firstNumberTens}
           onesCount={firstNumberOnes}
@@ -55,7 +55,7 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
 
         {/* Second Number */}
         <WorkspaceSection
-          title={`Second Number: ${problem.num2}`}
+          title={`Second: ${problem.num2}`}
           workspaceId="second"
           tensCount={secondNumberTens}
           onesCount={secondNumberOnes}
@@ -68,7 +68,7 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
 
         {/* Total */}
         <WorkspaceSection
-          title="Total (Drag blocks here!)"
+          title="Total"
           workspaceId="total"
           tensCount={totalTens}
           onesCount={totalOnes}

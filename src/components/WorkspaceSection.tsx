@@ -37,13 +37,13 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
 
   return (
     <div 
-      className="p-4 rounded-xl border-4"
+      className="p-2 rounded-lg border-2"
       style={{
         backgroundColor,
         borderColor
       }}
     >
-      <h3 className="font-space-grotesk text-xl font-bold text-center mb-4 text-grade-black">
+      <h3 className="font-space-grotesk text-lg font-bold text-center mb-2 text-grade-black">
         {title}
       </h3>
       
@@ -55,8 +55,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         resetTrigger={resetTrigger}
       />
       
-      <div className="text-center mt-2 font-dm-sans text-grade-body text-grade-black">
-        Current: {tensCount * 10 + onesCount}
+      <div className="text-center mt-1 font-dm-sans text-sm text-grade-black">
+        Value: {tensCount * 10 + onesCount}
       </div>
     </div>
   );
