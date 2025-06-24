@@ -224,19 +224,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
         />
       </div>
 
-      {/* Total display under the entire grid */}
-      <div className="text-center bg-white border-2 border-gray-300 rounded-lg p-3">
-        <div className="font-space-grotesk text-lg font-bold text-grade-black mb-1">
-          Total
-        </div>
-        <div className="font-space-grotesk text-3xl font-bold text-grade-purple">
-          {totalValue}
-        </div>
-        <div className="font-dm-sans text-sm text-grade-black">
-          ({tensCount} tens + {onesCount} ones)
-        </div>
-      </div>
-
       <DragFeedback 
         dragState={dragState} 
         onesCount={onesCount} 
