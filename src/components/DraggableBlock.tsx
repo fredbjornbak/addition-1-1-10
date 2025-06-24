@@ -66,11 +66,12 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    // Single click for deletion (changed from double-click for better UX)
-    if (e.detail === 1) {
-      console.log('🗑️ Single click remove block:', { id, type, value });
-      onRemove(id);
-    }
+    // Prevent event bubbling to parent button
+    e.stopPropagation();
+    e.preventDefault();
+    
+    console.log('🗑️ Single click remove block:', { id, type, value });
+    onRemove(id);
   };
 
   const isTens = type === 'tens';
