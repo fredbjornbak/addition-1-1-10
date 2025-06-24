@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -9,14 +8,12 @@ import { generateBundledPositions } from '../utils/blockPositions';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useBlockManagement } from '../hooks/useBlockManagement';
 import { useRegrouping } from '../hooks/useRegrouping';
-
 interface ExtendedSimpleBoardProps extends SimpleBoardProps {
   workspaceId?: string;
   externalTensCount?: number;
   externalOnesCount?: number;
 }
-
-const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({ 
+const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   onAddTens,
   onAddOnes,
   userAnswer,
@@ -37,17 +34,12 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     startDrag,
     cancelDrag,
     completeDrag
-  } = useBlockManagement(
-    onAddTens, 
-    onAddOnes, 
-    onBlocksChange, 
-    resetTrigger,
-    externalTensCount,
-    externalOnesCount
-  );
-
-  const { isGrouping, handleRegroup, canRegroup } = useRegrouping(blocks, setBlocks, onBlocksChange);
-
+  } = useBlockManagement(onAddTens, onAddOnes, onBlocksChange, resetTrigger, externalTensCount, externalOnesCount);
+  const {
+    isGrouping,
+    handleRegroup,
+    canRegroup
+  } = useRegrouping(blocks, setBlocks, onBlocksChange);
   const {
     dragState,
     handleDragStart,
@@ -56,7 +48,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     handleDragLeave,
     handleDragOver
   } = useDragAndDrop();
-
   const handleBlockDragStart = (blockId: string) => {
     const block = blocks.find(b => b.id === blockId);
     if (block) {
@@ -64,32 +55,26 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       handleDragStart(block, onesCount);
     }
   };
-
   const handleBulkDragStart = (blockType: 'tens' | 'ones') => {
     startDrag(blockType);
   };
-
   const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
     e.preventDefault();
     const draggedBlockId = e.dataTransfer.getData('text/plain');
     const draggedBlock = blocks.find(b => b.id === draggedBlockId);
-    
     if (!draggedBlock) {
       cancelDrag();
       return;
     }
-
     console.log('🎯 Internal drop - attempting regroup:', {
       draggedBlockType: draggedBlock.type,
       targetType,
       canRegroup: canRegroup()
     });
-
     handleRegroup(draggedBlock, targetType);
     handleDragEnd();
     completeDrag();
   };
-
   const handleDragCancel = () => {
     handleDragEnd();
     cancelDrag();
@@ -102,17 +87,14 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
         handleDragCancel();
       }
     };
-
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isDragging]);
-
   const tensCount = blocks.filter(b => b.type === 'tens').length;
   const onesCount = blocks.filter(b => b.type === 'ones').length;
   const tensBlocks = blocks.filter(b => b.type === 'tens');
   const onesBlocks = blocks.filter(b => b.type === 'ones');
   const hasBundle = onesCount >= 10;
-
   useEffect(() => {
     if (hasBundle && !isGrouping) {
       const bundledPositions = generateBundledPositions();
@@ -128,59 +110,17 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       }));
     }
   }, [hasBundle, isGrouping, setBlocks]);
-
-  return (
-    <div className="space-y-2">
+  return <div className="space-y-2">
       {/* Show regrouping hint if applicable */}
-      {canRegroup() && !isGrouping && (
-        <div className="text-center bg-blue-50 border border-blue-200 rounded-lg p-2 text-sm text-blue-800 font-medium animate-pulse">
-          💡 You have {Math.floor(onesCount / 10)} group(s) of 10 ones! Drag them to the tens column to regroup.
-        </div>
-      )}
+      {canRegroup() && !isGrouping}
       
       <div className="grid grid-cols-2 gap-2">
-        <PlaceValueColumn
-          type="tens"
-          blocks={tensBlocks}
-          onAddBlock={addTenBlock}
-          onRemoveBlock={removeBlock}
-          onDragStart={handleBlockDragStart}
-          onDrop={handleDrop}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          isDropTarget={dragState.isOver === 'tens'}
-          isGrouping={isGrouping}
-          workspaceId={workspaceId}
-          onStartBulkDrag={handleBulkDragStart}
-        />
+        <PlaceValueColumn type="tens" blocks={tensBlocks} onAddBlock={addTenBlock} onRemoveBlock={removeBlock} onDragStart={handleBlockDragStart} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} isDropTarget={dragState.isOver === 'tens'} isGrouping={isGrouping} workspaceId={workspaceId} onStartBulkDrag={handleBulkDragStart} />
         
-        <PlaceValueColumn
-          type="ones"
-          blocks={onesBlocks}
-          hasBundle={hasBundle}
-          onAddBlock={addOneBlock}
-          onRemoveBlock={removeBlock}
-          onDragStart={handleBlockDragStart}
-          onDrop={handleDrop}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          isDropTarget={dragState.isOver === 'ones'}
-          isGrouping={isGrouping}
-          workspaceId={workspaceId}
-          onStartBulkDrag={handleBulkDragStart}
-        />
+        <PlaceValueColumn type="ones" blocks={onesBlocks} hasBundle={hasBundle} onAddBlock={addOneBlock} onRemoveBlock={removeBlock} onDragStart={handleBlockDragStart} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} isDropTarget={dragState.isOver === 'ones'} isGrouping={isGrouping} workspaceId={workspaceId} onStartBulkDrag={handleBulkDragStart} />
       </div>
 
-      <DragFeedback 
-        dragState={dragState} 
-        onesCount={onesCount} 
-        tensCount={tensCount}
-        draggedBlocks={draggedBlocks}
-      />
-    </div>
-  );
+      <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} draggedBlocks={draggedBlocks} />
+    </div>;
 };
-
 export default SimpleBoard;
