@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -81,7 +82,6 @@ export default {
 				'dm-sans': ['DM Sans', 'sans-serif'],
 			},
 			
-			// Font sizes with minimum 18px requirement
 			fontSize: {
 				'grade-body': ['18px', { lineHeight: '1.5' }],
 				'grade-body-lg': ['20px', { lineHeight: '1.5' }],
@@ -105,7 +105,7 @@ export default {
 				'grade-card': '0 10px 30px rgba(0, 0, 0, 0.1)',
 			},
 			
-			// GradeAid Animations & Keyframes
+			// Enhanced GradeAid Animations & Keyframes
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -150,6 +150,76 @@ export default {
 						transform: 'scale(1)',
 						opacity: '1'
 					}
+				},
+				'vibrate': {
+					'0%, 100%': {
+						transform: 'translateX(0) translateY(0) rotate(0deg)'
+					},
+					'10%': {
+						transform: 'translateX(-2px) translateY(-1px) rotate(-0.5deg)'
+					},
+					'20%': {
+						transform: 'translateX(2px) translateY(1px) rotate(0.5deg)'
+					},
+					'30%': {
+						transform: 'translateX(-1px) translateY(-2px) rotate(-0.3deg)'
+					},
+					'40%': {
+						transform: 'translateX(1px) translateY(2px) rotate(0.3deg)'
+					},
+					'50%': {
+						transform: 'translateX(-2px) translateY(0px) rotate(-0.2deg)'
+					},
+					'60%': {
+						transform: 'translateX(2px) translateY(-1px) rotate(0.2deg)'
+					},
+					'70%': {
+						transform: 'translateX(-1px) translateY(1px) rotate(-0.1deg)'
+					},
+					'80%': {
+						transform: 'translateX(1px) translateY(-1px) rotate(0.1deg)'
+					},
+					'90%': {
+						transform: 'translateX(-1px) translateY(0px) rotate(0deg)'
+					}
+				},
+				'gather': {
+					'0%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					},
+					'50%': {
+						transform: 'scale(0.8)',
+						opacity: '0.8'
+					},
+					'100%': {
+						transform: 'scale(0.1)',
+						opacity: '0'
+					}
+				},
+				'bundle-flash': {
+					'0%, 100%': {
+						backgroundColor: 'rgba(255, 111, 0, 0.1)',
+						boxShadow: '0 0 0 0 rgba(255, 111, 0, 0.4)'
+					},
+					'50%': {
+						backgroundColor: 'rgba(255, 111, 0, 0.3)',
+						boxShadow: '0 0 0 20px rgba(255, 111, 0, 0)'
+					}
+				},
+				'ten-appear': {
+					'0%': {
+						transform: 'scale(2) rotate(180deg)',
+						opacity: '0'
+					},
+					'50%': {
+						transform: 'scale(1.2) rotate(90deg)',
+						opacity: '0.8'
+					},
+					'100%': {
+						transform: 'scale(1) rotate(0deg)',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
@@ -158,6 +228,10 @@ export default {
 				'bounce-gentle': 'bounce-gentle 1s infinite',
 				'pulse-glow': 'pulse-glow 2s infinite',
 				'scale-in': 'scale-in 0.2s ease-out',
+				'vibrate': 'vibrate 0.3s ease-in-out infinite',
+				'gather': 'gather 0.8s ease-in-out forwards',
+				'bundle-flash': 'bundle-flash 0.6s ease-in-out',
+				'ten-appear': 'ten-appear 0.6s ease-out forwards'
 			}
 		}
 	},

@@ -5,6 +5,7 @@ import PlaceValueColumn from './PlaceValueColumn';
 import AnswerDisplay from './AnswerDisplay';
 import { Block, SimpleBoardProps } from '../types/placeValue';
 import { generatePosition, generateBundledPositions } from '../utils/blockPositions';
+import { useBundleAnimation } from '../hooks/useBundleAnimation';
 
 const SimpleBoard: React.FC<SimpleBoardProps> = ({ 
   onAddTens,
@@ -14,15 +15,25 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   resetTrigger
 }) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const { 
+    bundleState, 
+    isAnimating, 
+    startBundleAnimation, 
+    startVibrating, 
+    stopVibrating 
+  } = useBundleAnimation();
 
   // Clear all blocks when resetTrigger changes
   useEffect(() => {
     if (resetTrigger > 0) {
       setBlocks([]);
+      stopVibrating();
     }
-  }, [resetTrigger]);
+  }, [resetTrigger, stopVibrating]);
 
   const addTenBlock = () => {
+    if (isAnimating) return;
+    
     const newBlock: Block = {
       id: `ten-${Date.now()}-${Math.random()}`,
       value: 10,
@@ -34,6 +45,8 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   };
 
   const addOneBlock = () => {
+    if (isAnimating) return;
+    
     const currentOnes = blocks.filter(b => b.type === 'ones').length;
     
     const newBlock: Block = {
@@ -49,6 +62,8 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   };
 
   const removeBlock = (id: string) => {
+    if (isAnimating) return;
+    
     setBlocks(prev => {
       const newBlocks = prev.filter(block => block.id !== id);
       const tens = newBlocks.filter(b => b.type === 'tens').length;
@@ -59,21 +74,25 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   };
 
   const handleBundleClick = () => {
-    // Remove all 10 ones and add 1 ten
-    const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
+    if (isAnimating) return;
     
-    const newTenBlock: Block = {
-      id: `ten-${Date.now()}-${Math.random()}`,
-      value: 10,
-      type: 'tens',
-      position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length)
-    };
-    
-    setBlocks([...nonOnesBlocks, newTenBlock]);
-    
-    // Update parent component
-    const tens = nonOnesBlocks.filter(b => b.type === 'tens').length + 1;
-    onBlocksChange(tens, 0);
+    startBundleAnimation(() => {
+      // Remove all 10 ones and add 1 ten after animation completes
+      const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
+      
+      const newTenBlock: Block = {
+        id: `ten-${Date.now()}-${Math.random()}`,
+        value: 10,
+        type: 'tens',
+        position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length)
+      };
+      
+      setBlocks([...nonOnesBlocks, newTenBlock]);
+      
+      // Update parent component
+      const tens = nonOnesBlocks.filter(b => b.type === 'tens').length + 1;
+      onBlocksChange(tens, 0);
+    });
   };
 
   const tensCount = blocks.filter(b => b.type === 'tens').length;
@@ -82,9 +101,13 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
   const onesBlocks = blocks.filter(b => b.type === 'ones');
   const hasBundle = onesCount === 10;
 
-  // Update ones block positions when bundling
+  // Update ones block positions when bundling and handle vibration
   useEffect(() => {
-    if (hasBundle) {
+    if (hasBundle && !isAnimating) {
+      // Start vibrating when 10 ones are present
+      startVibrating();
+      
+      // Position blocks in bundle formation
       const bundledPositions = generateBundledPositions();
       setBlocks(prev => prev.map((block, index) => {
         if (block.type === 'ones') {
@@ -96,8 +119,10 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
         }
         return block;
       }));
+    } else if (!hasBundle) {
+      stopVibrating();
     }
-  }, [hasBundle]);
+  }, [hasBundle, isAnimating, startVibrating, stopVibrating]);
 
   return (
     <Card 
@@ -111,6 +136,7 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
         <PlaceValueColumn
           type="tens"
           blocks={tensBlocks}
+          bundleState={bundleState}
           onAddBlock={addTenBlock}
           onRemoveBlock={removeBlock}
         />
@@ -119,6 +145,7 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
           type="ones"
           blocks={onesBlocks}
           hasBundle={hasBundle}
+          bundleState={bundleState}
           onAddBlock={addOneBlock}
           onRemoveBlock={removeBlock}
           onBundleClick={handleBundleClick}
