@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
@@ -132,61 +131,53 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   };
 
   const totalBlocksOfType = blocks.length;
-  const totalValue = blocks.reduce((sum, block) => sum + block.value, 0);
 
   return (
-    <div className="flex flex-col">
-      <button
-        onClick={onAddBlock}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
-        style={{
-          backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
-          borderColor: isDropTarget ? '#FFD700' : borderColor
-        }}
-        aria-label={`Click to add ${type} blocks or drop blocks here`}
-      >
-        <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
-          {type.toUpperCase()}
-        </div>
-        
-        <div className={`text-sm ${textColor} mb-2 opacity-75`}>
-          Click!
-        </div>
-        
-        {/* Render blocks with individual vibration logic */}
-        {blocks.map((block, index) => {
-          // Only first 10 ones blocks should vibrate when there are 10+ ones blocks
-          const shouldVibrate = shouldVibrateBlocks && index < 10;
-          
-          return (
-            <DraggableBlock
-              key={block.id}
-              id={block.id}
-              value={block.value}
-              type={block.type}
-              onRemove={onRemoveBlock}
-              onDragStart={onDragStart}
-              position={block.position}
-              shouldVibrate={shouldVibrate}
-              isGrouping={isGrouping}
-              workspaceId={workspaceId}
-              totalBlocksOfType={totalBlocksOfType}
-              isBeingDragged={block.isBeingDragged}
-              onStartBulkDrag={onStartBulkDrag}
-            />
-          );
-        })}
-      </button>
-      
-      {/* Total count display */}
-      <div className={`text-center mt-2 font-dm-sans font-bold text-lg ${textColor}`}>
-        Total: {totalValue}
+    <button
+      onClick={onAddBlock}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
+      style={{
+        backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
+        borderColor: isDropTarget ? '#FFD700' : borderColor
+      }}
+      aria-label={`Click to add ${type} blocks or drop blocks here`}
+    >
+      <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
+        {type.toUpperCase()}
       </div>
-    </div>
+      
+      <div className={`text-sm ${textColor} mb-2 opacity-75`}>
+        Click!
+      </div>
+      
+      {/* Render blocks with individual vibration logic */}
+      {blocks.map((block, index) => {
+        // Only first 10 ones blocks should vibrate when there are 10+ ones blocks
+        const shouldVibrate = shouldVibrateBlocks && index < 10;
+        
+        return (
+          <DraggableBlock
+            key={block.id}
+            id={block.id}
+            value={block.value}
+            type={block.type}
+            onRemove={onRemoveBlock}
+            onDragStart={onDragStart}
+            position={block.position}
+            shouldVibrate={shouldVibrate}
+            isGrouping={isGrouping}
+            workspaceId={workspaceId}
+            totalBlocksOfType={totalBlocksOfType}
+            isBeingDragged={block.isBeingDragged}
+            onStartBulkDrag={onStartBulkDrag}
+          />
+        );
+      })}
+    </button>
   );
 };
 
