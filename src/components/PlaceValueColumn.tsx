@@ -43,6 +43,11 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   const focusRing = isOnes ? 'focus:ring-orange-300' : 'focus:ring-blue-300';
   const dropTargetClass = isDropTarget ? 'ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-50' : '';
 
+  // Check if regrouping is possible
+  const onesCount = blocks.filter(b => b.type === 'ones').length;
+  const canRegroupToTens = !isOnes && onesCount >= 10; // Show hint on tens column when 10+ ones exist
+  const showRegroupHint = canRegroupToTens && !isGrouping;
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     console.log('🎯 PlaceValueColumn drop event:', {
@@ -86,7 +91,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
-      className={`relative rounded-lg p-2 h-[200px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
+      className={`relative rounded-lg p-2 h-[200px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden ${showRegroupHint ? 'animate-pulse' : ''}`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#FFD700' : borderColor
@@ -96,9 +101,16 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
         {type.toUpperCase()}
       </div>
-      <div className={`text-sm ${textColor} mb-2 opacity-75`}>
-        Click!
-      </div>
+      
+      {showRegroupHint ? (
+        <div className="text-xs text-center mb-2 bg-blue-100 text-blue-800 rounded px-2 py-1 font-bold animate-bounce">
+          🔄 Drop ones here to make groups of 10!
+        </div>
+      ) : (
+        <div className={`text-sm ${textColor} mb-2 opacity-75`}>
+          Click!
+        </div>
+      )}
       
       {/* Render blocks with enhanced props */}
       {blocks.map(block => (
@@ -118,6 +130,13 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           onStartBulkDrag={onStartBulkDrag}
         />
       ))}
+      
+      {/* Visual grouping indicator for ones */}
+      {isOnes && onesCount >= 10 && !isGrouping && (
+        <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold animate-pulse">
+          {Math.floor(onesCount / 10)}
+        </div>
+      )}
     </button>
   );
 };

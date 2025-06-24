@@ -46,7 +46,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     externalOnesCount
   );
 
-  const { isGrouping, handleRegroup } = useRegrouping(blocks, setBlocks, onBlocksChange);
+  const { isGrouping, handleRegroup, canRegroup } = useRegrouping(blocks, setBlocks, onBlocksChange);
 
   const {
     dragState,
@@ -78,6 +78,12 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       cancelDrag();
       return;
     }
+
+    console.log('🎯 Internal drop - attempting regroup:', {
+      draggedBlockType: draggedBlock.type,
+      targetType,
+      canRegroup: canRegroup()
+    });
 
     handleRegroup(draggedBlock, targetType);
     handleDragEnd();
@@ -125,6 +131,13 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
 
   return (
     <div className="space-y-2">
+      {/* Show regrouping hint if applicable */}
+      {canRegroup() && !isGrouping && (
+        <div className="text-center bg-blue-50 border border-blue-200 rounded-lg p-2 text-sm text-blue-800 font-medium animate-pulse">
+          💡 You have {Math.floor(onesCount / 10)} group(s) of 10 ones! Drag them to the tens column to regroup.
+        </div>
+      )}
+      
       <div className="grid grid-cols-2 gap-2">
         <PlaceValueColumn
           type="tens"

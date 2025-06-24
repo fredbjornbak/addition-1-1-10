@@ -54,14 +54,28 @@ const SimplePlaceValueTool = () => {
   const checkAnswer = () => {
     if (!currentProblem) return;
     
-    const firstNumber = firstNumberTens * 10 + firstNumberOnes;
-    const secondNumber = secondNumberTens * 10 + secondNumberOnes;
     const totalNumber = totalTens * 10 + totalOnes;
     
-    // Check if all three numbers are correct
-    const correct = firstNumber === currentProblem.num1 && 
-                   secondNumber === currentProblem.num2 && 
-                   totalNumber === currentProblem.answer;
+    // Primary check: Is the total correct?
+    const isTotalCorrect = totalNumber === currentProblem.answer;
+    
+    // Secondary check: Are the individual numbers represented correctly (optional)
+    const firstNumber = firstNumberTens * 10 + firstNumberOnes;
+    const secondNumber = secondNumberTens * 10 + secondNumberOnes;
+    const areIndividualNumbersCorrect = firstNumber === currentProblem.num1 && 
+                                      secondNumber === currentProblem.num2;
+    
+    // Accept the answer if total is correct (flexible approach)
+    // OR if all three are correct (traditional approach)
+    const correct = isTotalCorrect || areIndividualNumbersCorrect;
+    
+    console.log('📊 Answer check:', {
+      totalCorrect: isTotalCorrect,
+      individualCorrect: areIndividualNumbersCorrect,
+      finalResult: correct,
+      expected: currentProblem.answer,
+      actual: totalNumber
+    });
     
     setIsCorrect(correct);
     setShowFeedback(true);

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Block } from '../types/placeValue';
 import { generatePosition } from '../utils/blockPositions';
@@ -14,22 +13,35 @@ export const useRegrouping = (
     if (draggedBlock.type === 'ones' && targetType === 'tens') {
       const onesCount = blocks.filter(b => b.type === 'ones').length;
       
-      if (onesCount >= 10) {
+      // Allow regrouping when there are ANY ones blocks
+      if (onesCount > 0) {
+        console.log('🔄 Starting regrouping with', onesCount, 'ones blocks');
         setIsGrouping(true);
         
         setTimeout(() => {
           const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
-          const newTensCount = Math.floor(onesCount / 10);
+          const currentTensCount = nonOnesBlocks.filter(b => b.type === 'tens').length;
+          
+          // Convert every 10 ones into 1 ten, keep remainder as ones
+          const newTensFromOnes = Math.floor(onesCount / 10);
           const remainingOnes = onesCount % 10;
+          const totalNewTens = currentTensCount + newTensFromOnes;
+          
+          console.log('🔢 Regrouping calculation:', {
+            originalOnes: onesCount,
+            newTensFromOnes,
+            remainingOnes,
+            totalNewTens
+          });
           
           // Create new ten blocks
           const newTenBlocks: Block[] = [];
-          for (let i = 0; i < newTensCount; i++) {
+          for (let i = 0; i < totalNewTens; i++) {
             newTenBlocks.push({
               id: `ten-${Date.now()}-${Math.random()}-${i}`,
               value: 10,
               type: 'tens',
-              position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length + i)
+              position: generatePosition('tens', i)
             });
           }
           
@@ -44,21 +56,29 @@ export const useRegrouping = (
             });
           }
           
-          const newBlocks = [...nonOnesBlocks, ...newTenBlocks, ...remainingOnesBlocks];
+          const newBlocks = [...nonOnesBlocks.filter(b => b.type !== 'tens'), ...newTenBlocks, ...remainingOnesBlocks];
+          console.log('✅ Regrouping complete:', {
+            totalTens: totalNewTens,
+            remainingOnes: remainingOnes,
+            totalBlocks: newBlocks.length
+          });
+          
           setBlocks(newBlocks);
-          
-          const tens = newBlocks.filter(b => b.type === 'tens').length;
-          const ones = newBlocks.filter(b => b.type === 'ones').length;
-          onBlocksChange(tens, ones);
-          
+          onBlocksChange(totalNewTens, remainingOnes);
           setIsGrouping(false);
         }, 600);
       }
     }
   };
 
+  const canRegroup = () => {
+    const onesCount = blocks.filter(b => b.type === 'ones').length;
+    return onesCount >= 10;
+  };
+
   return {
     isGrouping,
-    handleRegroup
+    handleRegroup,
+    canRegroup
   };
 };
