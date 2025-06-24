@@ -108,6 +108,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       e.stopPropagation();
     }
   };
+  const totalValue = tensCount * 10 + onesCount;
   return <div className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`} style={{
     backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
     borderColor: isDropTarget ? '#3B82F6' : borderColor
@@ -115,14 +116,18 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       <h3 className="font-space-grotesk text-lg font-bold text-center mb-2 text-grade-black">
         {title}
       </h3>
-      
+      {workspaceId === 'total' && <div className="text-center mb-2">
+          <div className="font-space-grotesk text-3xl font-bold text-grade-purple">
+            {totalValue}
+          </div>
+          <div className="font-dm-sans text-sm text-grade-black">
+            ({tensCount} tens + {onesCount} ones)
+          </div>
+        </div>}
       {isDropTarget && canReceiveFromOthers && <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse bg-blue-100 rounded px-2 py-1">
           🎯 Drop all blocks here!
         </div>}
-      
       <SimpleBoard onAddTens={handleAddTens} onAddOnes={handleAddOnes} userAnswer={tensCount * 10 + onesCount} onBlocksChange={onBlocksChange} resetTrigger={resetTrigger} workspaceId={workspaceId} externalTensCount={tensCount} externalOnesCount={onesCount} />
-      
-      
     </div>;
 };
 export default WorkspaceSection;
