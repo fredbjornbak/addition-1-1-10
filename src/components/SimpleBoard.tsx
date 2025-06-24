@@ -13,6 +13,7 @@ interface ExtendedSimpleBoardProps extends SimpleBoardProps {
   workspaceId?: string;
   externalTensCount?: number;
   externalOnesCount?: number;
+  canAddDirectly?: boolean;
 }
 
 const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
@@ -23,7 +24,8 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   resetTrigger,
   workspaceId = 'default',
   externalTensCount,
-  externalOnesCount
+  externalOnesCount,
+  canAddDirectly = true
 }) => {
   const {
     blocks,
@@ -202,6 +204,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           onStartBulkDrag={startDrag}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
+          canAddDirectly={canAddDirectly}
         />
         
         <PlaceValueColumn 
@@ -221,6 +224,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           onStartBulkDrag={startDrag}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
+          canAddDirectly={canAddDirectly}
         />
       </div>
 
