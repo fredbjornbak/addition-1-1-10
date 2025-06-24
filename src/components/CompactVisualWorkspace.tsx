@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import PlaceValueNumberArea from './PlaceValueNumberArea';
-import CompactTotalArea from './CompactTotalArea';
+import PlaceValueTotalArea from './PlaceValueTotalArea';
 import { generateVisualAdditionProblems, VisualAdditionProblem } from '../utils/visualAdditionProblems';
 
 const CompactVisualWorkspace = () => {
@@ -95,8 +95,8 @@ const CompactVisualWorkspace = () => {
         <div className="font-space-grotesk text-3xl font-bold text-grade-black">=</div>
       </div>
 
-      {/* Total Area */}
-      <CompactTotalArea
+      {/* Total Area - Using new PlaceValueTotalArea */}
+      <PlaceValueTotalArea
         expectedTotal={currentProblem.answer}
         onTotalChange={setTotalBlocks}
         resetTrigger={resetTrigger}

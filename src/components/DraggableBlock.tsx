@@ -32,7 +32,13 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   };
 
   const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData('text/plain', id);
+    // Set both legacy format and new format for compatibility
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      id,
+      value,
+      type,
+      sourceId: id
+    }));
     e.dataTransfer.effectAllowed = 'move';
     onDragStart(id);
   };

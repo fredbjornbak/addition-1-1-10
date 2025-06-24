@@ -60,13 +60,9 @@ const PlaceValueNumberArea: React.FC<PlaceValueNumberAreaProps> = ({
     }
   };
 
-  const handleDragStart = (e: React.DragEvent) => {
-    const totalValue = onesCount + (tensCount * 10);
-    if (totalValue > 0) {
-      e.dataTransfer.setData('application/blocks', totalValue.toString());
-      e.dataTransfer.effectAllowed = 'move';
-      onDragStart(totalValue);
-    }
+  // Remove the area-level drag functionality - we want individual block dragging only
+  const handleAreaDragStart = (e: React.DragEvent) => {
+    e.preventDefault(); // Prevent area dragging
   };
 
   const removeBlock = (id: string) => {
@@ -84,7 +80,10 @@ const PlaceValueNumberArea: React.FC<PlaceValueNumberAreaProps> = ({
   };
 
   const handleBlockDragStart = (id: string) => {
-    // Handle individual block drag if needed
+    const block = blocks.find(b => b.id === id);
+    if (block) {
+      onDragStart(block.value);
+    }
   };
 
   const currentTotal = onesCount + (tensCount * 10);
@@ -97,8 +96,7 @@ const PlaceValueNumberArea: React.FC<PlaceValueNumberAreaProps> = ({
       className="p-4 rounded-[50px] border-4 min-h-[140px] cursor-pointer transition-all duration-300"
       style={{ backgroundColor, borderColor }}
       onClick={addBlock}
-      draggable={currentTotal > 0}
-      onDragStart={handleDragStart}
+      onDragStart={handleAreaDragStart}
     >
       <div className="flex gap-4 h-full">
         {/* Ones Section */}
@@ -159,7 +157,7 @@ const PlaceValueNumberArea: React.FC<PlaceValueNumberAreaProps> = ({
       {/* Regrouping Message */}
       {shouldHighlightOnes && (
         <div className="text-center mt-1 text-sm text-yellow-600 font-bold animate-bounce">
-          Drag 10 ones to tens area!
+          10 ones will become 1 ten!
         </div>
       )}
     </div>
