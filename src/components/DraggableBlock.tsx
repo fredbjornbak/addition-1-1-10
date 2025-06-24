@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface DraggableBlockProps {
@@ -71,9 +70,9 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '40px' : '20px', // Increased from 35px/18px
-        height: isTens ? '28px' : '20px', // Increased from 25px/18px  
-        fontSize: isTens ? '12px' : '10px', // Slightly increased font sizes
+        width: isTens ? '45px' : '22px', // Increased from 40px/20px
+        height: isTens ? '32px' : '22px', // Increased from 28px/20px  
+        fontSize: isTens ? '14px' : '12px', // Increased font sizes
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
