@@ -47,7 +47,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Column drop event:', { type, workspaceId });
+    console.log('🎯 PlaceValueColumn drop:', { type, workspaceId });
     onDrop(e, type);
   };
 
@@ -78,23 +78,23 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
-      className={`relative rounded-lg p-6 h-[240px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
+      className={`relative rounded-lg p-2 h-[200px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#FFD700' : borderColor
       }}
       aria-label={`Click to add ${type} blocks or drop blocks here`}
     >
-      <div className={`font-dm-sans text-center font-bold mb-4 text-2xl ${textColor}`}>
+      <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
         {type.toUpperCase()}
       </div>
-      <div className={`text-base ${textColor} mb-4 opacity-75`}>
+      <div className={`text-sm ${textColor} mb-2 opacity-75`}>
         Click or drop!
       </div>
       
       {/* Special message for tens column when ones can be regrouped */}
       {type === 'tens' && isDropTarget && (
-        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-3 rounded text-base font-bold animate-bounce-gentle z-20">
+        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-2 py-1 rounded text-sm font-bold animate-bounce-gentle z-20">
           Drop ones here!
         </div>
       )}
@@ -118,7 +118,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       {/* Drop zone indicator */}
       {isDropTarget && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="bg-yellow-400 text-yellow-900 px-4 py-3 rounded text-base font-bold animate-bounce-gentle">
+          <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-sm font-bold animate-bounce-gentle">
             Drop here!
           </div>
         </div>

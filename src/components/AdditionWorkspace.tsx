@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import WorkspaceSection from './WorkspaceSection';
 import { SimpleProblem } from '../utils/simpleProblems';
-import { useCrossWorkspaceDrag } from '../hooks/useCrossWorkspaceDrag';
 
 interface AdditionWorkspaceProps {
   problem: SimpleProblem;
@@ -35,23 +34,32 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
   const [dragTargetWorkspace, setDragTargetWorkspace] = useState<string | null>(null);
 
   const handleCrossWorkspaceDrop = (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number) => {
-    console.log('Cross-workspace drop:', { sourceWorkspace, blockType, blockValue });
+    console.log('🎯 CROSS-WORKSPACE DROP:', { 
+      sourceWorkspace, 
+      blockType, 
+      blockValue,
+      currentTotal: { totalTens, totalOnes }
+    });
     
     // Add the block to the total workspace
     if (blockType === 'tens') {
+      console.log('➕ Adding tens block to total');
       onTotalChange(totalTens + 1, totalOnes);
     } else {
+      console.log('➕ Adding ones block to total');
       onTotalChange(totalTens, totalOnes + 1);
     }
 
     // Remove the block from the source workspace
     if (sourceWorkspace === 'first') {
+      console.log('➖ Removing from first workspace');
       if (blockType === 'tens') {
         onFirstNumberChange(Math.max(0, firstNumberTens - 1), firstNumberOnes);
       } else {
         onFirstNumberChange(firstNumberTens, Math.max(0, firstNumberOnes - 1));
       }
     } else if (sourceWorkspace === 'second') {
+      console.log('➖ Removing from second workspace');
       if (blockType === 'tens') {
         onSecondNumberChange(Math.max(0, secondNumberTens - 1), secondNumberOnes);
       } else {
@@ -61,15 +69,16 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
     
     // Clear drag target
     setDragTargetWorkspace(null);
+    console.log('✅ Cross-workspace transfer complete');
   };
 
   const handleCrossWorkspaceDragEnter = (workspaceId: string) => {
-    console.log('Drag enter workspace:', workspaceId);
+    console.log('🎯 DRAG ENTER workspace:', workspaceId);
     setDragTargetWorkspace(workspaceId);
   };
 
   const handleCrossWorkspaceDragLeave = () => {
-    console.log('Drag leave workspace');
+    console.log('🚪 DRAG LEAVE workspace');
     setDragTargetWorkspace(null);
   };
 

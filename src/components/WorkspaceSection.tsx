@@ -34,10 +34,12 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   onCrossWorkspaceDragLeave
 }) => {
   const handleAddTens = () => {
+    console.log('➕ Adding tens to workspace:', workspaceId);
     onBlocksChange(tensCount + 1, onesCount);
   };
 
   const handleAddOnes = () => {
+    console.log('➕ Adding ones to workspace:', workspaceId);
     onBlocksChange(tensCount, onesCount + 1);
   };
 
@@ -45,31 +47,43 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('WorkspaceSection drop event:', { workspaceId, canReceiveFromOthers });
+    console.log('🎯 WorkspaceSection DROP:', { 
+      workspaceId, 
+      canReceiveFromOthers,
+      hasDropHandler: !!onCrossWorkspaceDrop 
+    });
     
     if (!canReceiveFromOthers || !onCrossWorkspaceDrop) {
-      console.log('Cannot receive from others or no drop handler');
+      console.log('❌ Cannot receive or no drop handler');
       return;
     }
     
-    // Try to get cross-workspace data first
-    const crossWorkspaceData = e.dataTransfer.getData('application/json');
-    console.log('Cross-workspace data received:', crossWorkspaceData);
+    // Get cross-workspace data
+    const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
+    console.log('📋 Raw cross-workspace data:', crossWorkspaceDataStr);
     
-    if (crossWorkspaceData) {
+    if (crossWorkspaceDataStr) {
       try {
-        const { blockType, blockValue, sourceWorkspace } = JSON.parse(crossWorkspaceData);
-        console.log('Parsed cross-workspace data:', { blockType, blockValue, sourceWorkspace });
+        const crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
+        console.log('📦 Parsed cross-workspace data:', crossWorkspaceData);
         
-        // Only process if it's from a different workspace
-        if (sourceWorkspace !== workspaceId) {
-          console.log('Processing cross-workspace drop');
+        const { blockType, blockValue, sourceWorkspace, isFromWorkspace } = crossWorkspaceData;
+        
+        // Only process if it's from a different workspace and is a cross-workspace drag
+        if (isFromWorkspace && sourceWorkspace && sourceWorkspace !== workspaceId) {
+          console.log('✅ Processing cross-workspace drop:', {
+            from: sourceWorkspace,
+            to: workspaceId,
+            blockType,
+            blockValue
+          });
+          
           onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue);
         } else {
-          console.log('Same workspace, ignoring');
+          console.log('🚫 Ignoring - same workspace or not cross-workspace');
         }
       } catch (error) {
-        console.log('Error parsing cross-workspace data:', error);
+        console.error('❌ Error parsing cross-workspace data:', error);
       }
     }
   };
@@ -78,7 +92,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     if (canReceiveFromOthers && onCrossWorkspaceDragEnter) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Drag enter workspace:', workspaceId);
+      console.log('🎯 Drag ENTER workspace:', workspaceId);
       onCrossWorkspaceDragEnter(workspaceId);
     }
   };
@@ -87,7 +101,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     if (canReceiveFromOthers && onCrossWorkspaceDragLeave) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Drag leave workspace:', workspaceId);
+      console.log('🚪 Drag LEAVE workspace:', workspaceId);
       onCrossWorkspaceDragLeave();
     }
   };
@@ -101,9 +115,9 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
 
   return (
     <div 
-      className={`p-2 rounded-lg border-2 min-h-[300px] ${isDropTarget ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+      className={`p-2 rounded-lg border-2 min-h-[300px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
       style={{
-        backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.1)' : backgroundColor,
+        backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
         borderColor: isDropTarget ? '#3B82F6' : borderColor
       }}
       onDrop={handleDrop}
@@ -116,8 +130,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       </h3>
       
       {isDropTarget && canReceiveFromOthers && (
-        <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse">
-          Drop blocks here to add them!
+        <div className="text-center mb-2 text-blue-600 font-bold text-sm animate-pulse bg-blue-100 rounded px-2 py-1">
+          🎯 Drop blocks here to add them!
         </div>
       )}
       
@@ -130,8 +144,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         workspaceId={workspaceId}
       />
       
-      <div className="text-center mt-1 font-dm-sans text-sm text-grade-black">
-        Value: {tensCount * 10 + onesCount}
+      <div className="text-center mt-2 font-dm-sans text-sm text-grade-black bg-gray-100 rounded px-2 py-1">
+        Value: {tensCount * 10 + onesCount} ({tensCount} tens + {onesCount} ones)
       </div>
     </div>
   );

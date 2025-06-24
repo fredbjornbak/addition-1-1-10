@@ -28,27 +28,33 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   workspaceId
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
-    console.log('Block drag start:', { id, type, value, workspaceId });
+    console.log('🚀 DraggableBlock drag start:', { 
+      id, 
+      type, 
+      value, 
+      workspaceId,
+      position: position 
+    });
     
     // Set regular block ID for within-workspace operations
     e.dataTransfer.setData('text/plain', id);
     
-    // Set cross-workspace data if workspace ID is provided
-    if (workspaceId) {
-      const crossWorkspaceData = {
-        blockType: type,
-        blockValue: value,
-        sourceWorkspace: workspaceId,
-        blockId: id
-      };
-      e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
-      console.log('Cross-workspace data set:', crossWorkspaceData);
-    }
+    // Set cross-workspace data for between-workspace operations
+    const crossWorkspaceData = {
+      blockType: type,
+      blockValue: value,
+      sourceWorkspace: workspaceId,
+      blockId: id,
+      isFromWorkspace: true
+    };
+    e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
+    console.log('📦 Cross-workspace data set:', crossWorkspaceData);
     
     onDragStart(id);
   };
 
   const handleDoubleClick = () => {
+    console.log('🗑️ Double click remove block:', { id, type, value });
     onRemove(id);
   };
 
@@ -67,9 +73,9 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '50px' : '20px',
-        height: isTens ? '30px' : '20px',
-        fontSize: isTens ? '12px' : '10px',
+        width: isTens ? '35px' : '18px', // Updated sizes
+        height: isTens ? '25px' : '18px',
+        fontSize: isTens ? '11px' : '9px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
