@@ -9,7 +9,7 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
     const blockWidth = 24; // Smaller tens blocks
     const blockHeight = 18; // Smaller tens blocks
     const spacing = 3; // Good spacing
-    const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
+    const maxCols = 4; // Fixed to 4 columns
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
@@ -21,7 +21,7 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
     const blockWidth = 16; // Smaller square blocks
     const blockHeight = 16; // Smaller square blocks
     const spacing = 2; // Minimal spacing for ones
-    const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
+    const maxCols = 4; // Fixed to 4 columns
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
@@ -36,7 +36,7 @@ export const generateBundledPositions = () => {
   const positions = [];
   const blockSize = 16; // Smaller for bundled ones blocks
   const spacing = 2; // Minimal spacing
-  const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockSize + spacing));
+  const maxCols = 4; // Fixed to 4 columns
   
   for (let i = 0; i < 10; i++) {
     const row = Math.floor(i / maxCols);
