@@ -117,7 +117,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
 
   return (
     <div 
-      className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
+      className={`p-4 rounded-lg border-2 min-h-[500px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
         borderColor: isDropTarget ? '#3B82F6' : borderColor
@@ -127,7 +127,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
     >
-      <h3 className="font-space-grotesk text-lg font-bold text-center mb-2 text-grade-black">
+      <h3 className="font-space-grotesk text-xl font-bold text-center mb-4 text-grade-black">
         {title}
       </h3>
       
@@ -148,7 +148,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         externalOnesCount={onesCount}
       />
       
-      <div className="text-center mt-2 font-dm-sans text-sm text-grade-black bg-gray-100 rounded px-2 py-1">
+      <div className="text-center mt-3 font-dm-sans text-base text-grade-black bg-gray-100 rounded px-3 py-2">
         Value: {tensCount * 10 + onesCount} ({tensCount} tens + {onesCount} ones)
       </div>
     </div>
