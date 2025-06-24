@@ -31,7 +31,12 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     setBlocks,
     addTenBlock,
     addOneBlock,
-    removeBlock
+    removeBlock,
+    isDragging,
+    draggedBlocks,
+    startDrag,
+    cancelDrag,
+    completeDrag
   } = useBlockManagement(
     onAddTens, 
     onAddOnes, 
@@ -60,16 +65,41 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     }
   };
 
+  const handleBulkDragStart = (blockType: 'tens' | 'ones') => {
+    startDrag(blockType);
+  };
+
   const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
     e.preventDefault();
     const draggedBlockId = e.dataTransfer.getData('text/plain');
     const draggedBlock = blocks.find(b => b.id === draggedBlockId);
     
-    if (!draggedBlock) return;
+    if (!draggedBlock) {
+      cancelDrag();
+      return;
+    }
 
     handleRegroup(draggedBlock, targetType);
     handleDragEnd();
+    completeDrag();
   };
+
+  const handleDragCancel = () => {
+    handleDragEnd();
+    cancelDrag();
+  };
+
+  // Cancel drag on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDragging) {
+        handleDragCancel();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isDragging]);
 
   const tensCount = blocks.filter(b => b.type === 'tens').length;
   const onesCount = blocks.filter(b => b.type === 'ones').length;
@@ -109,6 +139,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           isDropTarget={dragState.isOver === 'tens'}
           isGrouping={isGrouping}
           workspaceId={workspaceId}
+          onStartBulkDrag={handleBulkDragStart}
         />
         
         <PlaceValueColumn
@@ -125,10 +156,16 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           isDropTarget={dragState.isOver === 'ones'}
           isGrouping={isGrouping}
           workspaceId={workspaceId}
+          onStartBulkDrag={handleBulkDragStart}
         />
       </div>
 
-      <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} />
+      <DragFeedback 
+        dragState={dragState} 
+        onesCount={onesCount} 
+        tensCount={tensCount}
+        draggedBlocks={draggedBlocks}
+      />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 export interface Block {
   id: string;
   value: number;
@@ -7,6 +6,7 @@ export interface Block {
     x: number;
     y: number;
   };
+  isBeingDragged?: boolean;
 }
 
 export interface SimpleBoardProps {

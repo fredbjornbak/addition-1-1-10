@@ -1,3 +1,4 @@
+
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
@@ -16,6 +17,7 @@ interface PlaceValueColumnProps {
   isDropTarget?: boolean;
   isGrouping?: boolean;
   workspaceId?: string;
+  onStartBulkDrag?: (blockType: 'tens' | 'ones') => void;
 }
 
 const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
@@ -31,7 +33,8 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   onDragOver,
   isDropTarget = false,
   isGrouping = false,
-  workspaceId
+  workspaceId,
+  onStartBulkDrag
 }) => {
   const isOnes = type === 'ones';
   const backgroundColor = isOnes ? 'rgba(255, 111, 0, 0.1)' : 'rgba(0, 38, 255, 0.1)';
@@ -74,7 +77,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   };
 
   const shouldVibrate = hasBundle && isOnes;
-  const totalBlocksOfType = blocks.length; // Get total count for bulk transfer
+  const totalBlocksOfType = blocks.length;
 
   return (
     <button
@@ -97,7 +100,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
         Click!
       </div>
       
-      {/* Render blocks with bulk count */}
+      {/* Render blocks with enhanced props */}
       {blocks.map(block => (
         <DraggableBlock
           key={block.id}
@@ -111,6 +114,8 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           isGrouping={isGrouping}
           workspaceId={workspaceId}
           totalBlocksOfType={totalBlocksOfType}
+          isBeingDragged={block.isBeingDragged}
+          onStartBulkDrag={onStartBulkDrag}
         />
       ))}
     </button>

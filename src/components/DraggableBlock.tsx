@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface DraggableBlockProps {
@@ -13,7 +14,9 @@ interface DraggableBlockProps {
   shouldVibrate?: boolean;
   isGrouping?: boolean;
   workspaceId?: string;
-  totalBlocksOfType?: number; // New prop for bulk transfer
+  totalBlocksOfType?: number;
+  isBeingDragged?: boolean;
+  onStartBulkDrag?: (blockType: 'tens' | 'ones') => void;
 }
 
 const DraggableBlock: React.FC<DraggableBlockProps> = ({
@@ -26,7 +29,9 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   shouldVibrate = false,
   isGrouping = false,
   workspaceId,
-  totalBlocksOfType = 1
+  totalBlocksOfType = 1,
+  isBeingDragged = false,
+  onStartBulkDrag
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
     console.log('🚀 DraggableBlock bulk drag start:', { 
@@ -34,9 +39,13 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       type, 
       value, 
       workspaceId,
-      totalBlocksOfType,
-      position: position 
+      totalBlocksOfType
     });
+    
+    // Start bulk drag for all blocks of this type
+    if (onStartBulkDrag) {
+      onStartBulkDrag(type);
+    }
     
     // Set regular block ID for within-workspace operations
     e.dataTransfer.setData('text/plain', id);
@@ -48,7 +57,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       sourceWorkspace: workspaceId,
       blockId: id,
       isFromWorkspace: true,
-      bulkCount: totalBlocksOfType // Include total count for bulk transfer
+      bulkCount: totalBlocksOfType
     };
     e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
     console.log('📦 Cross-workspace bulk data set:', crossWorkspaceData);
@@ -56,9 +65,12 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
     onDragStart(id);
   };
 
-  const handleDoubleClick = () => {
-    console.log('🗑️ Double click remove block:', { id, type, value });
-    onRemove(id);
+  const handleClick = (e: React.MouseEvent) => {
+    // Single click for deletion (changed from double-click for better UX)
+    if (e.detail === 1) {
+      console.log('🗑️ Single click remove block:', { id, type, value });
+      onRemove(id);
+    }
   };
 
   const isTens = type === 'tens';
@@ -66,13 +78,14 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const hoverColor = isTens ? 'hover:bg-blue-600' : 'hover:bg-orange-600';
   const vibrateClass = shouldVibrate ? 'animate-vibrate' : '';
   const groupingClass = isGrouping ? 'animate-group-flash' : '';
+  const draggedClass = isBeingDragged ? 'opacity-30 scale-90' : 'opacity-100';
 
   return (
     <div
       draggable
       onDragStart={handleDragStart}
-      onDoubleClick={handleDoubleClick}
-      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded shadow-lg transition-all duration-200 select-none ${vibrateClass} ${groupingClass}`}
+      onClick={handleClick}
+      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded shadow-lg transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -84,7 +97,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         justifyContent: 'center',
         zIndex: 10
       }}
-      title={`${value} - Double click to remove${totalBlocksOfType > 1 ? ` (Will drag all ${totalBlocksOfType} ${type})` : ''}`}
+      title={`${value} - Click to remove${totalBlocksOfType > 1 ? ` (Will drag all ${totalBlocksOfType} ${type})` : ''}`}
     >
       {value}
     </div>

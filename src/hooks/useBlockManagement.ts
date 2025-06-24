@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Block } from '../types/placeValue';
 import { generatePosition } from '../utils/blockPositions';
 
@@ -12,17 +12,28 @@ export const useBlockManagement = (
   externalOnesCount?: number
 ) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedBlocks, setDraggedBlocks] = useState<Block[]>([]);
+  const isManualOperation = useRef(false);
 
   // Clear all blocks when resetTrigger changes
   useEffect(() => {
     if (resetTrigger > 0) {
       console.log('🔄 Clearing all blocks due to reset trigger');
       setBlocks([]);
+      setIsDragging(false);
+      setDraggedBlocks([]);
     }
   }, [resetTrigger]);
 
   // Synchronize blocks with external counts (for cross-workspace transfers)
   useEffect(() => {
+    // Skip sync during manual operations
+    if (isManualOperation.current) {
+      console.log('⏸️ Skipping external sync during manual operation');
+      return;
+    }
+
     if (externalTensCount !== undefined && externalOnesCount !== undefined) {
       console.log('🔄 Syncing blocks with external counts:', {
         externalTens: externalTensCount,
@@ -83,7 +94,9 @@ export const useBlockManagement = (
   };
 
   const removeBlock = (id: string) => {
-    console.log('🗑️ Removing block with ID:', id);
+    console.log('🗑️ Manual block removal initiated for:', id);
+    isManualOperation.current = true;
+    
     setBlocks(prev => {
       const blockToRemove = prev.find(block => block.id === id);
       if (!blockToRemove) {
@@ -95,10 +108,45 @@ export const useBlockManagement = (
       const tens = newBlocks.filter(b => b.type === 'tens').length;
       const ones = newBlocks.filter(b => b.type === 'ones').length;
       
-      console.log('✅ Block removed. New counts:', { tens, ones });
+      console.log('✅ Block removed manually. New counts:', { tens, ones });
       onBlocksChange(tens, ones);
+      
+      // Clear manual operation flag after state update
+      setTimeout(() => {
+        isManualOperation.current = false;
+      }, 100);
+      
       return newBlocks;
     });
+  };
+
+  const startDrag = (blockType: 'tens' | 'ones') => {
+    console.log('🚀 Starting drag for all', blockType, 'blocks');
+    const blocksOfType = blocks.filter(b => b.type === blockType);
+    setIsDragging(true);
+    setDraggedBlocks(blocksOfType);
+    
+    // Visually hide the dragged blocks
+    setBlocks(prev => prev.map(block => 
+      block.type === blockType 
+        ? { ...block, isBeingDragged: true } 
+        : block
+    ));
+  };
+
+  const cancelDrag = () => {
+    console.log('❌ Drag cancelled, restoring blocks');
+    setIsDragging(false);
+    setDraggedBlocks([]);
+    
+    // Restore visibility of all blocks
+    setBlocks(prev => prev.map(block => ({ ...block, isBeingDragged: false })));
+  };
+
+  const completeDrag = () => {
+    console.log('✅ Drag completed successfully');
+    setIsDragging(false);
+    setDraggedBlocks([]);
   };
 
   return {
@@ -106,6 +154,11 @@ export const useBlockManagement = (
     setBlocks,
     addTenBlock,
     addOneBlock,
-    removeBlock
+    removeBlock,
+    isDragging,
+    draggedBlocks,
+    startDrag,
+    cancelDrag,
+    completeDrag
   };
 };
