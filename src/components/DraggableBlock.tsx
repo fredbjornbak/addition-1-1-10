@@ -94,29 +94,36 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   // Enhanced visual feedback during drag
   const draggedClass = isBeingDragged 
     ? 'opacity-30 scale-75 ring-2 ring-yellow-400 animate-pulse' 
-    : 'opacity-100 hover:scale-110';
+    : 'opacity-100 hover:scale-110 hover:shadow-lg hover:ring-2 hover:ring-white/50';
 
+  // Increased block sizes for better draggability
+  const blockWidth = isTens ? 40 : 28;
+  const blockHeight = isTens ? 32 : 28;
+  const fontSize = isTens ? '14px' : '12px';
+  
   return (
     <div
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded-lg shadow-xl transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass}`}
+      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded-lg shadow-xl transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass} border-2 border-white/20`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '24px' : '16px',
-        height: isTens ? '18px' : '16px',
-        fontSize: isTens ? '10px' : '8px',
+        width: `${blockWidth}px`,
+        height: `${blockHeight}px`,
+        fontSize: fontSize,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: isBeingDragged ? 20 : 10,
         lineHeight: '1',
-        padding: '1px',
-        fontWeight: '900'
+        padding: '2px',
+        fontWeight: '900',
+        minWidth: `${blockWidth}px`,
+        minHeight: `${blockHeight}px`
       }}
-      title={`${value} - Click to remove`}
+      title={`${value} - Click to remove, drag to move`}
     >
       {value}
     </div>

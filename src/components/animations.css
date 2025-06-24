@@ -1,35 +1,29 @@
 
+/* Vibration animation for blocks that can be regrouped */
 @keyframes vibrate {
-  0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
+  0%, 100% { transform: translate(0); }
+  10% { transform: translate(-1px, -1px); }
+  20% { transform: translate(1px, -1px); }
+  30% { transform: translate(-1px, 1px); }
+  40% { transform: translate(1px, 1px); }
+  50% { transform: translate(-1px, -1px); }
+  60% { transform: translate(1px, -1px); }
+  70% { transform: translate(-1px, 1px); }
+  80% { transform: translate(1px, 1px); }
+  90% { transform: translate(-1px, -1px); }
 }
 
+/* Flash animation for grouping blocks */
 @keyframes group-flash {
-  0%, 100% { background-color: inherit; }
-  50% { background-color: rgba(255, 255, 0, 0.3); }
+  0%, 100% { background-color: currentColor; }
+  50% { background-color: #fbbf24; }
 }
 
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
+/* Apply animations */
 .animate-vibrate {
-  animation: vibrate 0.5s linear infinite;
+  animation: vibrate 0.5s ease-in-out infinite;
 }
 
 .animate-group-flash {
-  animation: group-flash 1s ease-in-out infinite;
-}
-
-.animate-sparkle {
-  animation: sparkle 1s ease-in-out infinite;
+  animation: group-flash 0.8s ease-in-out infinite;
 }

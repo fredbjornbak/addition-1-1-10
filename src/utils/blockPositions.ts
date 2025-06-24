@@ -1,15 +1,15 @@
 
 // Container dimensions for proper block positioning
-const CONTAINER_PADDING = 15; // Reduced padding
-const CONTAINER_WIDTH = 200; // Increased container width
+const CONTAINER_PADDING = 15; // Keep padding the same
+const CONTAINER_WIDTH = 200; // Keep container width
 const CONTAINER_HEIGHT = 280; // Keep height the same
 
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   if (type === 'tens') {
-    const blockWidth = 24; // Smaller tens blocks
-    const blockHeight = 18; // Smaller tens blocks
-    const spacing = 3; // Good spacing
-    const maxCols = 4; // Fixed to 4 columns
+    const blockWidth = 40; // Increased from 24
+    const blockHeight = 32; // Increased from 18
+    const spacing = 4; // Slightly increased spacing
+    const maxCols = 3; // Reduced columns to fit larger blocks
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
@@ -18,10 +18,10 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
       y: 15 + row * (blockHeight + spacing) // Start from top of container
     };
   } else {
-    const blockWidth = 16; // Smaller square blocks
-    const blockHeight = 16; // Smaller square blocks
-    const spacing = 2; // Minimal spacing for ones
-    const maxCols = 4; // Fixed to 4 columns
+    const blockWidth = 28; // Increased from 16
+    const blockHeight = 28; // Increased from 16
+    const spacing = 3; // Slightly increased spacing
+    const maxCols = 4; // Keep 4 columns for ones
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
     
@@ -34,9 +34,9 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
 
 export const generateBundledPositions = () => {
   const positions = [];
-  const blockSize = 16; // Smaller for bundled ones blocks
-  const spacing = 2; // Minimal spacing
-  const maxCols = 4; // Fixed to 4 columns
+  const blockSize = 28; // Increased from 16 for bundled ones blocks
+  const spacing = 3; // Slightly increased spacing
+  const maxCols = 4; // Keep 4 columns
   
   for (let i = 0; i < 10; i++) {
     const row = Math.floor(i / maxCols);
