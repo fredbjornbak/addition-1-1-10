@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import DraggableBlock from './DraggableBlock';
@@ -17,16 +18,26 @@ interface SimpleBoardProps {
   onAddOnes: () => void;
   userAnswer: number;
   onBlocksChange: (tens: number, ones: number) => void;
+  resetTrigger: number;
 }
 
 const SimpleBoard: React.FC<SimpleBoardProps> = ({ 
   onAddTens,
   onAddOnes,
   userAnswer,
-  onBlocksChange
+  onBlocksChange,
+  resetTrigger
 }) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [showRegroupModal, setShowRegroupModal] = useState(false);
+
+  // Clear all blocks when resetTrigger changes
+  useEffect(() => {
+    if (resetTrigger > 0) {
+      setBlocks([]);
+      setShowRegroupModal(false);
+    }
+  }, [resetTrigger]);
 
   // Generate random position within column bounds
   const generatePosition = (type: 'tens' | 'ones', index: number) => {

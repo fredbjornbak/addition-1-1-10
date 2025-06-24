@@ -15,6 +15,7 @@ const SimplePlaceValueTool = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [gameComplete, setGameComplete] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(0);
 
   useEffect(() => {
     // Generate 10 problems when component mounts
@@ -71,6 +72,7 @@ const SimplePlaceValueTool = () => {
     setTensBlocks(0);
     setOnesBlocks(0);
     setUserAnswer(0);
+    setResetTrigger(prev => prev + 1); // Trigger reset in SimpleBoard
   };
 
   const startNewGame = () => {
@@ -122,6 +124,7 @@ const SimplePlaceValueTool = () => {
         onAddOnes={handleAddOnes}
         userAnswer={userAnswer}
         onBlocksChange={handleBlocksChange}
+        resetTrigger={resetTrigger}
       />
 
       {/* Feedback */}
