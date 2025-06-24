@@ -37,7 +37,8 @@ export const useBlockManagement = (
     if (externalTensCount !== undefined && externalOnesCount !== undefined) {
       console.log('🔄 Syncing blocks with external counts:', {
         externalTens: externalTensCount,
-        externalOnes: externalOnesCount
+        externalOnes: externalOnesCount,
+        currentBlocks: blocks.length
       });
       
       const newBlocks: Block[] = [];
@@ -62,7 +63,11 @@ export const useBlockManagement = (
         });
       }
       
-      console.log('✅ Setting blocks to match external counts:', newBlocks.length, 'total blocks');
+      console.log('✅ Created blocks to match external counts:', {
+        totalBlocks: newBlocks.length,
+        tensBlocks: newBlocks.filter(b => b.type === 'tens').length,
+        onesBlocks: newBlocks.filter(b => b.type === 'ones').length
+      });
       setBlocks(newBlocks);
     }
   }, [externalTensCount, externalOnesCount]);
@@ -74,6 +79,7 @@ export const useBlockManagement = (
       type: 'tens',
       position: generatePosition('tens', blocks.filter(b => b.type === 'tens').length)
     };
+    console.log('➕ Adding ten block:', newBlock.id);
     setBlocks(prev => [...prev, newBlock]);
     onAddTens();
   };
@@ -88,6 +94,7 @@ export const useBlockManagement = (
       position: generatePosition('ones', currentOnes)
     };
     
+    console.log('➕ Adding one block:', newBlock.id);
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
     onAddOnes();

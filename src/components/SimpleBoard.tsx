@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -59,28 +60,48 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     const block = blocks.find(b => b.id === blockId);
     if (block) {
       console.log('🚀 Simple drag start for block:', blockId, block.type);
-      handleDragStart(block, 0); // Remove bulk drag logic
+      handleDragStart(block, 0);
     }
   };
 
   const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
     e.preventDefault();
+    console.log('🎯 SimpleBoard drop event:', { workspaceId, targetType });
+
+    // Check for cross-workspace data first
+    const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
+    if (crossWorkspaceDataStr) {
+      console.log('📋 Cross-workspace data detected in SimpleBoard:', crossWorkspaceDataStr);
+      try {
+        const crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
+        console.log('📦 Cross-workspace drop in SimpleBoard:', crossWorkspaceData);
+        
+        // For cross-workspace drops, let the event bubble up to WorkspaceSection
+        // Don't stop propagation so it reaches the parent WorkspaceSection
+        console.log('⬆️ Letting cross-workspace drop bubble up to WorkspaceSection');
+        return;
+      } catch (error) {
+        console.error('❌ Error parsing cross-workspace data in SimpleBoard:', error);
+      }
+    }
+
+    // Handle internal drops (regrouping within same workspace)
     const draggedBlockId = e.dataTransfer.getData('text/plain');
     const draggedBlock = blocks.find(b => b.id === draggedBlockId);
     
     if (!draggedBlock) {
-      console.log('❌ No dragged block found');
+      console.log('❌ No dragged block found for internal drop');
       handleDragEnd();
       return;
     }
 
-    console.log('🎯 Drop detected:', {
+    console.log('🔄 Internal drop detected:', {
       draggedBlockType: draggedBlock.type,
       targetType,
       blockId: draggedBlockId
     });
 
-    // Only trigger regrouping for cross-type drops
+    // Only trigger regrouping for cross-type drops within same workspace
     if (draggedBlock.type !== targetType) {
       console.log('🔄 Cross-type drop - triggering regrouping');
       handleRegroup(draggedBlock, targetType);
