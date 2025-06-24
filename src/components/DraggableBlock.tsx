@@ -34,14 +34,30 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   onStartBulkDrag
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
-    console.log('🚀 DraggableBlock simple drag start:', { 
+    console.log('🚀 DraggableBlock drag start:', { 
       id, 
       type, 
-      value
+      value,
+      workspaceId,
+      totalBlocksOfType
     });
     
-    // Simple drag - just set the block ID
+    // Set simple drag data for internal drops
     e.dataTransfer.setData('text/plain', id);
+    
+    // Set cross-workspace drag data for bulk transfers
+    if (workspaceId && (workspaceId === 'first' || workspaceId === 'second')) {
+      const crossWorkspaceData = {
+        blockType: type,
+        blockValue: value,
+        sourceWorkspace: workspaceId,
+        isFromWorkspace: true,
+        bulkCount: totalBlocksOfType
+      };
+      
+      console.log('📦 Setting cross-workspace drag data:', crossWorkspaceData);
+      e.dataTransfer.setData('application/json', JSON.stringify(crossWorkspaceData));
+    }
     
     onDragStart(id);
   };
@@ -71,9 +87,9 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '24px' : '16px', // Smaller blocks
-        height: isTens ? '18px' : '16px', // Smaller blocks
-        fontSize: isTens ? '10px' : '8px', // Smaller font
+        width: isTens ? '24px' : '16px',
+        height: isTens ? '18px' : '16px',
+        fontSize: isTens ? '10px' : '8px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

@@ -95,7 +95,6 @@ export const useBlockManagement = (
 
   const removeBlock = (id: string) => {
     console.log('🗑️ Manual block removal initiated for:', id);
-    isManualOperation.current = true;
     
     setBlocks(prev => {
       const blockToRemove = prev.find(block => block.id === id);
@@ -104,6 +103,9 @@ export const useBlockManagement = (
         return prev;
       }
       
+      // Set manual operation flag before state update
+      isManualOperation.current = true;
+      
       const newBlocks = prev.filter(block => block.id !== id);
       const tens = newBlocks.filter(b => b.type === 'tens').length;
       const ones = newBlocks.filter(b => b.type === 'ones').length;
@@ -111,12 +113,12 @@ export const useBlockManagement = (
       console.log('✅ Block removed manually. New counts:', { tens, ones });
       onBlocksChange(tens, ones);
       
-      // Clear manual operation flag after state update
-      setTimeout(() => {
-        isManualOperation.current = false;
-      }, 100);
-      
       return newBlocks;
+    });
+
+    // Clear manual operation flag after the render cycle
+    requestAnimationFrame(() => {
+      isManualOperation.current = false;
     });
   };
 
