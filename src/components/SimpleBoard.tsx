@@ -35,11 +35,15 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     cancelDrag,
     completeDrag
   } = useBlockManagement(onAddTens, onAddOnes, onBlocksChange, resetTrigger, externalTensCount, externalOnesCount);
+  
   const {
     isGrouping,
     handleRegroup,
-    canRegroup
+    canRegroup,
+    canRegroupOnestoTens,
+    canRegroupTensToOnes
   } = useRegrouping(blocks, setBlocks, onBlocksChange);
+  
   const {
     dragState,
     handleDragStart,
@@ -115,9 +119,42 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       {canRegroup() && !isGrouping}
       
       <div className="grid grid-cols-2 gap-2">
-        <PlaceValueColumn type="tens" blocks={tensBlocks} onAddBlock={addTenBlock} onRemoveBlock={removeBlock} onDragStart={handleBlockDragStart} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} isDropTarget={dragState.isOver === 'tens'} isGrouping={isGrouping} workspaceId={workspaceId} onStartBulkDrag={handleBulkDragStart} />
+        <PlaceValueColumn 
+          type="tens" 
+          blocks={tensBlocks} 
+          onAddBlock={addTenBlock} 
+          onRemoveBlock={removeBlock} 
+          onDragStart={handleBlockDragStart} 
+          onDrop={handleDrop} 
+          onDragEnter={handleDragEnter} 
+          onDragLeave={handleDragLeave} 
+          onDragOver={handleDragOver} 
+          isDropTarget={dragState.isOver === 'tens'} 
+          isGrouping={isGrouping} 
+          workspaceId={workspaceId} 
+          onStartBulkDrag={handleBulkDragStart}
+          canRegroupOnestoTens={canRegroupOnestoTens()}
+          canRegroupTensToOnes={canRegroupTensToOnes()}
+        />
         
-        <PlaceValueColumn type="ones" blocks={onesBlocks} hasBundle={hasBundle} onAddBlock={addOneBlock} onRemoveBlock={removeBlock} onDragStart={handleBlockDragStart} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} isDropTarget={dragState.isOver === 'ones'} isGrouping={isGrouping} workspaceId={workspaceId} onStartBulkDrag={handleBulkDragStart} />
+        <PlaceValueColumn 
+          type="ones" 
+          blocks={onesBlocks} 
+          hasBundle={hasBundle} 
+          onAddBlock={addOneBlock} 
+          onRemoveBlock={removeBlock} 
+          onDragStart={handleBlockDragStart} 
+          onDrop={handleDrop} 
+          onDragEnter={handleDragEnter} 
+          onDragLeave={handleDragLeave} 
+          onDragOver={handleDragOver} 
+          isDropTarget={dragState.isOver === 'ones'} 
+          isGrouping={isGrouping} 
+          workspaceId={workspaceId} 
+          onStartBulkDrag={handleBulkDragStart}
+          canRegroupOnestoTens={canRegroupOnestoTens()}
+          canRegroupTensToOnes={canRegroupTensToOnes()}
+        />
       </div>
 
       <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} draggedBlocks={draggedBlocks} />
