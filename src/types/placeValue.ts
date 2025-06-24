@@ -7,8 +7,6 @@ export interface Block {
 }
 
 export interface SimpleBoardProps {
-  tensBlocks: number;
-  onesBlocks: number;
   onAddTens: () => void;
   onAddOnes: () => void;
   userAnswer: number;
