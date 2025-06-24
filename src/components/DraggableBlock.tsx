@@ -2,37 +2,48 @@
 import React from 'react';
 
 interface DraggableBlockProps {
+  id: string;
   value: number;
   type: 'tens' | 'ones';
-  onClick: () => void;
+  onRemove: (id: string) => void;
+  position: { x: number; y: number };
 }
 
-const DraggableBlock: React.FC<DraggableBlockProps> = ({ value, type, onClick }) => {
+const DraggableBlock: React.FC<DraggableBlockProps> = ({ 
+  id, 
+  value, 
+  type, 
+  onRemove, 
+  position 
+}) => {
   const bgColor = type === 'tens' ? '#0026FF' : '#FF6F00';
-  const width = type === 'tens' ? '80px' : '50px';
-  const height = type === 'tens' ? '60px' : '50px';
+  const width = type === 'tens' ? '80px' : '40px';
+  const height = type === 'tens' ? '30px' : '40px';
   
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onRemove(id);
+  };
+
   return (
-    <button
-      className="cursor-pointer select-none font-dm-sans text-grade-body text-grade-white font-bold
-                 rounded-grade-pill border-0 shadow-grade-button
+    <div
+      className="absolute cursor-pointer select-none font-dm-sans text-white font-bold
+                 rounded-md border-2 border-gray-800 shadow-lg
                  transition-all duration-200 hover:scale-110 active:scale-95 
-                 focus:outline-none focus:ring-4 focus:ring-opacity-50
-                 flex items-center justify-center min-w-[44px] min-h-[44px]"
-      onClick={onClick}
+                 flex items-center justify-center animate-scale-in"
+      onClick={handleClick}
       style={{
         backgroundColor: bgColor,
-        borderLeft: '10px solid #2F2E41',
-        borderBottom: '10px solid #2F2E41',
         width,
-        height
+        height,
+        left: position.x,
+        top: position.y,
+        fontSize: type === 'tens' ? '14px' : '12px'
       }}
-      onFocus={(e) => e.target.style.boxShadow = `0 0 0 4px ${bgColor}40`}
-      onBlur={(e) => e.target.style.boxShadow = '-10px 10px 40px rgba(0, 0, 0, 0.25)'}
-      aria-label={`Add ${value} ${type === 'tens' ? 'tens' : 'ones'} block`}
+      title={`Click to remove this ${type === 'tens' ? 'ten' : 'one'} block`}
     >
       {value}
-    </button>
+    </div>
   );
 };
 

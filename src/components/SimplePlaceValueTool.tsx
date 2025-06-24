@@ -33,14 +33,12 @@ const SimplePlaceValueTool = () => {
   };
 
   const handleAddOnes = () => {
-    if (onesBlocks < 20) {
-      if (onesBlocks === 9) {
-        setOnesBlocks(0);
-        setTensBlocks(prev => prev + 1);
-      } else {
-        setOnesBlocks(prev => prev + 1);
-      }
-    }
+    setOnesBlocks(prev => prev + 1);
+  };
+
+  const handleBlocksChange = (tens: number, ones: number) => {
+    setTensBlocks(tens);
+    setOnesBlocks(ones);
   };
 
   const checkAnswer = () => {
@@ -123,6 +121,7 @@ const SimplePlaceValueTool = () => {
         onAddTens={handleAddTens}
         onAddOnes={handleAddOnes}
         userAnswer={userAnswer}
+        onBlocksChange={handleBlocksChange}
       />
 
       {/* Feedback */}
