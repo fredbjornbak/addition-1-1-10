@@ -1,7 +1,5 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 interface LevelSelectorProps {
   currentLevel: number;
@@ -10,38 +8,63 @@ interface LevelSelectorProps {
 
 const LevelSelector: React.FC<LevelSelectorProps> = ({ currentLevel, onLevelChange }) => {
   const levels = [
-    { level: 1, name: 'Easy', description: 'Sums up to 10', color: 'bg-green-500' },
-    { level: 2, name: 'Medium', description: 'Sums 11-20', color: 'bg-yellow-500' },
-    { level: 3, name: 'Hard', description: '10 + ones', color: 'bg-orange-500' },
-    { level: 4, name: 'Expert', description: 'Teen + ones', color: 'bg-red-500' },
+    { level: 1, name: 'Easy', description: 'Sums up to 10', color: '#6F00FF' },
+    { level: 2, name: 'Medium', description: 'Sums 11-20', color: '#FF6F00' },
+    { level: 3, name: 'Hard', description: '10 + ones', color: '#0026FF' },
+    { level: 4, name: 'Expert', description: 'Teen + ones', color: '#6F00FF' },
   ];
 
   return (
-    <Card className="p-4 bg-white border-2 border-gray-300">
-      <div className="text-lg font-bold text-gray-800 mb-3 text-center">
+    <div 
+      className="p-6 shadow-lg"
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: '50px',
+        border: 'none',
+        borderLeft: '10px solid #2F2E41',
+        borderBottom: '10px solid #2F2E41'
+      }}
+    >
+      <div 
+        className="text-2xl font-bold mb-4 text-center"
+        style={{ 
+          color: '#2F2E41', 
+          fontFamily: 'Space Grotesk',
+          fontWeight: 700
+        }}
+      >
         🎯 Choose Your Level
       </div>
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex flex-wrap gap-3 justify-center">
         {levels.map(({ level, name, description, color }) => (
-          <Button
+          <button
             key={level}
             onClick={() => onLevelChange(level)}
-            className={`
-              px-4 py-2 rounded-lg font-bold text-white transition-all duration-200
-              ${currentLevel === level 
-                ? `${color} scale-110 shadow-lg` 
-                : 'bg-gray-400 hover:bg-gray-500'
-              }
-            `}
+            className={`px-6 py-4 font-bold transition-all duration-200 hover:scale-105 active:scale-95 min-w-[44px] min-h-[44px] ${
+              currentLevel === level ? 'scale-110' : ''
+            }`}
+            style={{
+              backgroundColor: currentLevel === level ? color : '#F0F0F0',
+              color: currentLevel === level ? '#FAFAFA' : '#2F2E41',
+              borderRadius: '100px',
+              border: currentLevel === level ? 'none' : '2px solid #E5E7EB',
+              borderLeft: currentLevel === level ? '10px solid #2F2E41' : '2px solid #E5E7EB',
+              borderBottom: currentLevel === level ? '10px solid #2F2E41' : '2px solid #E5E7EB',
+              boxShadow: currentLevel === level ? '-10px 10px 40px rgba(0, 0, 0, 0.25)' : 'none',
+              fontFamily: 'DM Sans',
+              fontSize: '18px',
+              fontWeight: currentLevel === level ? 700 : 500
+            }}
+            aria-label={`Select ${name} level: ${description}`}
           >
             <div className="text-center">
-              <div className="text-sm">{name}</div>
-              <div className="text-xs opacity-90">{description}</div>
+              <div className="text-lg font-bold">{name}</div>
+              <div className="text-sm opacity-90">{description}</div>
             </div>
-          </Button>
+          </button>
         ))}
       </div>
-    </Card>
+    </div>
   );
 };
 

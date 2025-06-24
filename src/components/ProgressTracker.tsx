@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import { Star } from 'lucide-react';
 
 interface ProgressTrackerProps {
@@ -23,31 +22,66 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({ progress, currentLeve
   const maxStars = 10;
 
   return (
-    <Card className="p-4 bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300">
-      <div className="text-lg font-bold text-purple-800 mb-2 text-center">
+    <div 
+      className="p-6 shadow-lg"
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: '50px',
+        border: 'none',
+        borderLeft: '10px solid #2F2E41',
+        borderBottom: '10px solid #2F2E41'
+      }}
+    >
+      <div 
+        className="text-2xl font-bold mb-4 text-center"
+        style={{ 
+          color: '#6F00FF', 
+          fontFamily: 'Space Grotesk',
+          fontWeight: 700
+        }}
+      >
         ⭐ Your Progress
       </div>
-      <div className="flex justify-center mb-2">
+      <div className="flex justify-center mb-4">
         {Array.from({ length: maxStars }, (_, i) => (
           <Star
             key={i}
-            className={`w-6 h-6 mx-1 ${
+            className={`w-8 h-8 mx-1 ${
               i < totalStars 
-                ? 'text-yellow-500 fill-current' 
-                : 'text-gray-300'
+                ? 'fill-current' 
+                : ''
             }`}
+            style={{
+              color: i < totalStars ? '#FF6F00' : '#E5E7EB'
+            }}
+            aria-label={i < totalStars ? 'Completed star' : 'Empty star'}
           />
         ))}
       </div>
-      <div className="text-center text-sm text-purple-700">
+      <div 
+        className="text-center mb-3"
+        style={{ 
+          color: '#2F2E41', 
+          fontFamily: 'DM Sans',
+          fontSize: '18px',
+          fontWeight: 500
+        }}
+      >
         Level {currentLevel}: {totalStars}/{maxStars} problems solved!
       </div>
       
       {/* Overall Progress Summary */}
-      <div className="mt-3 text-xs text-center text-gray-600">
+      <div 
+        className="text-center"
+        style={{ 
+          color: '#2F2E41', 
+          fontFamily: 'DM Sans',
+          fontSize: '16px'
+        }}
+      >
         <div>Total: L1({progress.level1}) L2({progress.level2}) L3({progress.level3}) L4({progress.level4})</div>
       </div>
-    </Card>
+    </div>
   );
 };
 

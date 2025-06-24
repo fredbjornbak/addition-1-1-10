@@ -4,13 +4,22 @@ import PlaceValueCanvas from '../components/PlaceValueCanvas';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFAFA' }}>
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ 
+            fontFamily: 'Space Grotesk', 
+            color: '#2F2E41',
+            fontWeight: 700
+          }}>
             🔢 Place Value Addition Fun! 🎯
           </h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+          <p className="text-xl max-w-2xl mx-auto" style={{ 
+            fontFamily: 'DM Sans', 
+            color: '#2F2E41',
+            fontSize: '20px',
+            lineHeight: '1.5'
+          }}>
             Learn addition up to 20 by moving tens and ones blocks! 
             Discover how numbers work together in the place value system.
           </p>

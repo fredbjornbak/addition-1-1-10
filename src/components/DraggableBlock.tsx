@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
 
 interface DraggableBlockProps {
   value: number;
@@ -10,19 +9,27 @@ interface DraggableBlockProps {
 
 const DraggableBlock: React.FC<DraggableBlockProps> = ({ value, type, onClick }) => {
   return (
-    <Card
-      className={`
-        cursor-pointer select-none transition-all duration-200 hover:scale-110 active:scale-95
-        ${type === 'tens' 
-          ? 'bg-blue-500 hover:bg-blue-600 text-white border-2 border-blue-700 w-16 h-12' 
-          : 'bg-orange-500 hover:bg-orange-600 text-white border-2 border-orange-700 w-8 h-8'
-        }
-        flex items-center justify-center font-bold rounded-lg shadow-lg
-      `}
+    <button
+      className="cursor-pointer select-none transition-all duration-200 hover:scale-110 active:scale-95 flex items-center justify-center font-bold min-w-[44px] min-h-[44px]"
       onClick={onClick}
+      style={{
+        backgroundColor: type === 'tens' ? '#0026FF' : '#FF6F00',
+        color: '#FAFAFA',
+        borderRadius: '100px',
+        border: 'none',
+        borderLeft: '10px solid #2F2E41',
+        borderBottom: '10px solid #2F2E41',
+        boxShadow: '-10px 10px 40px rgba(0, 0, 0, 0.25)',
+        width: type === 'tens' ? '80px' : '50px',
+        height: type === 'tens' ? '60px' : '50px',
+        fontFamily: 'DM Sans',
+        fontSize: '18px',
+        fontWeight: 700
+      }}
+      aria-label={`Add ${value} ${type === 'tens' ? 'tens' : 'ones'} block`}
     >
       {value}
-    </Card>
+    </button>
   );
 };
 
