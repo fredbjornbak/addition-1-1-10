@@ -67,19 +67,20 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded-md shadow-lg transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass}`}
+      className={`absolute cursor-grab active:cursor-grabbing ${blockColor} ${hoverColor} text-white font-bold rounded-lg shadow-xl transition-all duration-200 select-none ${vibrateClass} ${groupingClass} ${draggedClass}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isTens ? '50px' : '26px', // Increased from 45px/22px
-        height: isTens ? '36px' : '26px', // Increased from 32px/22px  
-        fontSize: isTens ? '16px' : '14px', // Increased font sizes
+        width: isTens ? '70px' : '36px', // Much bigger - increased from 50px/26px
+        height: isTens ? '50px' : '36px', // Much bigger - increased from 36px/26px  
+        fontSize: isTens ? '24px' : '20px', // Much bigger font - increased from 16px/14px
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 10,
         lineHeight: '1', // Ensure proper line height for centering
-        padding: '2px' // Add small padding for better text fit
+        padding: '4px', // Increased padding for better text fit
+        fontWeight: '900' // Extra bold for better visibility
       }}
       title={`${value} - Click to remove`}
     >
