@@ -18,7 +18,18 @@ export default {
 			}
 		},
 		extend: {
+			// GradeAid Brand Colors
 			colors: {
+				// Brand Color Palette
+				'grade-purple': '#6F00FF',
+				'grade-orange': '#FF6F00',
+				'grade-blue': '#0026FF',
+				'grade-black': '#2F2E41',
+				'grade-white': '#FAFAFA',
+				'grade-gray': '#F0F0F0',
+				'grade-border': '#E5E7EB',
+				
+				// Keep existing shadcn colors
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -63,11 +74,38 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			
+			// GradeAid Typography
+			fontFamily: {
+				'space-grotesk': ['Space Grotesk', 'sans-serif'],
+				'dm-sans': ['DM Sans', 'sans-serif'],
+			},
+			
+			// Font sizes with minimum 18px requirement
+			fontSize: {
+				'grade-body': ['18px', { lineHeight: '1.5' }],
+				'grade-body-lg': ['20px', { lineHeight: '1.5' }],
+				'grade-button': ['20px', { lineHeight: '1.2', fontWeight: '700' }],
+				'grade-button-lg': ['24px', { lineHeight: '1.2', fontWeight: '700' }],
+				'grade-heading': ['48px', { lineHeight: '1.1', fontWeight: '700' }],
+				'grade-heading-lg': ['64px', { lineHeight: '1.1', fontWeight: '700' }],
+			},
+			
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'grade-pill': '100px',
+				'grade-card': '50px',
 			},
+			
+			// GradeAid Shadows
+			boxShadow: {
+				'grade-button': '-10px 10px 40px rgba(0, 0, 0, 0.25)',
+				'grade-card': '0 10px 30px rgba(0, 0, 0, 0.1)',
+			},
+			
+			// GradeAid Animations & Keyframes
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -84,11 +122,42 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'bounce-gentle': {
+					'0%, 100%': {
+						transform: 'translateY(0)',
+						animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)',
+						animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						boxShadow: '0 0 0 0 rgba(111, 0, 255, 0.4)'
+					},
+					'50%': {
+						boxShadow: '0 0 0 10px rgba(111, 0, 255, 0)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						transform: 'scale(0.95)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'bounce-gentle': 'bounce-gentle 1s infinite',
+				'pulse-glow': 'pulse-glow 2s infinite',
+				'scale-in': 'scale-in 0.2s ease-out',
 			}
 		}
 	},

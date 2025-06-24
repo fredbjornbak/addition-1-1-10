@@ -15,57 +15,37 @@ const PlaceValueBoard: React.FC<PlaceValueBoardProps> = ({
 }) => {
   return (
     <Card 
-      className="p-6 shadow-lg"
+      className="p-6 shadow-grade-card bg-white rounded-grade-card border-0"
       style={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: '50px',
-        border: 'none',
         borderLeft: '10px solid #2F2E41',
         borderBottom: '10px solid #2F2E41'
       }}
     >
-      <h3 
-        className="text-3xl font-bold text-center mb-6"
-        style={{ 
-          color: '#6F00FF', 
-          fontFamily: 'Space Grotesk',
-          fontWeight: 700
-        }}
-      >
+      <h3 className="font-space-grotesk text-3xl font-bold text-center mb-6 text-grade-purple">
         📊 Place Value Board
       </h3>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* Tens Column */}
         <div 
-          className="rounded-2xl p-4 min-h-[200px]"
+          className="rounded-2xl p-4 min-h-[200px] border-4"
           style={{
-            backgroundColor: '#0026FF',
-            opacity: 0.1,
-            border: '4px solid #0026FF'
+            backgroundColor: 'rgba(0, 38, 255, 0.1)',
+            borderColor: '#0026FF'
           }}
+          role="region"
+          aria-label={`Tens column with ${tensBlocks} blocks`}
         >
-          <div 
-            className="text-center font-bold mb-4 text-2xl"
-            style={{ 
-              color: '#0026FF', 
-              fontFamily: 'DM Sans',
-              fontWeight: 700
-            }}
-          >
+          <div className="font-dm-sans text-center font-bold mb-4 text-2xl text-grade-blue">
             TENS
           </div>
           <div className="grid gap-2">
             {Array.from({ length: tensBlocks }, (_, i) => (
               <div 
                 key={i} 
-                className="h-10 rounded-lg flex items-center justify-center font-bold"
-                style={{
-                  backgroundColor: '#0026FF',
-                  color: '#FAFAFA',
-                  fontFamily: 'DM Sans',
-                  fontSize: '18px'
-                }}
+                className="h-10 rounded-lg flex items-center justify-center font-dm-sans text-grade-body font-bold text-grade-white bg-grade-blue animate-scale-in"
+                style={{ animationDelay: `${i * 0.1}s` }}
+                aria-label="Ten block"
               >
                 10
               </div>
@@ -75,33 +55,24 @@ const PlaceValueBoard: React.FC<PlaceValueBoardProps> = ({
 
         {/* Ones Column */}
         <div 
-          className="rounded-2xl p-4 min-h-[200px]"
+          className="rounded-2xl p-4 min-h-[200px] border-4"
           style={{
-            backgroundColor: '#FF6F00',
-            opacity: 0.1,
-            border: '4px solid #FF6F00'
+            backgroundColor: 'rgba(255, 111, 0, 0.1)',
+            borderColor: '#FF6F00'
           }}
+          role="region"
+          aria-label={`Ones column with ${onesBlocks} blocks`}
         >
-          <div 
-            className="text-center font-bold mb-4 text-2xl"
-            style={{ 
-              color: '#FF6F00', 
-              fontFamily: 'DM Sans',
-              fontWeight: 700
-            }}
-          >
+          <div className="font-dm-sans text-center font-bold mb-4 text-2xl text-grade-orange">
             ONES
           </div>
           <div className="grid grid-cols-5 gap-1">
             {Array.from({ length: onesBlocks }, (_, i) => (
               <div 
                 key={i} 
-                className="w-8 h-8 rounded-md flex items-center justify-center text-sm font-bold"
-                style={{
-                  backgroundColor: '#FF6F00',
-                  color: '#FAFAFA',
-                  fontFamily: 'DM Sans'
-                }}
+                className="w-8 h-8 rounded-md flex items-center justify-center font-dm-sans text-sm font-bold text-grade-white bg-grade-orange animate-scale-in"
+                style={{ animationDelay: `${i * 0.05}s` }}
+                aria-label="One block"
               >
                 1
               </div>
@@ -112,24 +83,10 @@ const PlaceValueBoard: React.FC<PlaceValueBoardProps> = ({
 
       {/* Answer Display */}
       <div className="text-center">
-        <div 
-          className="text-3xl font-bold mb-2"
-          style={{ 
-            color: '#2F2E41', 
-            fontFamily: 'Space Grotesk',
-            fontWeight: 700
-          }}
-        >
+        <div className="font-space-grotesk text-3xl font-bold mb-2 text-grade-black">
           Your Answer: {userAnswer}
         </div>
-        <div 
-          className="text-xl"
-          style={{ 
-            color: '#2F2E41', 
-            fontFamily: 'DM Sans',
-            fontSize: '18px'
-          }}
-        >
+        <div className="font-dm-sans text-grade-body text-grade-black">
           ({tensBlocks} tens + {onesBlocks} ones)
         </div>
       </div>
