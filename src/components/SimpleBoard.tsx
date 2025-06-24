@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -58,8 +59,13 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   const handleBlockDragStart = (blockId: string) => {
     const block = blocks.find(b => b.id === blockId);
     if (block) {
-      console.log('🚀 Simple drag start for block:', blockId, block.type);
-      handleDragStart(block, 0);
+      console.log('🚀 SimpleBoard drag start for block:', blockId, block.type);
+      handleDragStart(block, blocks.filter(b => b.type === 'ones').length);
+      
+      // Start visual drag feedback immediately
+      if (workspaceId === 'first' || workspaceId === 'second') {
+        startDrag(block.type);
+      }
     }
   };
 
@@ -67,45 +73,76 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     e.preventDefault();
     console.log('🎯 SimpleBoard drop event:', { workspaceId, targetType });
 
-    // Check for cross-workspace data first
+    // Get internal drag data
+    const internalDataStr = e.dataTransfer.getData('text/plain');
+    let internalData = null;
+    
+    if (internalDataStr) {
+      try {
+        internalData = JSON.parse(internalDataStr);
+      } catch (error) {
+        internalData = { blockId: internalDataStr };
+      }
+    }
+
+    // Get cross-workspace data
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
+    let crossWorkspaceData = null;
+    
     if (crossWorkspaceDataStr) {
-      console.log('📋 Cross-workspace data detected in SimpleBoard - letting bubble up');
-      // For cross-workspace drops, let the event bubble up to WorkspaceSection
-      // DON'T stop propagation so it reaches the parent WorkspaceSection
-      return;
+      try {
+        crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
+      } catch (error) {
+        console.log('❌ Failed to parse cross-workspace data');
+      }
     }
 
-    // Handle internal drops (regrouping within same workspace)
-    const draggedBlockId = e.dataTransfer.getData('text/plain');
-    if (!draggedBlockId) {
-      console.log('❌ No internal drag data found');
-      handleDragEnd();
-      return;
-    }
+    // Determine if this is internal regrouping
+    const isInternalRegrouping = internalData && 
+      (!crossWorkspaceData || 
+       !crossWorkspaceData.isCrossWorkspace || 
+       crossWorkspaceData.sourceWorkspace === workspaceId);
 
-    const draggedBlock = blocks.find(b => b.id === draggedBlockId);
-    if (!draggedBlock) {
-      console.log('❌ No dragged block found for internal drop');
-      handleDragEnd();
-      return;
-    }
-
-    console.log('🔄 Internal drop detected:', {
-      draggedBlockType: draggedBlock.type,
-      targetType,
-      blockId: draggedBlockId
+    console.log('🔍 SimpleBoard drop analysis:', {
+      isInternalRegrouping,
+      hasInternalData: !!internalData,
+      hasCrossWorkspaceData: !!crossWorkspaceData,
+      sourceWorkspace: crossWorkspaceData?.sourceWorkspace,
+      currentWorkspace: workspaceId
     });
 
-    // Only trigger regrouping for cross-type drops within same workspace
-    if (draggedBlock.type !== targetType) {
-      console.log('🔄 Cross-type drop - triggering regrouping');
-      handleRegroup(draggedBlock, targetType);
-    } else {
-      console.log('ℹ️ Same-type drop - no regrouping needed');
+    if (isInternalRegrouping && internalData) {
+      console.log('🔄 Processing internal regrouping');
+      
+      const draggedBlock = blocks.find(b => b.id === internalData.blockId);
+      if (!draggedBlock) {
+        console.log('❌ No dragged block found for internal regrouping');
+        handleDragEnd();
+        return;
+      }
+
+      console.log('🔄 Internal regrouping:', {
+        draggedBlockType: draggedBlock.type,
+        targetType,
+        blockId: internalData.blockId
+      });
+
+      // Only trigger regrouping for cross-type drops within same workspace
+      if (draggedBlock.type !== targetType) {
+        console.log('✅ Cross-type drop - triggering regrouping');
+        handleRegroup(draggedBlock, targetType);
+      } else {
+        console.log('ℹ️ Same-type drop - no regrouping needed');
+      }
+    } else if (crossWorkspaceData && crossWorkspaceData.isCrossWorkspace) {
+      console.log('📦 Cross-workspace drop - letting bubble up to workspace');
+      // For cross-workspace drops, let the event bubble up to WorkspaceSection
+      // DON'T stop propagation and DON'T call handleDragEnd() here
+      return;
     }
     
     handleDragEnd();
+    completeDrag();
   };
 
   const handleDragCancel = () => {
@@ -162,6 +199,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           isDropTarget={dragState.isOver === 'tens'} 
           isGrouping={isGrouping} 
           workspaceId={workspaceId} 
+          onStartBulkDrag={startDrag}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
         />
@@ -180,12 +218,18 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           isDropTarget={dragState.isOver === 'ones'} 
           isGrouping={isGrouping} 
           workspaceId={workspaceId} 
+          onStartBulkDrag={startDrag}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
         />
       </div>
 
-      <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} draggedBlocks={draggedBlocks} />
+      <DragFeedback 
+        dragState={dragState} 
+        onesCount={onesCount} 
+        tensCount={tensCount} 
+        draggedBlocks={draggedBlocks} 
+      />
     </div>
   );
 };

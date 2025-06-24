@@ -59,23 +59,61 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       hasTextData: !!e.dataTransfer.getData('text/plain')
     });
 
-    // Check for cross-workspace data first
-    const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
-    if (crossWorkspaceDataStr) {
-      console.log('📋 Cross-workspace data detected in column, passing to parent:', crossWorkspaceDataStr);
-      // For cross-workspace drops, DON'T stop propagation - let it bubble up
-      onDrop(e, type);
-      return;
+    // First, try to get internal drag data
+    const internalDataStr = e.dataTransfer.getData('text/plain');
+    let internalData = null;
+    
+    if (internalDataStr) {
+      try {
+        internalData = JSON.parse(internalDataStr);
+        console.log('📋 Internal drag data:', internalData);
+      } catch (error) {
+        console.log('📋 Plain text drag data (legacy):', internalDataStr);
+        internalData = { blockId: internalDataStr };
+      }
     }
 
-    // Handle internal drops only if we have text data
-    const draggedBlockId = e.dataTransfer.getData('text/plain');
-    if (draggedBlockId) {
-      console.log('🔄 Internal drop detected in column:', draggedBlockId);
-      e.stopPropagation(); // Stop propagation for internal drops only
-    }
+    // Check for cross-workspace data
+    const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
+    let crossWorkspaceData = null;
     
-    onDrop(e, type);
+    if (crossWorkspaceDataStr) {
+      try {
+        crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
+        console.log('📦 Cross-workspace data:', crossWorkspaceData);
+      } catch (error) {
+        console.log('❌ Failed to parse cross-workspace data:', error);
+      }
+    }
+
+    // Determine if this is internal regrouping or cross-workspace transfer
+    const isInternalRegrouping = internalData && 
+      (!crossWorkspaceData || 
+       !crossWorkspaceData.isCrossWorkspace || 
+       crossWorkspaceData.sourceWorkspace === workspaceId);
+
+    console.log('🔍 Drop analysis:', {
+      isInternalRegrouping,
+      hasInternalData: !!internalData,
+      hasCrossWorkspaceData: !!crossWorkspaceData,
+      sourceWorkspace: crossWorkspaceData?.sourceWorkspace,
+      currentWorkspace: workspaceId
+    });
+
+    if (isInternalRegrouping) {
+      console.log('🔄 Handling as internal regrouping');
+      e.stopPropagation(); // Stop propagation for internal drops
+      onDrop(e, type);
+    } else if (crossWorkspaceData && crossWorkspaceData.isCrossWorkspace) {
+      console.log('📦 Handling as cross-workspace transfer - letting bubble up');
+      // For cross-workspace drops, let the event bubble up to WorkspaceSection
+      // DON'T stop propagation
+      onDrop(e, type);
+    } else {
+      console.log('❓ Unknown drop type, defaulting to internal');
+      e.stopPropagation();
+      onDrop(e, type);
+    }
   };
 
   const handleDragEnter = (e: React.DragEvent) => {
@@ -136,6 +174,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
             workspaceId={workspaceId}
             totalBlocksOfType={totalBlocksOfType}
             isBeingDragged={block.isBeingDragged}
+            onStartBulkDrag={onStartBulkDrag}
           />
         );
       })}

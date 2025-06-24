@@ -42,8 +42,13 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       totalBlocksOfType
     });
     
-    // Always set simple drag data for internal drops
-    e.dataTransfer.setData('text/plain', id);
+    // Always set simple drag data for internal drops (regrouping)
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      blockId: id,
+      blockType: type,
+      blockValue: value,
+      workspaceId: workspaceId || 'default'
+    }));
     
     // Set cross-workspace drag data for bulk transfers ONLY from first/second workspaces
     if (workspaceId && (workspaceId === 'first' || workspaceId === 'second')) {
@@ -52,6 +57,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         blockValue: value,
         sourceWorkspace: workspaceId,
         isFromWorkspace: true,
+        isCrossWorkspace: true,
         bulkCount: totalBlocksOfType
       };
       
@@ -61,7 +67,13 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       console.log('ℹ️ Internal workspace drag - no cross-workspace data needed');
     }
     
+    // Trigger immediate visual feedback
     onDragStart(id);
+    
+    // Start bulk drag if needed
+    if (onStartBulkDrag && workspaceId && (workspaceId === 'first' || workspaceId === 'second')) {
+      onStartBulkDrag(type);
+    }
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -78,7 +90,11 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const hoverColor = isTens ? 'hover:bg-blue-600' : 'hover:bg-orange-600';
   const vibrateClass = shouldVibrate ? 'animate-vibrate' : '';
   const groupingClass = isGrouping ? 'animate-group-flash' : '';
-  const draggedClass = isBeingDragged ? 'opacity-30 scale-90' : 'opacity-100';
+  
+  // Enhanced visual feedback during drag
+  const draggedClass = isBeingDragged 
+    ? 'opacity-30 scale-75 ring-2 ring-yellow-400 animate-pulse' 
+    : 'opacity-100 hover:scale-110';
 
   return (
     <div
@@ -95,7 +111,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 10,
+        zIndex: isBeingDragged ? 20 : 10,
         lineHeight: '1',
         padding: '1px',
         fontWeight: '900'
