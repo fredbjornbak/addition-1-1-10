@@ -16,6 +16,7 @@ interface PlaceValueColumnProps {
   onDragOver: (e: React.DragEvent) => void;
   isDropTarget?: boolean;
   isGrouping?: boolean;
+  workspaceId?: string;
 }
 
 const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
@@ -30,7 +31,8 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   onDragLeave,
   onDragOver,
   isDropTarget = false,
-  isGrouping = false
+  isGrouping = false,
+  workspaceId
 }) => {
   const isOnes = type === 'ones';
   const backgroundColor = isOnes ? 'rgba(255, 111, 0, 0.1)' : 'rgba(0, 38, 255, 0.1)';
@@ -82,7 +84,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
         </div>
       )}
       
-      {/* Render blocks - removed conditional deletion prevention */}
+      {/* Render blocks with workspace context */}
       {blocks.map(block => (
         <DraggableBlock
           key={block.id}
@@ -94,6 +96,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
           position={block.position}
           shouldVibrate={shouldVibrate}
           isGrouping={isGrouping}
+          workspaceId={workspaceId}
         />
       ))}
 

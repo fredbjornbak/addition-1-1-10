@@ -45,13 +45,26 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
     if (!canReceiveFromOthers || !onCrossWorkspaceDrop) return;
     
     e.preventDefault();
-    const dragData = e.dataTransfer.getData('text/plain');
     
-    try {
-      const { blockType, blockValue, sourceWorkspace } = JSON.parse(dragData);
-      onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue);
-    } catch (error) {
-      console.log('Regular drag and drop, not cross-workspace');
+    // Try to get cross-workspace data first
+    const crossWorkspaceData = e.dataTransfer.getData('application/json');
+    
+    if (crossWorkspaceData) {
+      try {
+        const { blockType, blockValue, sourceWorkspace } = JSON.parse(crossWorkspaceData);
+        // Only process if it's from a different workspace
+        if (sourceWorkspace !== workspaceId) {
+          onCrossWorkspaceDrop(sourceWorkspace, blockType, blockValue);
+        }
+      } catch (error) {
+        console.log('Error parsing cross-workspace data:', error);
+      }
+    } else {
+      // Fallback for regular drag data
+      const regularData = e.dataTransfer.getData('text/plain');
+      if (regularData) {
+        console.log('Regular drag and drop, not cross-workspace');
+      }
     }
   };
 

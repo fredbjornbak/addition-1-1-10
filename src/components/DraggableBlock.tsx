@@ -13,6 +13,7 @@ interface DraggableBlockProps {
   };
   shouldVibrate?: boolean;
   isGrouping?: boolean;
+  workspaceId?: string;
 }
 
 const DraggableBlock: React.FC<DraggableBlockProps> = ({
@@ -23,10 +24,24 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   onDragStart,
   position,
   shouldVibrate = false,
-  isGrouping = false
+  isGrouping = false,
+  workspaceId
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
+    // Set regular block ID for within-workspace operations
     e.dataTransfer.setData('text/plain', id);
+    
+    // Set cross-workspace data if workspace ID is provided
+    if (workspaceId) {
+      const crossWorkspaceData = JSON.stringify({
+        blockType: type,
+        blockValue: value,
+        sourceWorkspace: workspaceId,
+        blockId: id
+      });
+      e.dataTransfer.setData('application/json', crossWorkspaceData);
+    }
+    
     onDragStart(id);
   };
 

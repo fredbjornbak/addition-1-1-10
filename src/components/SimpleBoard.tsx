@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -97,6 +98,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           onDragOver={handleDragOver}
           isDropTarget={dragState.isOver === 'tens'}
           isGrouping={isGrouping}
+          workspaceId={workspaceId}
         />
         
         <PlaceValueColumn
@@ -112,6 +114,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           onDragOver={handleDragOver}
           isDropTarget={dragState.isOver === 'ones'}
           isGrouping={isGrouping}
+          workspaceId={workspaceId}
         />
       </div>
 

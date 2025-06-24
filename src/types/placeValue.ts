@@ -31,4 +31,5 @@ export interface PlaceValueColumnProps {
   onDragOver: (e: React.DragEvent) => void;
   isDropTarget?: boolean;
   isGrouping?: boolean;
+  workspaceId?: string;
 }
