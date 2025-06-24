@@ -6,9 +6,9 @@ const CONTAINER_HEIGHT = 160; // Usable container height after header
 
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   if (type === 'tens') {
-    const blockWidth = 70; // Much bigger - increased from 50px
-    const blockHeight = 50; // Much bigger - increased from 36px
-    const spacing = 6; // Slightly more spacing for bigger blocks
+    const blockWidth = 90; // Even bigger - increased from 70px
+    const blockHeight = 65; // Even bigger - increased from 50px
+    const spacing = 8; // More spacing for bigger blocks
     const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
@@ -18,9 +18,9 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
       y: 10 + row * (blockHeight + spacing) // Start from top of container
     };
   } else {
-    const blockWidth = 36; // Much bigger - increased from 26px
-    const blockHeight = 36; // Much bigger - increased from 26px
-    const spacing = 4; // Slightly more spacing
+    const blockWidth = 48; // Even bigger - increased from 36px
+    const blockHeight = 48; // Even bigger - increased from 36px
+    const spacing = 6; // More spacing
     const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
@@ -34,8 +34,8 @@ export const generatePosition = (type: 'tens' | 'ones', index: number) => {
 
 export const generateBundledPositions = () => {
   const positions = [];
-  const blockSize = 36; // Much bigger - increased from 26px
-  const spacing = 4; // Slightly more spacing
+  const blockSize = 48; // Even bigger - increased from 36px
+  const spacing = 6; // More spacing
   const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockSize + spacing));
   
   for (let i = 0; i < 10; i++) {
