@@ -46,6 +46,9 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   const focusRing = isOnes ? 'focus:ring-orange-300' : 'focus:ring-blue-300';
   const dropTargetClass = isDropTarget ? 'ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-50' : '';
 
+  // Determine which blocks should vibrate - only first 10 ones blocks when there are 10+ ones
+  const shouldVibrateBlocks = hasBundle && isOnes && blocks.length >= 10;
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     console.log('🎯 PlaceValueColumn simple drop event:', {
@@ -73,7 +76,6 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
     onDragOver(e);
   };
 
-  const shouldVibrate = hasBundle && isOnes;
   const totalBlocksOfType = blocks.length;
 
   return (
@@ -98,32 +100,30 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
         Click!
       </div>
       
-      {/* Render blocks with simplified props */}
-      {blocks.map(block => (
-        <DraggableBlock
-          key={block.id}
-          id={block.id}
-          value={block.value}
-          type={block.type}
-          onRemove={onRemoveBlock}
-          onDragStart={onDragStart}
-          position={block.position}
-          shouldVibrate={shouldVibrate}
-          isGrouping={isGrouping}
-          workspaceId={workspaceId}
-          totalBlocksOfType={totalBlocksOfType}
-          isBeingDragged={block.isBeingDragged}
-        />
-      ))}
+      {/* Render blocks with individual vibration logic */}
+      {blocks.map((block, index) => {
+        // Only first 10 ones blocks should vibrate when there are 10+ ones blocks
+        const shouldVibrate = shouldVibrateBlocks && index < 10;
+        
+        return (
+          <DraggableBlock
+            key={block.id}
+            id={block.id}
+            value={block.value}
+            type={block.type}
+            onRemove={onRemoveBlock}
+            onDragStart={onDragStart}
+            position={block.position}
+            shouldVibrate={shouldVibrate}
+            isGrouping={isGrouping}
+            workspaceId={workspaceId}
+            totalBlocksOfType={totalBlocksOfType}
+            isBeingDragged={block.isBeingDragged}
+          />
+        );
+      })}
       
-      {/* Visual grouping indicator for ones */}
-      {isOnes && blocks.length >= 10 && !isGrouping && (
-        <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
-          {Math.floor(blocks.length / 10)}
-        </div>
-      )}
-      
-      {/* Visual indicator for tens that can be broken down */}
+      {/* Visual indicator for tens that can be broken down - keeping this one */}
       {!isOnes && blocks.length > 0 && !isGrouping && (
         <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
           {blocks.length}
