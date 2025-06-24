@@ -85,18 +85,18 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
-      className={`relative rounded-lg p-3 h-[400px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
+      className={`relative rounded-lg p-2 h-[320px] border-4 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 ${focusRing} ${dropTargetClass} overflow-hidden`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#FFD700' : borderColor
       }}
       aria-label={`Click to add ${type} blocks or drop blocks here`}
     >
-      <div className={`font-dm-sans text-center font-bold mb-3 text-2xl ${textColor}`}>
+      <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor}`}>
         {type.toUpperCase()}
       </div>
       
-      <div className={`text-base ${textColor} mb-3 opacity-75`}>
+      <div className={`text-sm ${textColor} mb-2 opacity-75`}>
         Click!
       </div>
       
