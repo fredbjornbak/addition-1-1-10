@@ -2,7 +2,7 @@
 // Container dimensions for proper block positioning
 const CONTAINER_PADDING = 8; // Small padding from edges
 const CONTAINER_WIDTH = 180; // Actual usable container width
-const CONTAINER_HEIGHT = 160; // Usable container height after header
+const CONTAINER_HEIGHT = 280; // Increased height for better visual space
 
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   if (type === 'tens') {

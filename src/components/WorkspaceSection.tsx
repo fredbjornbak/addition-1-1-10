@@ -117,7 +117,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
 
   return (
     <div 
-      className={`p-2 rounded-lg border-2 min-h-[300px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
+      className={`p-2 rounded-lg border-2 min-h-[420px] transition-all duration-200 ${isDropTarget ? 'ring-4 ring-blue-400 bg-blue-50 scale-105' : ''}`}
       style={{
         backgroundColor: isDropTarget ? 'rgba(59, 130, 246, 0.2)' : backgroundColor,
         borderColor: isDropTarget ? '#3B82F6' : borderColor
