@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -68,31 +67,6 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
     });
   };
 
-  const handleBundleClick = () => {
-    setIsGrouping(true);
-    
-    // Animate the regrouping process
-    setTimeout(() => {
-      // Remove all 10 ones and add 1 ten
-      const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
-      
-      const newTenBlock: Block = {
-        id: `ten-${Date.now()}-${Math.random()}`,
-        value: 10,
-        type: 'tens',
-        position: generatePosition('tens', nonOnesBlocks.filter(b => b.type === 'tens').length)
-      };
-      
-      setBlocks([...nonOnesBlocks, newTenBlock]);
-      
-      // Update parent component
-      const tens = nonOnesBlocks.filter(b => b.type === 'tens').length + 1;
-      onBlocksChange(tens, 0);
-      
-      setIsGrouping(false);
-    }, 600);
-  };
-
   const handleBlockDragStart = (blockId: string) => {
     const block = blocks.find(b => b.id === blockId);
     if (block) {
@@ -117,9 +91,9 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
         setIsGrouping(true);
         
         setTimeout(() => {
-          const nonOnesBlocks = blocks.filter(b => b.type !== 'ones').slice(0, -Math.floor(onesCount / 10) * 10);
-          const remainingOnes = onesCount % 10;
+          const nonOnesBlocks = blocks.filter(b => b.type !== 'ones');
           const newTensCount = Math.floor(onesCount / 10);
+          const remainingOnes = onesCount % 10;
           
           // Create new ten blocks
           const newTenBlocks: Block[] = [];
@@ -210,7 +184,6 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
           hasBundle={hasBundle}
           onAddBlock={addOneBlock}
           onRemoveBlock={removeBlock}
-          onBundleClick={handleBundleClick}
           onDragStart={handleBlockDragStart}
           onDrop={handleDrop}
           onDragEnter={handleDragEnter}

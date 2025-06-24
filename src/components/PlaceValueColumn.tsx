@@ -1,7 +1,6 @@
 
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
-import BundleOverlay from './BundleOverlay';
 import { Block } from '../types/placeValue';
 
 interface PlaceValueColumnProps {
@@ -10,7 +9,6 @@ interface PlaceValueColumnProps {
   hasBundle?: boolean;
   onAddBlock: () => void;
   onRemoveBlock: (id: string) => void;
-  onBundleClick?: () => void;
   onDragStart: (id: string) => void;
   onDrop: (e: React.DragEvent, targetType: 'tens' | 'ones') => void;
   onDragEnter: (columnType: 'tens' | 'ones') => void;
@@ -26,7 +24,6 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   hasBundle = false,
   onAddBlock,
   onRemoveBlock,
-  onBundleClick,
   onDragStart,
   onDrop,
   onDragEnter,
@@ -78,9 +75,11 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
         Click to add or drop here!
       </div>
       
-      {/* Bundle overlay for ones column when bundling is possible */}
-      {hasBundle && isOnes && onBundleClick && (
-        <BundleOverlay onBundleClick={onBundleClick} />
+      {/* Special message for tens column when ones can be regrouped */}
+      {type === 'tens' && isDropTarget && (
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-bounce-gentle z-20">
+          Drop ones here to regroup!
+        </div>
       )}
       
       {/* Render blocks */}

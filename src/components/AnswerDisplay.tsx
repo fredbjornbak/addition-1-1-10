@@ -24,7 +24,7 @@ const AnswerDisplay: React.FC<AnswerDisplayProps> = ({
       </div>
       {hasBundle && (
         <div className="font-dm-sans text-sm text-purple-600 mt-2 animate-bounce">
-          💡 You have 10 ones! Click the purple area to bundle them into 1 ten!
+          💡 You have 10 ones! Drag them to the tens column to make 1 ten!
         </div>
       )}
     </div>
