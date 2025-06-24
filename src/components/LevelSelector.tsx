@@ -22,10 +22,10 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({ currentLevel, onLevelChan
         borderBottom: '10px solid #2F2E41'
       }}
     >
-      <div className="font-space-grotesk text-2xl font-bold mb-4 text-center text-grade-black">
+      <div className="font-space-grotesk text-grade-heading-sm font-bold mb-6 text-center text-grade-black">
         🎯 Choose Your Level
       </div>
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className="flex flex-wrap gap-4 justify-center">
         {levels.map(({ level, name, description, color }) => {
           const isSelected = currentLevel === level;
           return (
@@ -44,8 +44,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({ currentLevel, onLevelChan
                 border: isSelected ? 'none' : '2px solid #E5E7EB',
                 borderLeft: isSelected ? '10px solid #2F2E41' : '2px solid #E5E7EB',
                 borderBottom: isSelected ? '10px solid #2F2E41' : '2px solid #E5E7EB',
-                boxShadow: isSelected ? '-10px 10px 40px rgba(0, 0, 0, 0.25)' : 'none',
-                focusRingColor: color + '40'
+                boxShadow: isSelected ? '-10px 10px 40px rgba(0, 0, 0, 0.25)' : 'none'
               }}
               onFocus={(e) => e.target.style.boxShadow = `0 0 0 4px ${color}40`}
               onBlur={(e) => e.target.style.boxShadow = isSelected ? '-10px 10px 40px rgba(0, 0, 0, 0.25)' : 'none'}
