@@ -1,14 +1,14 @@
 
 // Container dimensions for proper block positioning
-const CONTAINER_PADDING = 16; // Account for PlaceValueColumn's p-2 padding (8px each side)
-const CONTAINER_WIDTH = 200; // Reduced to match actual usable space after padding
+const CONTAINER_PADDING = 20; // Increased padding to move blocks away from edges
+const CONTAINER_WIDTH = 180; // Further reduced to ensure blocks fit with padding
 const CONTAINER_HEIGHT = 280; // Keep height the same
 
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   if (type === 'tens') {
     const blockWidth = 28; // Slightly smaller to ensure fit
     const blockHeight = 22; // Slightly smaller to ensure fit
-    const spacing = 3; // Minimal spacing
+    const spacing = 2; // Reduced spacing to fit more blocks
     const maxCols = Math.floor((CONTAINER_WIDTH - CONTAINER_PADDING * 2) / (blockWidth + spacing));
     const row = Math.floor(index / maxCols);
     const col = index % maxCols;
