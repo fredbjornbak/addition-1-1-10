@@ -12,6 +12,7 @@ export const useBlockManagement = (
   externalOnesCount?: number
 ) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [isExternalSync, setIsExternalSync] = useState(false);
 
   // Clear all blocks when resetTrigger changes
   useEffect(() => {
@@ -22,7 +23,7 @@ export const useBlockManagement = (
 
   // Synchronize blocks with external counts (for cross-workspace transfers)
   useEffect(() => {
-    if (externalTensCount !== undefined && externalOnesCount !== undefined) {
+    if (externalTensCount !== undefined && externalOnesCount !== undefined && !isExternalSync) {
       const currentTens = blocks.filter(b => b.type === 'tens').length;
       const currentOnes = blocks.filter(b => b.type === 'ones').length;
       
@@ -32,6 +33,8 @@ export const useBlockManagement = (
           current: { tens: currentTens, ones: currentOnes },
           target: { tens: externalTensCount, ones: externalOnesCount }
         });
+        
+        setIsExternalSync(true);
         
         const newBlocks: Block[] = [];
         
@@ -57,9 +60,12 @@ export const useBlockManagement = (
         
         setBlocks(newBlocks);
         console.log('✅ Blocks synchronized:', newBlocks.length, 'total blocks');
+        
+        // Reset the sync flag after a brief delay
+        setTimeout(() => setIsExternalSync(false), 100);
       }
     }
-  }, [externalTensCount, externalOnesCount, blocks]);
+  }, [externalTensCount, externalOnesCount, blocks, isExternalSync]);
 
   const addTenBlock = () => {
     const newBlock: Block = {
@@ -88,10 +94,19 @@ export const useBlockManagement = (
   };
 
   const removeBlock = (id: string) => {
+    console.log('🗑️ Removing block with ID:', id);
     setBlocks(prev => {
+      const blockToRemove = prev.find(block => block.id === id);
+      if (!blockToRemove) {
+        console.log('❌ Block not found for removal:', id);
+        return prev;
+      }
+      
       const newBlocks = prev.filter(block => block.id !== id);
       const tens = newBlocks.filter(b => b.type === 'tens').length;
       const ones = newBlocks.filter(b => b.type === 'ones').length;
+      
+      console.log('✅ Block removed. New counts:', { tens, ones });
       onBlocksChange(tens, ones);
       return newBlocks;
     });
