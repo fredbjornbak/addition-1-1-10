@@ -1,18 +1,18 @@
 
 export const generatePosition = (type: 'tens' | 'ones', index: number) => {
   if (type === 'tens') {
-    const row = Math.floor(index / 2);
-    const col = index % 2;
+    const row = Math.floor(index / 3); // Increased columns to fit better
+    const col = index % 3;
     return {
-      x: 20 + col * 60,
-      y: 20 + row * 50
+      x: 15 + col * 60, // Better spacing for larger column
+      y: 80 + row * 40  // Start lower to account for header text
     };
   } else {
-    const row = Math.floor(index / 5);
-    const col = index % 5;
+    const row = Math.floor(index / 6); // More columns for ones
+    const col = index % 6;
     return {
-      x: 10 + col * 25,
-      y: 10 + row * 25
+      x: 8 + col * 25,   // Tighter spacing for ones
+      y: 80 + row * 25   // Start lower to account for header text
     };
   }
 };
@@ -23,8 +23,8 @@ export const generateBundledPositions = () => {
     const row = Math.floor(i / 5);
     const col = i % 5;
     positions.push({
-      x: 15 + col * 20,
-      y: 15 + row * 20
+      x: 15 + col * 22,  // Slightly adjusted for better fit
+      y: 80 + row * 22   // Start lower to account for header text
     });
   }
   return positions;

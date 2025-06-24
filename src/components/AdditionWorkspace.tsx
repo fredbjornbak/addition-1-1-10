@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import WorkspaceSection from './WorkspaceSection';
 import { SimpleProblem } from '../utils/simpleProblems';
+import { useCrossWorkspaceDrag } from '../hooks/useCrossWorkspaceDrag';
 
 interface AdditionWorkspaceProps {
   problem: SimpleProblem;
@@ -31,6 +32,36 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
   onTotalChange,
   resetTrigger
 }) => {
+  const {
+    dragState,
+    handleCrossWorkspaceDragEnter,
+    handleCrossWorkspaceDragLeave
+  } = useCrossWorkspaceDrag();
+
+  const handleCrossWorkspaceDrop = (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number) => {
+    // Add the block to the total workspace
+    if (blockType === 'tens') {
+      onTotalChange(totalTens + 1, totalOnes);
+    } else {
+      onTotalChange(totalTens, totalOnes + 1);
+    }
+
+    // Remove the block from the source workspace
+    if (sourceWorkspace === 'first') {
+      if (blockType === 'tens') {
+        onFirstNumberChange(Math.max(0, firstNumberTens - 1), firstNumberOnes);
+      } else {
+        onFirstNumberChange(firstNumberTens, Math.max(0, firstNumberOnes - 1));
+      }
+    } else if (sourceWorkspace === 'second') {
+      if (blockType === 'tens') {
+        onSecondNumberChange(Math.max(0, secondNumberTens - 1), secondNumberOnes);
+      } else {
+        onSecondNumberChange(secondNumberTens, Math.max(0, secondNumberOnes - 1));
+      }
+    }
+  };
+
   return (
     <Card 
       className="p-3 shadow-grade-card bg-white rounded-grade-card border-0"
@@ -77,7 +108,10 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
           backgroundColor="rgba(108, 117, 125, 0.1)"
           borderColor="#6C757D"
           canReceiveFromOthers={true}
-          isDropTarget={true}
+          isDropTarget={dragState.targetWorkspace === 'total'}
+          onCrossWorkspaceDrop={handleCrossWorkspaceDrop}
+          onCrossWorkspaceDragEnter={handleCrossWorkspaceDragEnter}
+          onCrossWorkspaceDragLeave={handleCrossWorkspaceDragLeave}
         />
       </div>
     </Card>

@@ -10,12 +10,17 @@ import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useBlockManagement } from '../hooks/useBlockManagement';
 import { useRegrouping } from '../hooks/useRegrouping';
 
-const SimpleBoard: React.FC<SimpleBoardProps> = ({ 
+interface ExtendedSimpleBoardProps extends SimpleBoardProps {
+  workspaceId?: string;
+}
+
+const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({ 
   onAddTens,
   onAddOnes,
   userAnswer,
   onBlocksChange,
-  resetTrigger
+  resetTrigger,
+  workspaceId = 'default'
 }) => {
   const {
     blocks,
@@ -41,6 +46,17 @@ const SimpleBoard: React.FC<SimpleBoardProps> = ({
     if (block) {
       const onesCount = blocks.filter(b => b.type === 'ones').length;
       handleDragStart(block, onesCount);
+      
+      // Set cross-workspace drag data
+      const dragData = JSON.stringify({
+        blockType: block.type,
+        blockValue: block.value,
+        sourceWorkspace: workspaceId,
+        blockId: block.id
+      });
+      
+      // This will be picked up by the drag event
+      window.currentDragData = dragData;
     }
   };
 

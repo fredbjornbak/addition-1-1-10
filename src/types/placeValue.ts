@@ -15,6 +15,7 @@ export interface SimpleBoardProps {
   userAnswer: number;
   onBlocksChange: (tens: number, ones: number) => void;
   resetTrigger: number;
+  workspaceId?: string;
 }
 
 export interface PlaceValueColumnProps {

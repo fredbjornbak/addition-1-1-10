@@ -82,14 +82,14 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
         </div>
       )}
       
-      {/* Render blocks */}
+      {/* Render blocks - removed conditional deletion prevention */}
       {blocks.map(block => (
         <DraggableBlock
           key={block.id}
           id={block.id}
           value={block.value}
           type={block.type}
-          onRemove={hasBundle && isOnes ? () => {} : onRemoveBlock}
+          onRemove={onRemoveBlock}
           onDragStart={onDragStart}
           position={block.position}
           shouldVibrate={shouldVibrate}
