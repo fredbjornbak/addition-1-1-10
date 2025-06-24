@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -46,17 +45,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     if (block) {
       const onesCount = blocks.filter(b => b.type === 'ones').length;
       handleDragStart(block, onesCount);
-      
-      // Set cross-workspace drag data
-      const dragData = JSON.stringify({
-        blockType: block.type,
-        blockValue: block.value,
-        sourceWorkspace: workspaceId,
-        blockId: block.id
-      });
-      
-      // This will be picked up by the drag event
-      window.currentDragData = dragData;
     }
   };
 

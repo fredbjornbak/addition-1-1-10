@@ -27,12 +27,6 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('text/plain', id);
-    
-    // Set cross-workspace drag data if available
-    if (window.currentDragData) {
-      e.dataTransfer.setData('application/json', window.currentDragData);
-    }
-    
     onDragStart(id);
   };
 
