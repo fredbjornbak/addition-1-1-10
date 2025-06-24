@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -11,6 +12,8 @@ import { useRegrouping } from '../hooks/useRegrouping';
 
 interface ExtendedSimpleBoardProps extends SimpleBoardProps {
   workspaceId?: string;
+  externalTensCount?: number;
+  externalOnesCount?: number;
 }
 
 const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({ 
@@ -19,7 +22,9 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   userAnswer,
   onBlocksChange,
   resetTrigger,
-  workspaceId = 'default'
+  workspaceId = 'default',
+  externalTensCount,
+  externalOnesCount
 }) => {
   const {
     blocks,
@@ -27,7 +32,14 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     addTenBlock,
     addOneBlock,
     removeBlock
-  } = useBlockManagement(onAddTens, onAddOnes, onBlocksChange, resetTrigger);
+  } = useBlockManagement(
+    onAddTens, 
+    onAddOnes, 
+    onBlocksChange, 
+    resetTrigger,
+    externalTensCount,
+    externalOnesCount
+  );
 
   const { isGrouping, handleRegroup } = useRegrouping(blocks, setBlocks, onBlocksChange);
 

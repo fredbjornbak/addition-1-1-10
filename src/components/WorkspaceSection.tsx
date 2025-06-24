@@ -144,6 +144,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         onBlocksChange={onBlocksChange}
         resetTrigger={resetTrigger}
         workspaceId={workspaceId}
+        externalTensCount={tensCount}
+        externalOnesCount={onesCount}
       />
       
       <div className="text-center mt-2 font-dm-sans text-sm text-grade-black bg-gray-100 rounded px-2 py-1">

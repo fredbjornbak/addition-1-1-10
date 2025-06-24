@@ -7,7 +7,9 @@ export const useBlockManagement = (
   onAddTens: () => void,
   onAddOnes: () => void,
   onBlocksChange: (tens: number, ones: number) => void,
-  resetTrigger: number
+  resetTrigger: number,
+  externalTensCount?: number,
+  externalOnesCount?: number
 ) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
 
@@ -17,6 +19,47 @@ export const useBlockManagement = (
       setBlocks([]);
     }
   }, [resetTrigger]);
+
+  // Synchronize blocks with external counts (for cross-workspace transfers)
+  useEffect(() => {
+    if (externalTensCount !== undefined && externalOnesCount !== undefined) {
+      const currentTens = blocks.filter(b => b.type === 'tens').length;
+      const currentOnes = blocks.filter(b => b.type === 'ones').length;
+      
+      // Only sync if counts have changed
+      if (currentTens !== externalTensCount || currentOnes !== externalOnesCount) {
+        console.log('🔄 Syncing blocks with external counts:', {
+          current: { tens: currentTens, ones: currentOnes },
+          target: { tens: externalTensCount, ones: externalOnesCount }
+        });
+        
+        const newBlocks: Block[] = [];
+        
+        // Create tens blocks
+        for (let i = 0; i < externalTensCount; i++) {
+          newBlocks.push({
+            id: `ten-${Date.now()}-${Math.random()}-${i}`,
+            value: 10,
+            type: 'tens',
+            position: generatePosition('tens', i)
+          });
+        }
+        
+        // Create ones blocks
+        for (let i = 0; i < externalOnesCount; i++) {
+          newBlocks.push({
+            id: `one-${Date.now()}-${Math.random()}-${i}`,
+            value: 1,
+            type: 'ones',
+            position: generatePosition('ones', i)
+          });
+        }
+        
+        setBlocks(newBlocks);
+        console.log('✅ Blocks synchronized:', newBlocks.length, 'total blocks');
+      }
+    }
+  }, [externalTensCount, externalOnesCount, blocks]);
 
   const addTenBlock = () => {
     const newBlock: Block = {
