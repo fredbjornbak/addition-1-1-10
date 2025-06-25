@@ -7,6 +7,7 @@ import FeedbackDisplay from './FeedbackDisplay';
 import GameComplete from './GameComplete';
 import { useGameState } from '../hooks/useGameState';
 import { useBlockCounts } from '../hooks/useBlockCounts';
+import { Problem } from '../utils/problemGenerator';
 
 const VisualAdditionTool = () => {
   const {
@@ -54,6 +55,21 @@ const VisualAdditionTool = () => {
     resetBoard();
   };
 
+  // Convert SimpleProblem to Problem format for FeedbackDisplay
+  const convertToProblem = (simpleProblem: typeof currentProblem): Problem => {
+    if (!simpleProblem) {
+      return { num1: 0, num2: 0, answer: 0, level: 1, description: '' };
+    }
+    
+    return {
+      num1: simpleProblem.num1,
+      num2: simpleProblem.num2,
+      answer: simpleProblem.answer,
+      level: 1,
+      description: "Add these numbers together using blocks!"
+    };
+  };
+
   if (problems.length === 0) {
     return <div className="text-center p-8">Loading...</div>;
   }
@@ -84,7 +100,7 @@ const VisualAdditionTool = () => {
         showFeedback={showFeedback}
         isCorrect={isCorrect || false}
         celebrating={isCorrect || false}
-        problem={currentProblem}
+        problem={convertToProblem(currentProblem)}
         showHint={false}
       />
 
