@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import VisualAdditionQuestion from './VisualAdditionQuestion';
+import AdditionQuestion from './AdditionQuestion';
 import AdditionWorkspace from './AdditionWorkspace';
 import FeedbackDisplay from './FeedbackDisplay';
 import GameComplete from './GameComplete';
@@ -64,7 +64,7 @@ const VisualAdditionTool = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <VisualAdditionQuestion 
+      <AdditionQuestion 
         problem={currentProblem} 
         totalQuestions={problems.length} 
       />
@@ -81,9 +81,11 @@ const VisualAdditionTool = () => {
       />
 
       <FeedbackDisplay 
-        isCorrect={isCorrect}
-        correctAnswer={currentProblem?.answer || 0}
-        show={showFeedback}
+        showFeedback={showFeedback}
+        isCorrect={isCorrect || false}
+        celebrating={isCorrect || false}
+        problem={currentProblem}
+        showHint={false}
       />
 
       <div className="flex justify-center gap-4">
