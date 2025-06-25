@@ -28,40 +28,36 @@ const SimplePlaceValueTool = () => {
     firstNumberOnes,
     secondNumberTens,
     secondNumberOnes,
-    totalTens,
-    totalOnes,
     handleFirstNumberChange,
     handleSecondNumberChange,
-    handleTotalChange,
     resetAllCounts
   } = useBlockCounts(resetTrigger);
 
-  const userAnswer = totalTens * 10 + totalOnes;
+  const userAnswer = (firstNumberTens * 10 + firstNumberOnes) + (secondNumberTens * 10 + secondNumberOnes);
 
   const checkAnswer = () => {
     if (!currentProblem) return;
     
-    const totalNumber = totalTens * 10 + totalOnes;
-    
-    // Primary check: Is the total correct?
-    const isTotalCorrect = totalNumber === currentProblem.answer;
-    
-    // Secondary check: Are the individual numbers represented correctly (optional)
     const firstNumber = firstNumberTens * 10 + firstNumberOnes;
     const secondNumber = secondNumberTens * 10 + secondNumberOnes;
-    const areIndividualNumbersCorrect = firstNumber === currentProblem.num1 && 
-                                      secondNumber === currentProblem.num2;
+    const totalNumber = firstNumber + secondNumber;
     
-    // Accept the answer if total is correct (flexible approach)
-    // OR if all three are correct (traditional approach)
-    const correct = isTotalCorrect || areIndividualNumbersCorrect;
+    // Check if the user has represented both numbers correctly and they add up to the correct answer
+    const areNumbersCorrect = firstNumber === currentProblem.num1 && 
+                            secondNumber === currentProblem.num2;
+    const isTotalCorrect = totalNumber === currentProblem.answer;
+    
+    // Accept the answer if both individual representations are correct OR if the total is correct
+    const correct = areNumbersCorrect || isTotalCorrect;
     
     console.log('📊 Answer check:', {
-      totalCorrect: isTotalCorrect,
-      individualCorrect: areIndividualNumbersCorrect,
-      finalResult: correct,
+      firstNumber,
+      secondNumber,
+      totalNumber,
       expected: currentProblem.answer,
-      actual: totalNumber
+      areNumbersCorrect,
+      isTotalCorrect,
+      finalResult: correct
     });
     
     setIsCorrect(correct);
@@ -96,18 +92,15 @@ const SimplePlaceValueTool = () => {
         totalQuestions={problems.length} 
       />
 
-      {/* Addition Workspace with three sections */}
+      {/* Addition Workspace with two sections */}
       <AdditionWorkspace
         problem={currentProblem}
         firstNumberTens={firstNumberTens}
         firstNumberOnes={firstNumberOnes}
         secondNumberTens={secondNumberTens}
         secondNumberOnes={secondNumberOnes}
-        totalTens={totalTens}
-        totalOnes={totalOnes}
         onFirstNumberChange={handleFirstNumberChange}
         onSecondNumberChange={handleSecondNumberChange}
-        onTotalChange={handleTotalChange}
         resetTrigger={resetTrigger}
       />
 
