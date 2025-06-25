@@ -8,14 +8,12 @@ import { generateBundledPositions } from '../utils/blockPositions';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useBlockManagement } from '../hooks/useBlockManagement';
 import { useRegrouping } from '../hooks/useRegrouping';
-
 interface ExtendedSimpleBoardProps extends SimpleBoardProps {
   workspaceId?: string;
   externalTensCount?: number;
   externalOnesCount?: number;
   canAddDirectly?: boolean;
 }
-
 const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
   onAddTens,
   onAddOnes,
@@ -41,7 +39,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     showRegroupingHint,
     hideRegroupingHint
   } = useBlockManagement(onAddTens, onAddOnes, onBlocksChange, resetTrigger, externalTensCount, externalOnesCount);
-  
   const {
     isGrouping,
     handleRegroup,
@@ -49,7 +46,6 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     canRegroupOnestoTens,
     canRegroupTensToOnes
   } = useRegrouping(blocks, setBlocks, onBlocksChange);
-  
   const {
     dragState,
     handleDragStart,
@@ -58,40 +54,41 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     handleDragLeave,
     handleDragOver
   } = useDragAndDrop();
-
   const handleBlockDragStart = (blockId: string) => {
     const block = blocks.find(b => b.id === blockId);
     if (block) {
       console.log('🚀 SimpleBoard drag start for block:', blockId, block.type);
       handleDragStart(block, blocks.filter(b => b.type === 'ones').length);
-      
+
       // Start visual drag feedback immediately
       if (workspaceId === 'first' || workspaceId === 'second') {
         startDrag(block.type);
       }
     }
   };
-
   const handleDrop = (e: React.DragEvent, targetType: 'tens' | 'ones') => {
     e.preventDefault();
-    console.log('🎯 SimpleBoard drop event:', { workspaceId, targetType });
+    console.log('🎯 SimpleBoard drop event:', {
+      workspaceId,
+      targetType
+    });
 
     // Get internal drag data
     const internalDataStr = e.dataTransfer.getData('text/plain');
     let internalData = null;
-    
     if (internalDataStr) {
       try {
         internalData = JSON.parse(internalDataStr);
       } catch (error) {
-        internalData = { blockId: internalDataStr };
+        internalData = {
+          blockId: internalDataStr
+        };
       }
     }
 
     // Get cross-workspace data
     const crossWorkspaceDataStr = e.dataTransfer.getData('application/json');
     let crossWorkspaceData = null;
-    
     if (crossWorkspaceDataStr) {
       try {
         crossWorkspaceData = JSON.parse(crossWorkspaceDataStr);
@@ -101,11 +98,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     }
 
     // Determine if this is internal regrouping
-    const isInternalRegrouping = internalData && 
-      (!crossWorkspaceData || 
-       !crossWorkspaceData.isCrossWorkspace || 
-       crossWorkspaceData.sourceWorkspace === workspaceId);
-
+    const isInternalRegrouping = internalData && (!crossWorkspaceData || !crossWorkspaceData.isCrossWorkspace || crossWorkspaceData.sourceWorkspace === workspaceId);
     console.log('🔍 SimpleBoard drop analysis:', {
       isInternalRegrouping,
       hasInternalData: !!internalData,
@@ -113,17 +106,14 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       sourceWorkspace: crossWorkspaceData?.sourceWorkspace,
       currentWorkspace: workspaceId
     });
-
     if (isInternalRegrouping && internalData) {
       console.log('🔄 Processing internal regrouping');
-      
       const draggedBlock = blocks.find(b => b.id === internalData.blockId);
       if (!draggedBlock) {
         console.log('❌ No dragged block found for internal regrouping');
         handleDragEnd();
         return;
       }
-
       console.log('🔄 Internal regrouping:', {
         draggedBlockType: draggedBlock.type,
         targetType,
@@ -144,11 +134,9 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       // DON'T stop propagation and DON'T call handleDragEnd() here
       return;
     }
-    
     handleDragEnd();
     completeDrag();
   };
-
   const handleDragCancel = () => {
     handleDragEnd();
     cancelDrag();
@@ -164,14 +152,12 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isDragging]);
-
   const tensCount = blocks.filter(b => b.type === 'tens').length;
   const onesCount = blocks.filter(b => b.type === 'ones').length;
   const tensBlocks = blocks.filter(b => b.type === 'tens');
   const onesBlocks = blocks.filter(b => b.type === 'ones');
   const hasBundle = onesCount >= 10;
   const totalValue = tensCount * 10 + onesCount;
-
   useEffect(() => {
     if (hasBundle && !isGrouping) {
       const bundledPositions = generateBundledPositions();
@@ -187,65 +173,17 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       }));
     }
   }, [hasBundle, isGrouping, setBlocks]);
-
-  return (
-    <div className="space-y-2">
+  return <div className="space-y-2">
       {/* Regrouping Hint */}
-      {showRegroupingHint && (
-        <div className="bg-yellow-100 text-yellow-800 p-3 rounded-lg text-center font-dm-sans text-sm font-bold animate-pulse">
-          💡 You have 10 ones! Drag some ones to the tens column to make groups of 10.
-        </div>
-      )}
+      {showRegroupingHint}
       
       <div className="grid grid-cols-2 gap-2">
-        <PlaceValueColumn 
-          type="tens" 
-          blocks={tensBlocks} 
-          onAddBlock={addTenBlock} 
-          onRemoveBlock={removeBlock} 
-          onDragStart={handleBlockDragStart} 
-          onDrop={handleDrop} 
-          onDragEnter={handleDragEnter} 
-          onDragLeave={handleDragLeave} 
-          onDragOver={handleDragOver} 
-          isDropTarget={dragState.isOver === 'tens'} 
-          isGrouping={isGrouping} 
-          workspaceId={workspaceId} 
-          onStartBulkDrag={startDrag}
-          canRegroupOnestoTens={canRegroupOnestoTens()}
-          canRegroupTensToOnes={canRegroupTensToOnes()}
-          canAddDirectly={false}
-        />
+        <PlaceValueColumn type="tens" blocks={tensBlocks} onAddBlock={addTenBlock} onRemoveBlock={removeBlock} onDragStart={handleBlockDragStart} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} isDropTarget={dragState.isOver === 'tens'} isGrouping={isGrouping} workspaceId={workspaceId} onStartBulkDrag={startDrag} canRegroupOnestoTens={canRegroupOnestoTens()} canRegroupTensToOnes={canRegroupTensToOnes()} canAddDirectly={false} />
         
-        <PlaceValueColumn 
-          type="ones" 
-          blocks={onesBlocks} 
-          hasBundle={hasBundle} 
-          onAddBlock={addOneBlock} 
-          onRemoveBlock={removeBlock} 
-          onDragStart={handleBlockDragStart} 
-          onDrop={handleDrop} 
-          onDragEnter={handleDragEnter} 
-          onDragLeave={handleDragLeave} 
-          onDragOver={handleDragOver} 
-          isDropTarget={dragState.isOver === 'ones'} 
-          isGrouping={isGrouping} 
-          workspaceId={workspaceId} 
-          onStartBulkDrag={startDrag}
-          canRegroupOnestoTens={canRegroupOnestoTens()}
-          canRegroupTensToOnes={canRegroupTensToOnes()}
-          canAddDirectly={canAddDirectly}
-        />
+        <PlaceValueColumn type="ones" blocks={onesBlocks} hasBundle={hasBundle} onAddBlock={addOneBlock} onRemoveBlock={removeBlock} onDragStart={handleBlockDragStart} onDrop={handleDrop} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} isDropTarget={dragState.isOver === 'ones'} isGrouping={isGrouping} workspaceId={workspaceId} onStartBulkDrag={startDrag} canRegroupOnestoTens={canRegroupOnestoTens()} canRegroupTensToOnes={canRegroupTensToOnes()} canAddDirectly={canAddDirectly} />
       </div>
 
-      <DragFeedback 
-        dragState={dragState} 
-        onesCount={onesCount} 
-        tensCount={tensCount} 
-        draggedBlocks={draggedBlocks} 
-      />
-    </div>
-  );
+      <DragFeedback dragState={dragState} onesCount={onesCount} tensCount={tensCount} draggedBlocks={draggedBlocks} />
+    </div>;
 };
-
 export default SimpleBoard;
