@@ -92,9 +92,9 @@ export const useBlockManagement = (
   const addOneBlock = () => {
     const currentOnes = blocks.filter(b => b.type === 'ones').length;
     
-    // Prevent adding if already at 9 ones - force regrouping instead
-    if (currentOnes >= 9) {
-      console.log('🚫 Cannot add more ones - maximum 9 allowed. Must regroup first!');
+    // Prevent adding if already at 10 ones - force regrouping instead
+    if (currentOnes >= 10) {
+      console.log('🚫 Cannot add more ones - maximum 10 allowed. Must regroup first!');
       setShowRegroupingHint(true);
       return;
     }
@@ -110,8 +110,8 @@ export const useBlockManagement = (
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
     
-    // Show regrouping hint if we now have 9 ones
-    if (currentOnes + 1 === 9) {
+    // Show regrouping hint if we now have 10 ones
+    if (currentOnes + 1 === 10) {
       setShowRegroupingHint(true);
     }
     
@@ -140,7 +140,7 @@ export const useBlockManagement = (
     setBlocks(newBlocks);
     
     // Hide regrouping hint if ones count is now below threshold
-    if (ones < 9) {
+    if (ones < 10) {
       setShowRegroupingHint(false);
     }
     

@@ -1,16 +1,9 @@
 
-/* Vibration animation for blocks that can be regrouped */
+/* Simple vibration animation for blocks that can be regrouped */
 @keyframes vibrate {
   0%, 100% { transform: translate(0); }
-  10% { transform: translate(-1px, -1px); }
-  20% { transform: translate(1px, -1px); }
-  30% { transform: translate(-1px, 1px); }
-  40% { transform: translate(1px, 1px); }
-  50% { transform: translate(-1px, -1px); }
-  60% { transform: translate(1px, -1px); }
-  70% { transform: translate(-1px, 1px); }
-  80% { transform: translate(1px, 1px); }
-  90% { transform: translate(-1px, -1px); }
+  25% { transform: translate(-1px, 0); }
+  75% { transform: translate(1px, 0); }
 }
 
 /* Flash animation for grouping blocks */
@@ -21,7 +14,7 @@
 
 /* Apply animations */
 .animate-vibrate {
-  animation: vibrate 0.5s ease-in-out infinite;
+  animation: vibrate 0.3s ease-in-out infinite;
 }
 
 .animate-group-flash {

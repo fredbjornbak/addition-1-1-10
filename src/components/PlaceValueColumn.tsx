@@ -51,7 +51,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
 
   // Enhanced visual feedback for regrouping
   const shouldVibrateBlocks = hasBundle && isOnes && blocks.length >= 10;
-  const shouldHighlightForRegrouping = (isOnes && blocks.length >= 9) || (!isOnes && canRegroupOnestoTens);
+  const shouldHighlightForRegrouping = (isOnes && blocks.length >= 10) || (!isOnes && canRegroupOnestoTens);
 
   const handleButtonClick = (e: React.MouseEvent) => {
     // Only handle clicks that aren't on blocks
@@ -59,9 +59,9 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
     const isDraggableBlock = target.closest('[data-draggable-block]');
     
     if (!isDraggableBlock && canAddDirectly) {
-      // For ones column, check if we can add more (max 9)
-      if (isOnes && blocks.length >= 9) {
-        console.log('🚫 Cannot add more ones - maximum 9 allowed. Must regroup first!');
+      // For ones column, check if we can add more (max 10)
+      if (isOnes && blocks.length >= 10) {
+        console.log('🚫 Cannot add more ones - maximum 10 allowed. Must regroup first!');
         return;
       }
       
@@ -172,9 +172,9 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       {canAddDirectly && (
         <button
           onClick={handleButtonClick}
-          disabled={isOnes && blocks.length >= 9}
+          disabled={isOnes && blocks.length >= 10}
           className={`absolute inset-0 w-full h-full bg-transparent hover:bg-white/10 active:bg-white/20 transition-colors z-0 ${
-            (isOnes && blocks.length >= 9) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+            (isOnes && blocks.length >= 10) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
           }`}
           aria-label={`Click to add ${type} blocks`}
         />
@@ -186,15 +186,15 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       
       <div className={`text-sm ${textColor} mb-2 opacity-75 text-center relative z-10 pointer-events-none`}>
         {canAddDirectly ? (
-          isOnes && blocks.length >= 9 ? 'Drag to tens!' : 'Click!'
+          isOnes && blocks.length >= 10 ? 'Drag to tens!' : 'Click!'
         ) : 'Drop only!'}
       </div>
       
-      {/* Enhanced regrouping guidance */}
-      {shouldHighlightForRegrouping && (
+      {/* Simplified regrouping guidance - removed "Regroup me!" */}
+      {shouldHighlightForRegrouping && !isOnes && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
           <div className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-bold animate-bounce">
-            {isOnes ? 'Regroup me!' : 'Drop here!'}
+            Drop here!
           </div>
         </div>
       )}
