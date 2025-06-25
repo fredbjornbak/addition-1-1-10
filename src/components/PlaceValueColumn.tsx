@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
@@ -53,12 +52,15 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   const shouldVibrateBlocks = hasBundle && isOnes && blocks.length >= 10;
   const shouldHighlightForRegrouping = (isOnes && blocks.length >= 10) || (!isOnes && canRegroupOnestoTens);
 
+  // Disable tens block addition - only allow drag and drop
+  const canClickToAdd = canAddDirectly && isOnes;
+
   const handleButtonClick = (e: React.MouseEvent) => {
-    // Only handle clicks that aren't on blocks
+    // Only handle clicks that aren't on blocks and only for ones column
     const target = e.target as HTMLElement;
     const isDraggableBlock = target.closest('[data-draggable-block]');
     
-    if (!isDraggableBlock && canAddDirectly) {
+    if (!isDraggableBlock && canClickToAdd) {
       // For ones column, check if we can add more (max 10)
       if (isOnes && blocks.length >= 10) {
         console.log('🚫 Cannot add more ones - maximum 10 allowed. Must regroup first!');
@@ -161,15 +163,15 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       style={{
         backgroundColor: isDropTarget ? 'rgba(255, 255, 0, 0.1)' : backgroundColor,
         borderColor: isDropTarget ? '#FFD700' : (shouldHighlightForRegrouping ? '#FFD700' : borderColor),
-        opacity: canAddDirectly ? 1 : 0.7
+        opacity: canClickToAdd ? 1 : 0.7
       }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
     >
-      {/* Enhanced clickable area with regrouping restrictions */}
-      {canAddDirectly && (
+      {/* Clickable area - only for ones column */}
+      {canClickToAdd && (
         <button
           onClick={handleButtonClick}
           disabled={isOnes && blocks.length >= 10}
@@ -183,21 +185,6 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       <div className={`font-dm-sans text-center font-bold mb-2 text-xl ${textColor} relative z-10 pointer-events-none`}>
         {type.toUpperCase()}
       </div>
-      
-      <div className={`text-sm ${textColor} mb-2 opacity-75 text-center relative z-10 pointer-events-none`}>
-        {canAddDirectly ? (
-          isOnes && blocks.length >= 10 ? 'Drag to tens!' : 'Click!'
-        ) : 'Drop only!'}
-      </div>
-      
-      {/* Simplified regrouping guidance - removed "Regroup me!" */}
-      {shouldHighlightForRegrouping && !isOnes && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
-          <div className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-bold animate-bounce">
-            Drop here!
-          </div>
-        </div>
-      )}
       
       {/* Render blocks with individual vibration logic */}
       {blocks.map((block, index) => {

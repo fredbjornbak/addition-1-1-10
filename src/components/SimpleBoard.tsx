@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -194,7 +193,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       {/* Regrouping Hint */}
       {showRegroupingHint && (
         <div className="bg-yellow-100 text-yellow-800 p-3 rounded-lg text-center font-dm-sans text-sm font-bold animate-pulse">
-          💡 You have 9+ ones! Drag some ones to the tens column to make groups of 10.
+          💡 You have 10 ones! Drag some ones to the tens column to make groups of 10.
         </div>
       )}
       
@@ -215,7 +214,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
           onStartBulkDrag={startDrag}
           canRegroupOnestoTens={canRegroupOnestoTens()}
           canRegroupTensToOnes={canRegroupTensToOnes()}
-          canAddDirectly={canAddDirectly}
+          canAddDirectly={false}
         />
         
         <PlaceValueColumn 
