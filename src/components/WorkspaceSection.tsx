@@ -12,10 +12,6 @@ interface WorkspaceSectionProps {
   backgroundColor: string;
   borderColor: string;
   canReceiveFromOthers: boolean;
-  isDropTarget?: boolean;
-  onCrossWorkspaceDrop?: (sourceWorkspace: string, blockType: 'tens' | 'ones', blockValue: number, bulkCount?: number) => void;
-  onCrossWorkspaceDragEnter?: (workspaceId: string) => void;
-  onCrossWorkspaceDragLeave?: () => void;
 }
 
 const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
@@ -27,11 +23,7 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
   resetTrigger,
   backgroundColor,
   borderColor,
-  canReceiveFromOthers,
-  isDropTarget = false,
-  onCrossWorkspaceDrop,
-  onCrossWorkspaceDragEnter,
-  onCrossWorkspaceDragLeave
+  canReceiveFromOthers
 }) => {
   const handleAddTens = () => {
     console.log('➕ Adding tens to workspace:', workspaceId);
@@ -58,8 +50,8 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
         borderColor
       }}
     >
-      <h3 className="font-space-grotesk text-lg font-bold text-center mb-2 text-grade-black">
-        {title}
+      <h3 className="font-space-grotesk text-4xl font-bold text-center mb-2 text-grade-purple">
+        {totalValue}
       </h3>
       
       <SimpleBoard 
@@ -75,9 +67,6 @@ const WorkspaceSection: React.FC<WorkspaceSectionProps> = ({
       />
       
       <div className="text-center mt-2">
-        <div className="font-space-grotesk text-2xl font-bold text-grade-purple">
-          {totalValue}
-        </div>
         <div className="font-dm-sans text-sm text-grade-black">
           ({tensCount} tens + {onesCount} ones)
         </div>
