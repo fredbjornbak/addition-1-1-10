@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const useBlockCounts = (resetTrigger: number) => {
   // First addend blocks
@@ -13,6 +13,17 @@ export const useBlockCounts = (resetTrigger: number) => {
   // Total blocks
   const [totalTens, setTotalTens] = useState(0);
   const [totalOnes, setTotalOnes] = useState(0);
+
+  // Reset all counts when resetTrigger changes
+  useEffect(() => {
+    console.log('🔄 useBlockCounts: Resetting all counts due to resetTrigger:', resetTrigger);
+    setFirstNumberTens(0);
+    setFirstNumberOnes(0);
+    setSecondNumberTens(0);
+    setSecondNumberOnes(0);
+    setTotalTens(0);
+    setTotalOnes(0);
+  }, [resetTrigger]);
 
   const handleFirstNumberChange = (tens: number, ones: number) => {
     setFirstNumberTens(tens);
@@ -30,6 +41,7 @@ export const useBlockCounts = (resetTrigger: number) => {
   };
 
   const resetAllCounts = () => {
+    console.log('🔄 useBlockCounts: Manual reset of all counts');
     setFirstNumberTens(0);
     setFirstNumberOnes(0);
     setSecondNumberTens(0);

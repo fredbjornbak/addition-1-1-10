@@ -20,16 +20,20 @@ export const useGameState = () => {
 
   const nextQuestion = () => {
     if (currentProblemIndex < problems.length - 1) {
-      setCurrentProblemIndex(prev => prev + 1);
+      // Clear everything first
       resetBoard();
       setShowFeedback(false);
       setIsCorrect(null);
+      
+      // Then move to next question
+      setCurrentProblemIndex(prev => prev + 1);
     } else {
       setGameComplete(true);
     }
   };
 
   const resetBoard = () => {
+    console.log('🔄 Triggering board reset');
     setResetTrigger(prev => prev + 1);
   };
 
