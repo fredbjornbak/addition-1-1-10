@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import PlaceValueColumn from './PlaceValueColumn';
@@ -37,7 +38,9 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
     draggedBlocks,
     startDrag,
     cancelDrag,
-    completeDrag
+    completeDrag,
+    showRegroupingHint,
+    hideRegroupingHint
   } = useBlockManagement(onAddTens, onAddOnes, onBlocksChange, resetTrigger, externalTensCount, externalOnesCount);
   
   const {
@@ -132,6 +135,7 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
       if (draggedBlock.type !== targetType) {
         console.log('✅ Cross-type drop - triggering regrouping');
         handleRegroup(draggedBlock, targetType);
+        hideRegroupingHint(); // Hide hint after successful regrouping
       } else {
         console.log('ℹ️ Same-type drop - no regrouping needed');
       }
@@ -187,6 +191,13 @@ const SimpleBoard: React.FC<ExtendedSimpleBoardProps> = ({
 
   return (
     <div className="space-y-2">
+      {/* Regrouping Hint */}
+      {showRegroupingHint && (
+        <div className="bg-yellow-100 text-yellow-800 p-3 rounded-lg text-center font-dm-sans text-sm font-bold animate-pulse">
+          💡 You have 9+ ones! Drag some ones to the tens column to make groups of 10.
+        </div>
+      )}
+      
       <div className="grid grid-cols-2 gap-2">
         <PlaceValueColumn 
           type="tens" 

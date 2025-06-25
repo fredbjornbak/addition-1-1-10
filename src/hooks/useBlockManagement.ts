@@ -14,6 +14,7 @@ export const useBlockManagement = (
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [draggedBlocks, setDraggedBlocks] = useState<Block[]>([]);
+  const [showRegroupingHint, setShowRegroupingHint] = useState(false);
   const isManualOperation = useRef(false);
 
   // Clear all blocks when resetTrigger changes
@@ -23,6 +24,7 @@ export const useBlockManagement = (
       setBlocks([]);
       setIsDragging(false);
       setDraggedBlocks([]);
+      setShowRegroupingHint(false);
     }
   }, [resetTrigger]);
 
@@ -69,6 +71,9 @@ export const useBlockManagement = (
         onesBlocks: newBlocks.filter(b => b.type === 'ones').length
       });
       setBlocks(newBlocks);
+      
+      // Show regrouping hint if there are 10+ ones
+      setShowRegroupingHint(externalOnesCount >= 10);
     }
   }, [externalTensCount, externalOnesCount]);
 
@@ -87,6 +92,13 @@ export const useBlockManagement = (
   const addOneBlock = () => {
     const currentOnes = blocks.filter(b => b.type === 'ones').length;
     
+    // Prevent adding if already at 9 ones - force regrouping instead
+    if (currentOnes >= 9) {
+      console.log('🚫 Cannot add more ones - maximum 9 allowed. Must regroup first!');
+      setShowRegroupingHint(true);
+      return;
+    }
+    
     const newBlock: Block = {
       id: `one-${Date.now()}-${Math.random()}`,
       value: 1,
@@ -97,6 +109,12 @@ export const useBlockManagement = (
     console.log('➕ Adding one block:', newBlock.id);
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
+    
+    // Show regrouping hint if we now have 9 ones
+    if (currentOnes + 1 === 9) {
+      setShowRegroupingHint(true);
+    }
+    
     onAddOnes();
   };
 
@@ -120,6 +138,11 @@ export const useBlockManagement = (
     
     // Update blocks immediately
     setBlocks(newBlocks);
+    
+    // Hide regrouping hint if ones count is now below threshold
+    if (ones < 9) {
+      setShowRegroupingHint(false);
+    }
     
     // Always call onBlocksChange to notify parent
     onBlocksChange(tens, ones);
@@ -160,6 +183,10 @@ export const useBlockManagement = (
     setDraggedBlocks([]);
   };
 
+  const hideRegroupingHint = () => {
+    setShowRegroupingHint(false);
+  };
+
   return {
     blocks,
     setBlocks,
@@ -170,6 +197,8 @@ export const useBlockManagement = (
     draggedBlocks,
     startDrag,
     cancelDrag,
-    completeDrag
+    completeDrag,
+    showRegroupingHint,
+    hideRegroupingHint
   };
 };

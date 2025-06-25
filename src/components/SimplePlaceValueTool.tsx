@@ -33,7 +33,7 @@ const SimplePlaceValueTool = () => {
     resetAllCounts
   } = useBlockCounts(resetTrigger);
 
-  // Automatically check answer whenever block counts change
+  // Enhanced answer checking with regrouping validation
   useEffect(() => {
     if (!currentProblem) return;
     
@@ -44,16 +44,25 @@ const SimplePlaceValueTool = () => {
     const firstNumberCorrect = firstNumber === currentProblem.num1;
     const secondNumberCorrect = secondNumber === currentProblem.num2;
     
-    console.log('🔍 Auto-checking:', {
+    // Check for proper regrouping - no workspace should have 10+ ones
+    const firstNeedsRegrouping = firstNumberOnes >= 10;
+    const secondNeedsRegrouping = secondNumberOnes >= 10;
+    const hasUnregroupedOnes = firstNeedsRegrouping || secondNeedsRegrouping;
+    
+    console.log('🔍 Enhanced answer checking:', {
       firstNumber,
       secondNumber,
       expected: [currentProblem.num1, currentProblem.num2],
       firstCorrect: firstNumberCorrect,
-      secondCorrect: secondNumberCorrect
+      secondCorrect: secondNumberCorrect,
+      firstNeedsRegrouping,
+      secondNeedsRegrouping,
+      hasUnregroupedOnes
     });
 
-    if (firstNumberCorrect && secondNumberCorrect) {
-      console.log('✅ Both numbers correct! Auto-advancing...');
+    // Only mark as correct if numbers match AND no ungrouped ones exist
+    if (firstNumberCorrect && secondNumberCorrect && !hasUnregroupedOnes) {
+      console.log('✅ Both numbers correct AND properly regrouped! Auto-advancing...');
       setIsCorrect(true);
       setShowFeedback(true);
       
@@ -62,9 +71,17 @@ const SimplePlaceValueTool = () => {
         nextQuestion();
       }, 2000);
     } else {
-      // Reset feedback if numbers are not correct
+      // Reset feedback if numbers are not correct or regrouping is needed
       setShowFeedback(false);
       setIsCorrect(null);
+      
+      // Log why the answer isn't complete
+      if (!firstNumberCorrect || !secondNumberCorrect) {
+        console.log('❌ Numbers not correctly represented');
+      }
+      if (hasUnregroupedOnes) {
+        console.log('⚠️ Regrouping required - found 10+ ones blocks');
+      }
     }
   }, [firstNumberTens, firstNumberOnes, secondNumberTens, secondNumberOnes, currentProblem, setIsCorrect, setShowFeedback, nextQuestion]);
 
@@ -98,11 +115,13 @@ const SimplePlaceValueTool = () => {
         resetTrigger={resetTrigger}
       />
 
-      {/* Feedback */}
+      {/* Enhanced Feedback with regrouping guidance */}
       <SimpleFeedback 
         isCorrect={isCorrect}
         correctAnswer={currentProblem?.answer || 0}
         show={showFeedback}
+        firstNumberOnes={firstNumberOnes}
+        secondNumberOnes={secondNumberOnes}
       />
 
       {/* Action Buttons - Only Clear button now */}
