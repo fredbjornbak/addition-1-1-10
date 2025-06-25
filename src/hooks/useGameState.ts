@@ -11,7 +11,7 @@ export const useGameState = () => {
   const [resetTrigger, setResetTrigger] = useState(0);
 
   useEffect(() => {
-    // Generate 10 problems when component mounts
+    // Generate 7 predefined problems when component mounts
     const newProblems = generateSimpleProblems();
     setProblems(newProblems);
   }, []);

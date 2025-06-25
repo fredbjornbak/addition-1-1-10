@@ -7,25 +7,19 @@ export interface SimpleProblem {
 }
 
 export const generateSimpleProblems = (): SimpleProblem[] => {
-  const problems: SimpleProblem[] = [];
-  
-  for (let i = 1; i <= 10; i++) {
-    let num1: number, num2: number;
-    
-    // Generate problems with sums up to 20
-    num1 = Math.floor(Math.random() * 10) + 1; // 1-10
-    const maxNum2 = Math.min(20 - num1, 10); // Ensure sum ≤ 20
-    num2 = Math.floor(Math.random() * maxNum2) + 1; // 1 to maxNum2
-    
-    const answer = num1 + num2;
-    
-    problems.push({
-      num1,
-      num2,
-      answer,
-      questionNumber: i
-    });
-  }
-  
-  return problems;
+  // Predefined sequence of 7 problems from easy to hard
+  const predefinedProblems = [
+    { num1: 6, num2: 7, answer: 13 },   // Problem 1: Basic addition, single digits
+    { num1: 8, num2: 5, answer: 13 },   // Problem 2: Practice with same sum
+    { num1: 9, num2: 4, answer: 13 },   // Problem 3: Different combinations
+    { num1: 12, num2: 6, answer: 18 },  // Problem 4: Introducing teens
+    { num1: 15, num2: 8, answer: 23 },  // Problem 5: Crossing into twenties
+    { num1: 13, num2: 9, answer: 22 },  // Problem 6: More complex teen + single digit
+    { num1: 16, num2: 7, answer: 23 }   // Problem 7: Most challenging
+  ];
+
+  return predefinedProblems.map((problem, index) => ({
+    ...problem,
+    questionNumber: index + 1
+  }));
 };

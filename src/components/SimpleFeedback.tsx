@@ -18,11 +18,11 @@ const SimpleFeedback: React.FC<SimpleFeedbackProps> = ({ isCorrect, correctAnswe
     }`}>
       {isCorrect ? (
         <div>
-          🎉 Excellent! You correctly represented both numbers and their sum!
+          🎉 Perfect! You correctly represented both numbers! Moving to the next question...
         </div>
       ) : (
         <div>
-          Try again! Make sure to represent both addends correctly and drag blocks to show the total of {correctAnswer}
+          Place the correct number of blocks for each number to continue
         </div>
       )}
     </div>
