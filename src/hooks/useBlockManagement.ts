@@ -1,7 +1,7 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Block } from '../types/placeValue';
 import { generatePosition } from '../utils/blockPositions';
+import { useSoundEffects } from './useSoundEffects';
 
 export const useBlockManagement = (
   onAddTens: () => void,
@@ -16,6 +16,7 @@ export const useBlockManagement = (
   const [draggedBlocks, setDraggedBlocks] = useState<Block[]>([]);
   const [showRegroupingHint, setShowRegroupingHint] = useState(false);
   const isManualOperation = useRef(false);
+  const { playAddSound } = useSoundEffects();
 
   // Clear all blocks when resetTrigger changes
   useEffect(() => {
@@ -85,6 +86,7 @@ export const useBlockManagement = (
       position: generatePosition('tens', blocks.filter(b => b.type === 'tens').length)
     };
     console.log('➕ Adding ten block:', newBlock.id);
+    playAddSound('tens'); // Play sound for tens block
     setBlocks(prev => [...prev, newBlock]);
     onAddTens();
   };
@@ -107,6 +109,7 @@ export const useBlockManagement = (
     };
     
     console.log('➕ Adding one block:', newBlock.id);
+    playAddSound('ones'); // Play sound for ones block
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
     

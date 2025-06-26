@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 interface DraggableBlockProps {
   id: string;
@@ -33,6 +33,8 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   isBeingDragged = false,
   onStartBulkDrag
 }) => {
+  const { playDragStart, playRemoveSound } = useSoundEffects();
+
   const handleDragStart = (e: React.DragEvent) => {
     console.log('🚀 DraggableBlock drag start:', { 
       id, 
@@ -41,6 +43,9 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       workspaceId,
       totalBlocksOfType
     });
+    
+    // Play drag start sound
+    playDragStart(type);
     
     // Always set simple drag data for internal drops (regrouping)
     e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -82,6 +87,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
     e.preventDefault();
     
     console.log('🗑️ Block clicked for removal:', { id, type, value, workspaceId });
+    playRemoveSound(); // Play removal sound
     onRemove(id);
   };
 

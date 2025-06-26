@@ -1,6 +1,7 @@
 import React from 'react';
 import DraggableBlock from './DraggableBlock';
 import { Block } from '../types/placeValue';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 interface PlaceValueColumnProps {
   type: 'tens' | 'ones';
@@ -41,6 +42,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
   canRegroupTensToOnes = false,
   canAddDirectly = true
 }) => {
+  const { playAddSound, playDragDrop } = useSoundEffects();
   const isOnes = type === 'ones';
   const backgroundColor = isOnes ? 'rgba(255, 111, 0, 0.1)' : 'rgba(0, 38, 255, 0.1)';
   const borderColor = isOnes ? '#FF6F00' : '#0026FF';
@@ -68,6 +70,7 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
       }
       
       console.log('🔘 Column button clicked - adding block');
+      playAddSound(type); // Play sound when adding block
       onAddBlock();
     }
   };
@@ -125,15 +128,16 @@ const PlaceValueColumn: React.FC<PlaceValueColumnProps> = ({
     if (isInternalRegrouping) {
       console.log('🔄 Handling as internal regrouping');
       e.stopPropagation(); // Stop propagation for internal drops
+      playDragDrop(type); // Play drop sound
       onDrop(e, type);
     } else if (crossWorkspaceData && crossWorkspaceData.isCrossWorkspace) {
       console.log('📦 Handling as cross-workspace transfer - letting bubble up');
-      // For cross-workspace drops, let the event bubble up to WorkspaceSection
-      // DON'T stop propagation
+      playDragDrop(type); // Play drop sound
       onDrop(e, type);
     } else {
       console.log('❓ Unknown drop type, defaulting to internal');
       e.stopPropagation();
+      playDragDrop(type); // Play drop sound
       onDrop(e, type);
     }
   };
