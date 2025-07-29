@@ -47,7 +47,7 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
 
         {/* Plus Sign */}
         <div className="flex items-center justify-center">
-          <div className="font-space-grotesk text-6xl font-bold text-grade-purple bg-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg border-4 border-grade-purple">+</div>
+          <div className="font-space-grotesk text-6xl font-bold text-grade-purple">+</div>
         </div>
 
         {/* Second Number */}
