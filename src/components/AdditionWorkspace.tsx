@@ -52,32 +52,43 @@ const AdditionWorkspace: React.FC<AdditionWorkspaceProps> = ({
         borderBottom: '10px solid #2F2E41'
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="flex flex-col md:flex-row items-center gap-3">
         {/* First Number */}
-        <WorkspaceSection
-          title={`First: ${problem.num1}`}
-          workspaceId="first"
-          tensCount={firstNumberTens}
-          onesCount={firstNumberOnes}
-          onBlocksChange={onFirstNumberChange}
-          resetTrigger={resetTrigger}
-          backgroundColor="rgba(0, 123, 255, 0.1)"
-          borderColor="#007BFF"
-          canReceiveFromOthers={false}
-        />
+        <div className="flex-1">
+          <WorkspaceSection
+            title={`First: ${problem.num1}`}
+            workspaceId="first"
+            tensCount={firstNumberTens}
+            onesCount={firstNumberOnes}
+            onBlocksChange={onFirstNumberChange}
+            resetTrigger={resetTrigger}
+            backgroundColor="rgba(0, 123, 255, 0.1)"
+            borderColor="#007BFF"
+            canReceiveFromOthers={false}
+          />
+        </div>
+
+        {/* Plus Sign */}
+        <div className="flex items-center justify-center">
+          <div className="font-space-grotesk text-6xl font-bold text-grade-purple bg-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg border-4 border-grade-purple">
+            +
+          </div>
+        </div>
 
         {/* Second Number */}
-        <WorkspaceSection
-          title={`Second: ${problem.num2}`}
-          workspaceId="second"
-          tensCount={secondNumberTens}
-          onesCount={secondNumberOnes}
-          onBlocksChange={onSecondNumberChange}
-          resetTrigger={resetTrigger}
-          backgroundColor="rgba(40, 167, 69, 0.1)"
-          borderColor="#28A745"
-          canReceiveFromOthers={false}
-        />
+        <div className="flex-1">
+          <WorkspaceSection
+            title={`Second: ${problem.num2}`}
+            workspaceId="second"
+            tensCount={secondNumberTens}
+            onesCount={secondNumberOnes}
+            onBlocksChange={onSecondNumberChange}
+            resetTrigger={resetTrigger}
+            backgroundColor="rgba(40, 167, 69, 0.1)"
+            borderColor="#28A745"
+            canReceiveFromOthers={false}
+          />
+        </div>
       </div>
     </Card>
   );
